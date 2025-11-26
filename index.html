@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Party Pixels – Face Remix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #050712;
+      --card: #101324;
+      --accent: #ff5cff;
+      --accent-soft: rgba(255, 92, 255, 0.2);
+      --text: #f4f4ff;
+      --muted: #9a9ac0;
+      --border: #24273a;
+      --danger: #ff4b6b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #181b39 0, #050712 45%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 960px;
+      padding: 24px 16px 40px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .brand-pill {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #ff5cff, #5c8aff);
+      box-shadow: 0 0 20px rgba(255, 92, 255, 0.6);
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(24, 26, 52, 0.9);
+      border: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .hero {
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(26px, 4vw, 34px);
+      margin: 0 0 8px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 520px;
+      font-size: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.3fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(255, 92, 255, 0.07), transparent 55%), 
+                  radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.12), transparent 60%);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      padding: 16px 16px 18px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+    }
+
+    .card h2 {
+      font-size: 17px;
+      margin: 0 0 12px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .upload-zone {
+      border-radius: 16px;
+      border: 1px dashed rgba(151, 154, 196, 0.8);
+      padding: 14px 14px 10px;
+      background: rgba(6, 9, 24, 0.9);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .upload-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .upload-hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--accent), #5c8aff);
+      color: #050712;
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.6);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.05s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 0 10px rgba(255, 92, 255, 0.4);
+    }
+
+    .btn-ghost {
+      background: rgba(11, 14, 32, 0.9);
+      color: var(--muted);
+      box-shadow: none;
+      border: 1px solid var(--border);
+    }
+
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .preview-thumb {
+      width: 100%;
+      max-height: 220px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid rgba(132, 136, 200, 0.5);
+      background: #050712;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    select {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(6, 9, 24, 0.95);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .status strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .status-error {
+      color: var(--danger);
+    }
+
+    .preview-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .result-frame {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 10px;
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.12), transparent 60%),
+                  rgba(6, 9, 24, 0.94);
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .placeholder {
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 260px;
+    }
+
+    .result-img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 14px;
+      object-fit: contain;
+      display: none;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(13, 18, 40, 0.95);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.13);
+      border-top-color: var(--accent);
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .disclaimer {
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .faq {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+    }
+
+    .faq p {
+      margin: 0 0 6px;
+    }
+
+    .faq strong {
+      color: var(--text);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-pill"></div>
+        <span>Party&nbsp;Pixels</span>
+      </div>
+      <div class="tag">Web Toys</div>
+    </header>
+
+    <section class="hero">
+      <h1>Face Remix: turn your selfie into a character</h1>
+      <p>
+        Upload your photo, pick a vibe – princess, cyberpunk, anime hero – and let the pixels
+        remix you into a movie-style character.
+      </p>
+    </section>
+
+    <main class="layout">
+      <section class="card">
+        <h2>Create your transformation</h2>
+        <div class="steps">
+
+          <!-- STEP 1: UPLOAD -->
+          <div>
+            <div class="step-label">Step 1 · Upload</div>
+            <div class="upload-zone">
+              <div class="upload-header">
+                <span>Drop a selfie or choose a file</span>
+                <button class="btn btn-ghost" id="uploadButton">Choose photo</button>
+              </div>
+              <p class="upload-hint">Use a clear photo of your face. No nudity, no other people without consent.</p>
+              <input type="file" id="fileInput" class="file-input" accept="image/*">
+              <img id="previewImage" class="preview-thumb" alt="Preview" />
+            </div>
+          </div>
+
+          <!-- STEP 2: CHARACTER TYPE -->
+          <div class="field">
+            <div class="step-label">Step 2 · Character type</div>
+            <label for="styleSelect">Who do you want to become?</label>
+            <select id="styleSelect">
+              <option value="disney_princess">Disney-style princess</option>
+              <option value="retro_anime">Retro anime hero</option>
+              <option value="cyberpunk">Cyberpunk mercenary</option>
+              <option value="dark_knight">Dark fantasy knight</option>
+              <option value="pixar_toy">Pixar-like toy adventurer</option>
+              <option value="90s_cartoon">90s cartoon slacker</option>
+              <option value="space_captain">Space-opera captain</option>
+              <option value="romcom_main">Rom-com main character</option>
+              <option value="vampire_lord">Vampire aristocrat</option>
+              <option value="magical_girl">Magical girl/boy</option>
+            </select>
+          </div>
+
+          <!-- STEP 3: GENERATE -->
+          <div>
+            <div class="step-label">Step 3 · Generate</div>
+            <div class="actions-row">
+              <button class="btn" id="generateButton" disabled>
+                <span id="generateLabel">Generate my character</span>
+              </button>
+              <span class="status" id="statusText">
+                <strong>Waiting for photo…</strong>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="card preview-card">
+        <h2>Your result</h2>
+        <div class="result-frame" id="resultFrame">
+          <div class="placeholder" id="placeholder">
+            Your generated character will appear here.<br><br>
+            Upload a selfie, pick a style and hit <strong>Generate</strong>.
+          </div>
+          <img id="resultImage" class="result-img" alt="Generated character">
+        </div>
+
+        <div class="result-actions">
+          <div class="chip" id="chipInfo">
+            <span id="chipText">No image generated yet</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-ghost" id="downloadButton" disabled>Download</button>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          This is an experimental demo. Don’t upload sensitive content. Results are generated by AI and may not be perfect.
+        </div>
+
+        <div class="faq">
+          <p><strong>How does this work?</strong><br>
+          Your photo and prompt are sent to an AI image model on the server, which returns a remixed portrait.</p>
+          <p><strong>Do you store my photos?</strong><br>
+          For a real deployment you should add a clear privacy policy here (e.g. “We delete photos after processing”).</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const uploadButton = document.getElementById('uploadButton');
+    const previewImage = document.getElementById('previewImage');
+    const generateButton = document.getElementById('generateButton');
+    const generateLabel = document.getElementById('generateLabel');
+    const statusText = document.getElementById('statusText');
+    const resultImage = document.getElementById('resultImage');
+    const placeholder = document.getElementById('placeholder');
+    const chipText = document.getElementById('chipText');
+    const downloadButton = document.getElementById('downloadButton');
+    const styleSelect = document.getElementById('styleSelect');
+    const resultFrame = document.getElementById('resultFrame');
+
+    let uploadedImageBlob = null;
+    let isGenerating = false;
+
+    uploadButton.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        statusText.textContent = 'Please upload an image file.';
+        statusText.classList.add('status-error');
+        return;
+      } else {
+        statusText.classList.remove('status-error');
+      }
+
+      uploadedImageBlob = file;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+        generateButton.disabled = false;
+        statusText.innerHTML = '<strong>Photo ready.</strong> Choose a style & generate.';
+        chipText.textContent = 'Ready to remix your face';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    generateButton.addEventListener('click', async () => {
+      if (!uploadedImageBlob || isGenerating) return;
+
+      isGenerating = true;
+      generateButton.disabled = true;
+      downloadButton.disabled = true;
+      resultImage.style.display = 'none';
+      placeholder.style.display = 'flex';
+      placeholder.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <div class="spinner"></div>
+          <div>Summoning your new persona…</div>
+        </div>
+      `;
+      statusText.innerHTML = '<strong>Generating…</strong> This may take a few seconds.';
+      chipText.textContent = 'AI is working on it';
+
+      // TODO: podmień ten "fake timeout" na prawdziwe wywołanie do backendu
+      // który wyśle zdjęcie + styl i odeśle wygenerowany obrazek.
+      try {
+        await fakeGenerate();
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = 'Something went wrong. Try again.';
+        statusText.classList.add('status-error');
+      } finally {
+        isGenerating = false;
+        generateButton.disabled = !uploadedImageBlob;
+      }
+    });
+
+    async function fakeGenerate() {
+      // Fake "generation" – w realu tutaj robisz fetch() do swojego API.
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Na potrzeby frontu użyjemy po prostu uploadowanego zdjęcia jako "wyniku".
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resultImage.src = e.target.result;
+        resultImage.style.display = 'block';
+        placeholder.style.display = 'none';
+        statusText.innerHTML = '<strong>Done.</strong> This is your remixed character preview.';
+        chipText.textContent = 'Result ready · demo mode';
+        downloadButton.disabled = false;
+      };
+      reader.readAsDataURL(uploadedImageBlob);
+    }
+
+    downloadButton.addEventListener('click', () => {
+      if (!resultImage.src) return;
+      const link = document.createElement('a');
+      link.href = resultImage.src;
+      link.download = 'party-pixels-face-remix.png';
+      link.click();
+    });
+  </script>
+</body>
+</html>
