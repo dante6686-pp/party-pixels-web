@@ -56,12 +56,13 @@ export default async function handler(req, res) {
 
     // Wołamy OpenAI images API
     const response = await client.images.generate({
-      model: "gpt-image-1",
-      prompt,
-      size: "1024x1024",
-      n: 1,
-      response_format: "b64_json",
-    });
+  model: "gpt-image-1",
+  prompt,
+  size: "1024x1024",
+  n: 1,
+  // gpt-image-1 ZAWSZE zwraca base64 w data[0].b64_json,
+  // więc nie podajemy już response_format.
+});
 
     const image = response.data[0]?.b64_json;
 
