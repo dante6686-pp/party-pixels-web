@@ -520,17 +520,35 @@
     statusText.classList.add('status-error');
   } finally {
     isGenerating = false;
+    generateButton.addEventListener('click', async () => {
+  if (!uploadedImageBlob || isGenerating) return;
+
+  isGenerating = true;
+  generateButton.disabled = true;
+  downloadButton.disabled = true;
+
+  try {
+    await realGenerate();
+  } catch (err) {
+    console.error(err);
+    statusText.textContent = 'Something went wrong. Try again.';
+    statusText.classList.add('status-error');
+  } finally {
+    isGenerating = false;
     generateButton.disabled = !uploadedImageBlob;
   }
-    });
+});
 
     async function realGenerate() {
   const style = styleSelect.value;
 
+  // stan UI – loading
   statusText.innerHTML = '<strong>Generating…</strong> Talking to the AI.';
-  chipText.textContent = 'AI is working on it';
-  resultImage.style.display = 'none';
-  placeholder.style.display = 'flex';
+  statusText.classList.remove("status-error");
+  chipText.textContent = "AI is working on it";
+
+  resultImage.style.display = "none";
+  placeholder.style.display = "flex";
   placeholder.innerHTML = `
     <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
       <div class="spinner"></div>
@@ -544,48 +562,54 @@
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        style: style,
-      }),
+      body: JSON.stringify({ style }),
     });
 
-    if (!resp.ok) {
-      throw new Error("Bad response from API");
+    const data = await resp.json().catch(() => ({}));
+
+    // 🔴 SPECJALNY CASE: billing limit – fallback / demo mode
+    if (resp.status === 402 && data && data.error === "billing_limit") {
+      // jeśli mamy preview uploadowanego zdjęcia, używamy go jako wynik
+      if (previewImage && previewImage.src) {
+        placeholder.style.display = "none";
+        resultImage.src = previewImage.src;
+        resultImage.style.display = "block";
+
+        chipText.textContent = "Demo mode · billing limit reached";
+        statusText.textContent =
+          "Billing limit in OpenAI has been reached – showing your original photo instead of AI result.";
+        downloadButton.disabled = false;
+      } else {
+        // awaryjnie, gdyby coś poszło nie tak z uploadem
+        placeholder.style.display = "flex";
+        placeholder.innerHTML = `
+          <div style="text-align:center;font-size:13px;">
+            Billing limit reached on the AI side.<br>
+            Try again later or contact the site owner.
+          </div>
+        `;
+        statusText.textContent = "Billing limit reached.";
+        statusText.classList.add("status-error");
+      }
+      return;
     }
 
-    const data = await resp.json();
+    // inne błędy HTTP
+    if (!resp.ok) {
+      throw new Error(data && data.error ? data.error : "Bad response from API");
+    }
 
-    // Billing limit – przełączamy się w tryb demo
-if (resp.status === 402 && data.error === "billing_limit") {
-  placeholder.style.display = "none";
+    if (!data || !data.imageBase64) {
+      throw new Error("No image returned");
+    }
 
-  // używamy po prostu uploadowanego zdjęcia jako "wyniku"
-  if (previewImage.src) {
-    resultImage.src = previewImage.src;
-    resultImage.style.display = "block";
-    chipText.textContent = "Demo mode (billing limit reached)";
-    statusText.textContent = "Billing limit reached – showing your original photo instead of AI result.";
-    downloadButton.disabled = false;
-    return;
-  } else {
-    // awaryjnie
-    placeholder.style.display = "flex";
-    placeholder.innerHTML = `
-      <div style="text-align:center;font-size:13px;">
-        Billing limit reached.<br>Upload a photo again or try later.
-      </div>
-    `;
-    statusText.textContent = "Billing limit reached.";
-    statusText.classList.add("status-error");
-    return;
-  }
-}
-
+    // normalny tryb – mamy base64 z OpenAI
     const imgUrl = "data:image/png;base64," + data.imageBase64;
 
     resultImage.src = imgUrl;
     resultImage.style.display = "block";
     placeholder.style.display = "none";
+
     statusText.innerHTML = "<strong>Done.</strong> Here's your character.";
     chipText.textContent = "Result generated via AI";
     downloadButton.disabled = false;
