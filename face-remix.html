@@ -555,9 +555,31 @@
 
     const data = await resp.json();
 
-    if (!data.imageBase64) {
-      throw new Error("No image returned");
-    }
+    // Billing limit – przełączamy się w tryb demo
+if (resp.status === 402 && data.error === "billing_limit") {
+  placeholder.style.display = "none";
+
+  // używamy po prostu uploadowanego zdjęcia jako "wyniku"
+  if (previewImage.src) {
+    resultImage.src = previewImage.src;
+    resultImage.style.display = "block";
+    chipText.textContent = "Demo mode (billing limit reached)";
+    statusText.textContent = "Billing limit reached – showing your original photo instead of AI result.";
+    downloadButton.disabled = false;
+    return;
+  } else {
+    // awaryjnie
+    placeholder.style.display = "flex";
+    placeholder.innerHTML = `
+      <div style="text-align:center;font-size:13px;">
+        Billing limit reached.<br>Upload a photo again or try later.
+      </div>
+    `;
+    statusText.textContent = "Billing limit reached.";
+    statusText.classList.add("status-error");
+    return;
+  }
+}
 
     const imgUrl = "data:image/png;base64," + data.imageBase64;
 
