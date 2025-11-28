@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <title>Party Pixels – Face Remix</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
     :root {
       --bg: #050712;
       --card: #101324;
       --accent: #ff5cff;
-      --accent-soft: rgba(255, 92, 255, 0.2);
+      --accent2: #5c8aff;
       --text: #f4f4ff;
       --muted: #9a9ac0;
       --border: #24273a;
@@ -21,27 +22,25 @@
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #181b39 0, #050712 45%);
+      background: radial-gradient(circle at top, #181b39 0, #050712 48%, #02030a 100%);
       color: var(--text);
       min-height: 100vh;
       display: flex;
-      align-items: stretch;
       justify-content: center;
     }
 
-    .wrapper {
+    .page {
       width: 100%;
       max-width: 960px;
-      padding: 24px 16px 40px;
-      margin: 0 auto;
+      padding: 20px 14px 36px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 10px;
+      margin-bottom: 18px;
     }
 
     .brand {
@@ -58,19 +57,19 @@
       width: 22px;
       height: 22px;
       border-radius: 8px;
-      background: linear-gradient(135deg, #ff5cff, #5c8aff);
-      box-shadow: 0 0 20px rgba(255, 92, 255, 0.6);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.7);
     }
 
     .tag {
       font-size: 11px;
       padding: 4px 10px;
       border-radius: 999px;
-      background: rgba(24, 26, 52, 0.9);
       border: 1px solid var(--border);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.14em;
       color: var(--muted);
+      background: rgba(6, 9, 24, 0.9);
       white-space: nowrap;
     }
 
@@ -78,16 +77,24 @@
       margin-bottom: 20px;
     }
 
+    .hero-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
     .hero h1 {
-      font-size: clamp(26px, 4vw, 34px);
-      margin: 0 0 8px;
+      font-size: clamp(24px, 5vw, 32px);
+      margin: 0 0 6px;
     }
 
     .hero p {
       margin: 0;
-      color: var(--muted);
       max-width: 520px;
       font-size: 14px;
+      color: var(--muted);
     }
 
     .layout {
@@ -103,23 +110,19 @@
     }
 
     .card {
-      background: radial-gradient(circle at top left, rgba(255, 92, 255, 0.07), transparent 55%), 
-                  radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.12), transparent 60%);
-      border-radius: 20px;
+      background:
+        radial-gradient(circle at top left, rgba(255, 92, 255, 0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.2), transparent 65%),
+        linear-gradient(145deg, rgba(10, 14, 35, 0.96), rgba(4, 5, 14, 0.98));
+      border-radius: 18px;
       border: 1px solid var(--border);
-      padding: 16px 16px 18px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+      padding: 14px 14px 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
     }
 
     .card h2 {
-      font-size: 17px;
-      margin: 0 0 12px;
-    }
-
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      font-size: 16px;
+      margin: 0 0 10px;
     }
 
     .step-label {
@@ -130,11 +133,17 @@
       margin-bottom: 4px;
     }
 
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .upload-zone {
       border-radius: 16px;
-      border: 1px dashed rgba(151, 154, 196, 0.8);
-      padding: 14px 14px 10px;
-      background: rgba(6, 9, 24, 0.9);
+      border: 1px dashed rgba(151, 154, 196, 0.9);
+      padding: 12px 12px 10px;
+      background: rgba(6, 9, 24, 0.95);
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -142,8 +151,8 @@
 
     .upload-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
       font-size: 13px;
     }
@@ -151,41 +160,6 @@
     .upload-hint {
       font-size: 11px;
       color: var(--muted);
-    }
-
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, var(--accent), #5c8aff);
-      color: #050712;
-      box-shadow: 0 0 18px rgba(255, 92, 255, 0.6);
-      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.05s ease;
-      white-space: nowrap;
-    }
-
-    .btn:active {
-      transform: translateY(1px) scale(0.99);
-      box-shadow: 0 0 10px rgba(255, 92, 255, 0.4);
-    }
-
-    .btn-ghost {
-      background: rgba(11, 14, 32, 0.9);
-      color: var(--muted);
-      box-shadow: none;
-      border: 1px solid var(--border);
-    }
-
-    .btn:disabled {
-      opacity: 0.7;
-      cursor: default;
-      box-shadow: none;
     }
 
     .file-input {
@@ -197,8 +171,9 @@
       max-height: 220px;
       border-radius: 12px;
       object-fit: cover;
-      border: 1px solid rgba(132, 136, 200, 0.5);
+      border: 1px solid rgba(132, 136, 200, 0.6);
       background: #050712;
+      display: none;
     }
 
     .field {
@@ -224,7 +199,7 @@
 
     select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent-soft);
+      box-shadow: 0 0 0 1px rgba(255, 92, 255, 0.2);
     }
 
     .actions-row {
@@ -235,6 +210,41 @@
       margin-top: 6px;
     }
 
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #050712;
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.6);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.05s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 0 10px rgba(255, 92, 255, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: rgba(11, 14, 32, 0.9);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
     .status {
       font-size: 12px;
       color: var(--muted);
@@ -242,7 +252,6 @@
 
     .status strong {
       color: var(--accent);
-      font-weight: 600;
     }
 
     .status-error {
@@ -260,8 +269,8 @@
       border-radius: 18px;
       border: 1px solid var(--border);
       padding: 10px;
-      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.12), transparent 60%),
-                  rgba(6, 9, 24, 0.94);
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.16), transparent 60%),
+                  rgba(6, 9, 24, 0.96);
       min-height: 260px;
       display: flex;
       align-items: center;
@@ -300,7 +309,7 @@
       width: 18px;
       height: 18px;
       border-radius: 999px;
-      border: 2px solid rgba(255, 255, 255, 0.13);
+      border: 2px solid rgba(255, 255, 255, 0.18);
       border-top-color: var(--accent);
       animation: spin 0.75s linear infinite;
     }
@@ -318,71 +327,82 @@
       margin-top: 4px;
     }
 
+    .toy-link {
+      font-size: 11px;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 5px 10px;
+      border: 1px solid rgba(124, 128, 210, 0.8);
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.16), rgba(10, 11, 29, 0.98));
+      white-space: nowrap;
+    }
+
     .disclaimer {
-      margin-top: 10px;
+      margin-top: 8px;
       font-size: 10px;
       color: var(--muted);
       line-height: 1.4;
     }
 
-    .faq {
-      margin-top: 14px;
+    .footer {
+      margin-top: 20px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(33, 36, 73, 0.9);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
       font-size: 11px;
       color: var(--muted);
-      border-top: 1px dashed var(--border);
-      padding-top: 10px;
     }
 
-    .faq p {
-      margin: 0 0 6px;
+    @media (max-width: 560px) {
+      .footer {
+        flex-direction: column;
+      }
     }
-
-    .faq strong {
-      color: var(--text);
-    }
-
   </style>
 </head>
 <body>
-  <div class="wrapper">
+  <div class="page">
     <header class="topbar">
       <div class="brand">
         <div class="brand-pill"></div>
         <span>Party&nbsp;Pixels</span>
       </div>
-      <div class="tag">Web Toys</div>
+      <div class="tag">Face Remix</div>
     </header>
 
     <section class="hero">
-      <h1>Face Remix: turn your selfie into a character</h1>
-      <p>
-        Upload your photo, pick a vibe – princess, cyberpunk, anime hero – and let the pixels
-        remix you into a movie-style character.
-      </p>
+      <div class="hero-kicker">web toy · selfie → character</div>
+      <h1>Turn your selfie into a stylized character.</h1>
+      <p>Upload a clear photo of your face, pick a vibe, and let the AI cook. When billing is capped, this page switches to demo mode and just shows your original photo.</p>
     </section>
 
     <main class="layout">
+      <!-- LEFT: FORM -->
       <section class="card">
-        <h2>Create your transformation</h2>
+        <h2>Create your remix</h2>
         <div class="steps">
-
-          <!-- STEP 1: UPLOAD -->
+          <!-- STEP 1 -->
           <div>
             <div class="step-label">Step 1 · Upload</div>
             <div class="upload-zone">
               <div class="upload-header">
-                <span>Drop a selfie or choose a file</span>
+                <span>Drop a selfie or tap to choose a file</span>
                 <button class="btn btn-ghost" id="uploadButton">Choose photo</button>
               </div>
-              <p class="upload-hint">Use a clear photo of your face. No nudity, no other people without consent.</p>
+              <p class="upload-hint">
+                Use a single-person photo, face clearly visible. No nudity, no other people without consent.
+              </p>
               <input type="file" id="fileInput" class="file-input" accept="image/*">
-              <img id="previewImage" class="preview-thumb" alt="Preview" />
+              <img id="previewImage" class="preview-thumb" alt="Preview">
             </div>
           </div>
 
-          <!-- STEP 2: CHARACTER TYPE -->
+          <!-- STEP 2 -->
           <div class="field">
-            <div class="step-label">Step 2 · Character type</div>
+            <div class="step-label">Step 2 · Vibe</div>
             <label for="styleSelect">Who do you want to become?</label>
             <select id="styleSelect">
               <option value="disney_princess">Disney-style princess</option>
@@ -398,7 +418,7 @@
             </select>
           </div>
 
-          <!-- STEP 3: GENERATE -->
+          <!-- STEP 3 -->
           <div>
             <div class="step-label">Step 3 · Generate</div>
             <div class="actions-row">
@@ -410,13 +430,13 @@
               </span>
             </div>
           </div>
-
         </div>
       </section>
 
+      <!-- RIGHT: RESULT -->
       <section class="card preview-card">
         <h2>Your result</h2>
-        <div class="result-frame" id="resultFrame">
+        <div class="result-frame">
           <div class="placeholder" id="placeholder">
             Your generated character will appear here.<br><br>
             Upload a selfie, pick a style and hit <strong>Generate</strong>.
@@ -430,54 +450,52 @@
           </div>
           <div style="display:flex; gap:8px;">
             <button class="btn btn-ghost" id="downloadButton" disabled>Download</button>
+            <a class="toy-link" href="/index.html">← Back to Web Toys</a>
           </div>
         </div>
 
         <div class="disclaimer">
-          This is an experimental demo. Don’t upload sensitive content. Results are generated by AI and may not be perfect.
-        </div>
-
-        <div class="faq">
-          <p><strong>How does this work?</strong><br>
-          Your photo and prompt are sent to an AI image model on the server, which returns a remixed portrait.</p>
-          <p><strong>Do you store my photos?</strong><br>
-          For a real deployment you should add a clear privacy policy here (e.g. “We delete photos after processing”).</p>
+          This is an experimental demo. If the AI billing limit is reached, the page switches to demo mode and just shows your original photo instead of an AI remix.
         </div>
       </section>
     </main>
+
+    <footer class="footer">
+      <div>Party Pixels · Face Remix</div>
+      <div>Built fast, probably broken.</div>
+    </footer>
   </div>
 
   <script>
-    const fileInput = document.getElementById('fileInput');
-    const uploadButton = document.getElementById('uploadButton');
-    const previewImage = document.getElementById('previewImage');
-    const generateButton = document.getElementById('generateButton');
-    const generateLabel = document.getElementById('generateLabel');
-    const statusText = document.getElementById('statusText');
-    const resultImage = document.getElementById('resultImage');
-    const placeholder = document.getElementById('placeholder');
-    const chipText = document.getElementById('chipText');
-    const downloadButton = document.getElementById('downloadButton');
-    const styleSelect = document.getElementById('styleSelect');
-    const resultFrame = document.getElementById('resultFrame');
+    const fileInput = document.getElementById("fileInput");
+    const uploadButton = document.getElementById("uploadButton");
+    const previewImage = document.getElementById("previewImage");
+    const generateButton = document.getElementById("generateButton");
+    const generateLabel = document.getElementById("generateLabel");
+    const statusText = document.getElementById("statusText");
+    const resultImage = document.getElementById("resultImage");
+    const placeholder = document.getElementById("placeholder");
+    const chipText = document.getElementById("chipText");
+    const downloadButton = document.getElementById("downloadButton");
+    const styleSelect = document.getElementById("styleSelect");
 
     let uploadedImageBlob = null;
     let isGenerating = false;
 
-    uploadButton.addEventListener('click', () => {
+    uploadButton.addEventListener("click", () => {
       fileInput.click();
     });
 
-    fileInput.addEventListener('change', (event) => {
+    fileInput.addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        statusText.textContent = 'Please upload an image file.';
-        statusText.classList.add('status-error');
+      if (!file.type.startsWith("image/")) {
+        statusText.textContent = "Please upload an image file.";
+        statusText.classList.add("status-error");
         return;
       } else {
-        statusText.classList.remove('status-error');
+        statusText.classList.remove("status-error");
       }
 
       uploadedImageBlob = file;
@@ -485,152 +503,120 @@
       const reader = new FileReader();
       reader.onload = (e) => {
         previewImage.src = e.target.result;
-        previewImage.style.display = 'block';
+        previewImage.style.display = "block";
         generateButton.disabled = false;
-        statusText.innerHTML = '<strong>Photo ready.</strong> Choose a style & generate.';
-        chipText.textContent = 'Ready to remix your face';
+        statusText.innerHTML = "<strong>Photo ready.</strong> Choose a vibe & generate.";
+        chipText.textContent = "Ready to remix your face";
       };
       reader.readAsDataURL(file);
     });
 
-    generateButton.addEventListener('click', async () => {
-      if (!uploadedImageBlob || isGenerating) return;
+    async function realGenerate() {
+      const style = styleSelect.value;
 
-      isGenerating = true;
-      generateButton.disabled = true;
-      downloadButton.disabled = true;
-      resultImage.style.display = 'none';
-      placeholder.style.display = 'flex';
+      statusText.innerHTML = "<strong>Generating…</strong> Talking to the AI.";
+      statusText.classList.remove("status-error");
+      chipText.textContent = "AI is working on it";
+
+      resultImage.style.display = "none";
+      placeholder.style.display = "flex";
       placeholder.innerHTML = `
         <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
           <div class="spinner"></div>
           <div>Summoning your new persona…</div>
         </div>
       `;
-      statusText.innerHTML = '<strong>Generating…</strong> This may take a few seconds.';
-      chipText.textContent = 'AI is working on it';
 
-      // TODO: podmień ten "fake timeout" na prawdziwe wywołanie do backendu
-      // który wyśle zdjęcie + styl i odeśle wygenerowany obrazek.
       try {
-    await realGenerate();
-  } catch (err) {
-    console.error(err);
-    statusText.textContent = 'Something went wrong. Try again.';
-    statusText.classList.add('status-error');
-  } finally {
-    isGenerating = false;
-    generateButton.addEventListener('click', async () => {
-  if (!uploadedImageBlob || isGenerating) return;
+        const resp = await fetch("/api/face-remix", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ style }),
+        });
 
-  isGenerating = true;
-  generateButton.disabled = true;
-  downloadButton.disabled = true;
+        const data = await resp.json().catch(() => ({}));
 
-  try {
-    await realGenerate();
-  } catch (err) {
-    console.error(err);
-    statusText.textContent = 'Something went wrong. Try again.';
-    statusText.classList.add('status-error');
-  } finally {
-    isGenerating = false;
-    generateButton.disabled = !uploadedImageBlob;
-  }
-});
+        // Billing limit → demo mode (pokazujemy oryginalne zdjęcie)
+        if (resp.status === 402 && data && data.error === "billing_limit") {
+          if (previewImage && previewImage.src) {
+            placeholder.style.display = "none";
+            resultImage.src = previewImage.src;
+            resultImage.style.display = "block";
 
-    async function realGenerate() {
-  const style = styleSelect.value;
+            chipText.textContent = "Demo mode · billing limit reached";
+            statusText.textContent =
+              "Billing limit in OpenAI has been reached – showing your original photo instead of AI result.";
+            downloadButton.disabled = false;
+          } else {
+            placeholder.style.display = "flex";
+            placeholder.innerHTML = `
+              <div style="text-align:center;font-size:13px;">
+                Billing limit reached on the AI side.<br>
+                Try again later.
+              </div>
+            `;
+            statusText.textContent = "Billing limit reached.";
+            statusText.classList.add("status-error");
+          }
+          return;
+        }
 
-  // stan UI – loading
-  statusText.innerHTML = '<strong>Generating…</strong> Talking to the AI.';
-  statusText.classList.remove("status-error");
-  chipText.textContent = "AI is working on it";
+        if (!resp.ok) {
+          throw new Error(data && data.error ? data.error : "Bad response from API");
+        }
 
-  resultImage.style.display = "none";
-  placeholder.style.display = "flex";
-  placeholder.innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-      <div class="spinner"></div>
-      <div>Summoning your new persona…</div>
-    </div>
-  `;
+        if (!data || !data.imageBase64) {
+          throw new Error("No image returned");
+        }
 
-  try {
-    const resp = await fetch("/api/face-remix", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ style }),
-    });
+        const imgUrl = "data:image/png;base64," + data.imageBase64;
 
-    const data = await resp.json().catch(() => ({}));
-
-    // 🔴 SPECJALNY CASE: billing limit – fallback / demo mode
-    if (resp.status === 402 && data && data.error === "billing_limit") {
-      // jeśli mamy preview uploadowanego zdjęcia, używamy go jako wynik
-      if (previewImage && previewImage.src) {
-        placeholder.style.display = "none";
-        resultImage.src = previewImage.src;
+        resultImage.src = imgUrl;
         resultImage.style.display = "block";
+        placeholder.style.display = "none";
 
-        chipText.textContent = "Demo mode · billing limit reached";
-        statusText.textContent =
-          "Billing limit in OpenAI has been reached – showing your original photo instead of AI result.";
+        statusText.innerHTML = "<strong>Done.</strong> Here's your character.";
+        chipText.textContent = "Result generated via AI";
         downloadButton.disabled = false;
-      } else {
-        // awaryjnie, gdyby coś poszło nie tak z uploadem
+      } catch (err) {
+        console.error(err);
         placeholder.style.display = "flex";
         placeholder.innerHTML = `
           <div style="text-align:center;font-size:13px;">
-            Billing limit reached on the AI side.<br>
-            Try again later or contact the site owner.
+            Something went wrong.<br>Try again in a moment.
           </div>
         `;
-        statusText.textContent = "Billing limit reached.";
+        statusText.textContent = "Generation failed. Try again.";
         statusText.classList.add("status-error");
       }
-      return;
     }
 
-    // inne błędy HTTP
-    if (!resp.ok) {
-      throw new Error(data && data.error ? data.error : "Bad response from API");
-    }
+    generateButton.addEventListener("click", async () => {
+      if (!uploadedImageBlob || isGenerating) return;
 
-    if (!data || !data.imageBase64) {
-      throw new Error("No image returned");
-    }
+      isGenerating = true;
+      generateButton.disabled = true;
+      downloadButton.disabled = true;
 
-    // normalny tryb – mamy base64 z OpenAI
-    const imgUrl = "data:image/png;base64," + data.imageBase64;
+      try {
+        await realGenerate();
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "Something went wrong. Try again.";
+        statusText.classList.add("status-error");
+      } finally {
+        isGenerating = false;
+        generateButton.disabled = !uploadedImageBlob;
+      }
+    });
 
-    resultImage.src = imgUrl;
-    resultImage.style.display = "block";
-    placeholder.style.display = "none";
-
-    statusText.innerHTML = "<strong>Done.</strong> Here's your character.";
-    chipText.textContent = "Result generated via AI";
-    downloadButton.disabled = false;
-  } catch (err) {
-    console.error(err);
-    placeholder.style.display = "flex";
-    placeholder.innerHTML = `
-      <div style="text-align:center;font-size:13px;">
-        Something went wrong.<br>Try again in a moment.
-      </div>
-    `;
-    statusText.textContent = "Generation failed. Try again.";
-    statusText.classList.add("status-error");
-  }
-}
-
-    downloadButton.addEventListener('click', () => {
+    downloadButton.addEventListener("click", () => {
       if (!resultImage.src) return;
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = resultImage.src;
-      link.download = 'party-pixels-face-remix.png';
+      link.download = "party-pixels-face-remix.png";
       link.click();
     });
   </script>
