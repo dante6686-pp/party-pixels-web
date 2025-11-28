@@ -524,22 +524,61 @@
       }
     });
 
-    async function fakeGenerate() {
-      // Fake "generation" – w realu tutaj robisz fetch() do swojego API.
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    async function realGenerate() {
+  const style = styleSelect.value;
 
-      // Na potrzeby frontu użyjemy po prostu uploadowanego zdjęcia jako "wyniku".
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        resultImage.src = e.target.result;
-        resultImage.style.display = 'block';
-        placeholder.style.display = 'none';
-        statusText.innerHTML = '<strong>Done.</strong> This is your remixed character preview.';
-        chipText.textContent = 'Result ready · demo mode';
-        downloadButton.disabled = false;
-      };
-      reader.readAsDataURL(uploadedImageBlob);
+  statusText.innerHTML = '<strong>Generating…</strong> Talking to the AI.';
+  chipText.textContent = 'AI is working on it';
+  resultImage.style.display = 'none';
+  placeholder.style.display = 'flex';
+  placeholder.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div class="spinner"></div>
+      <div>Summoning your new persona…</div>
+    </div>
+  `;
+
+  try {
+    const resp = await fetch("/api/face-remix", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        style: style,
+      }),
+    });
+
+    if (!resp.ok) {
+      throw new Error("Bad response from API");
     }
+
+    const data = await resp.json();
+
+    if (!data.imageBase64) {
+      throw new Error("No image returned");
+    }
+
+    const imgUrl = "data:image/png;base64," + data.imageBase64;
+
+    resultImage.src = imgUrl;
+    resultImage.style.display = "block";
+    placeholder.style.display = "none";
+    statusText.innerHTML = "<strong>Done.</strong> Here's your character.";
+    chipText.textContent = "Result generated via AI";
+    downloadButton.disabled = false;
+  } catch (err) {
+    console.error(err);
+    placeholder.style.display = "flex";
+    placeholder.innerHTML = `
+      <div style="text-align:center;font-size:13px;">
+        Something went wrong.<br>Try again in a moment.
+      </div>
+    `;
+    statusText.textContent = "Generation failed. Try again.";
+    statusText.classList.add("status-error");
+  }
+}
 
     downloadButton.addEventListener('click', () => {
       if (!resultImage.src) return;
