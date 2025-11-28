@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Party Pixels – Relationship Forecast</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #050712;
+      --card: #101324;
+      --accent: #ff5cff;
+      --accent2: #5c8aff;
+      --text: #f4f4ff;
+      --muted: #9a9ac0;
+      --border: #24273a;
+      --danger: #ff4b6b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #181b39 0, #050712 48%, #02030a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 960px;
+      padding: 20px 14px 36px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .brand-pill {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.7);
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      background: rgba(6, 9, 24, 0.9);
+      white-space: nowrap;
+    }
+
+    .hero {
+      margin-bottom: 20px;
+    }
+
+    .hero-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      font-size: clamp(24px, 5vw, 32px);
+      margin: 0 0 6px;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 540px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.3fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background:
+        radial-gradient(circle at top left, rgba(255, 92, 255, 0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.2), transparent 65%),
+        linear-gradient(145deg, rgba(10, 14, 35, 0.96), rgba(4, 5, 14, 0.98));
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 14px 14px 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+    }
+
+    .card h2 {
+      font-size: 16px;
+      margin: 0 0 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input, select {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(6, 9, 24, 0.95);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(255, 92, 255, 0.2);
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .row .field {
+      flex: 1 1 140px;
+      margin-bottom: 0;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #050712;
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.6);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.05s ease;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 0 10px rgba(255, 92, 255, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: rgba(11, 14, 32, 0.9);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .status strong {
+      color: var(--accent);
+    }
+
+    .status-error {
+      color: var(--danger);
+    }
+
+    .result-frame {
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 10px 10px 12px;
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.16), transparent 60%),
+                  rgba(6, 9, 24, 0.96);
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .forecast-text {
+      font-size: 13px;
+      color: var(--text);
+      white-space: pre-line;
+    }
+
+    .placeholder {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: rgba(13, 18, 40, 0.95);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 8px rgba(74, 222, 128, 0.9);
+    }
+
+    .chip-demo .chip-dot {
+      background: #f97316;
+      box-shadow: 0 0 8px rgba(249, 115, 22, 0.9);
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+      border-top-color: var(--accent);
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .result-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .toy-link {
+      font-size: 11px;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 5px 10px;
+      border: 1px solid rgba(124, 128, 210, 0.8);
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.16), rgba(10, 11, 29, 0.98));
+      white-space: nowrap;
+    }
+
+    .disclaimer {
+      margin-top: 8px;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(33, 36, 73, 0.9);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 560px) {
+      .footer {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-pill"></div>
+        <span>Party&nbsp;Pixels</span>
+      </div>
+      <div class="tag">Relationship Forecast</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-kicker">web toy · love · chaos</div>
+      <h1>Get a fake-serious forecast for your relationship.</h1>
+      <p>Type your names, pick the vibe, and let the AI spit out a dramatic, slightly toxic and way-too-specific “prediction”. Pure entertainment, zero real astrology.</p>
+    </section>
+
+    <main class="layout">
+      <!-- LEFT: FORM -->
+      <section class="card">
+        <h2>Set up your situation</h2>
+
+        <div class="field">
+          <label>Who are we reading?</label>
+          <div class="row">
+            <div class="field">
+              <label for="youName">Your name</label>
+              <input id="youName" type="text" placeholder="You">
+            </div>
+            <div class="field">
+              <label for="partnerName">Their name</label>
+              <input id="partnerName" type="text" placeholder="Them">
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="vibeSelect">What’s the vibe?</label>
+          <select id="vibeSelect">
+            <option value="wholesome">Soft & wholesome</option>
+            <option value="goofy">Goofy & chaotic</option>
+            <option value="dramatic">Overly dramatic</option>
+            <option value="toxic">Toxic but honest</option>
+            <option value="situationship">Situationship energy</option>
+            <option value="long_distance">Long-distance saga</option>
+            <option value="friends_with_benefits">Friends with benefits</option>
+            <option value="office_romance">Secret office romance</option>
+            <option value="its_complicated">It’s complicated™</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="timeframeSelect">Timeframe</label>
+          <select id="timeframeSelect">
+            <option value="next_week">Next week</option>
+            <option value="next_month">Next month</option>
+            <option value="six_months">Next 6 months</option>
+            <option value="one_year">Next year</option>
+          </select>
+        </div>
+
+        <div class="actions-row">
+          <button class="btn" id="generateButton">
+            <span id="generateLabel">Generate forecast</span>
+          </button>
+          <span class="status" id="statusText">
+            <strong>Ready.</strong> Fill the names & vibe first.
+          </span>
+        </div>
+      </section>
+
+      <!-- RIGHT: RESULT -->
+      <section class="card">
+        <h2>Your forecast</h2>
+        <div class="result-frame">
+          <div class="placeholder" id="placeholder">
+            Your prediction will appear here.<br><br>
+            This is entertainment only. If you make life decisions based on this, that’s on you 😆
+          </div>
+          <div class="forecast-text" id="forecastText" style="display:none;"></div>
+        </div>
+
+        <div class="result-actions">
+          <div class="chip" id="chipMode">
+            <span class="chip-dot"></span>
+            <span id="chipText">No forecast yet</span>
+          </div>
+          <a class="toy-link" href="/index.html">← Back to Web Toys</a>
+        </div>
+
+        <div class="disclaimer">
+          Relationship Forecast is a joke toy. It’s powered by an AI model and sometimes by “demo mode” when billing is capped. Don’t use this as therapy, astrology or real advice.
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>Party Pixels · Relationship Forecast</div>
+      <div>Built fast, emotionally irresponsible.</div>
+    </footer>
+  </div>
+
+  <script>
+    const youNameInput = document.getElementById("youName");
+    const partnerNameInput = document.getElementById("partnerName");
+    const vibeSelect = document.getElementById("vibeSelect");
+    const timeframeSelect = document.getElementById("timeframeSelect");
+    const generateButton = document.getElementById("generateButton");
+    const generateLabel = document.getElementById("generateLabel");
+    const statusText = document.getElementById("statusText");
+    const placeholder = document.getElementById("placeholder");
+    const forecastText = document.getElementById("forecastText");
+    const chipMode = document.getElementById("chipMode");
+    const chipText = document.getElementById("chipText");
+
+    let isGenerating = false;
+
+    async function generateForecast() {
+      const youName = youNameInput.value.trim() || "You";
+      const partnerName = partnerNameInput.value.trim() || "Them";
+      const vibe = vibeSelect.value;
+      const timeframe = timeframeSelect.value;
+
+      if (!youNameInput.value.trim() && !partnerNameInput.value.trim()) {
+        statusText.textContent = "At least put one name in, coward.";
+        statusText.classList.add("status-error");
+        return;
+      }
+
+      statusText.classList.remove("status-error");
+      isGenerating = true;
+      generateButton.disabled = true;
+      generateLabel.textContent = "Generating…";
+
+      placeholder.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <div class="spinner"></div>
+          <div>Assembling red flags and green flags…</div>
+        </div>
+      `;
+      forecastText.style.display = "none";
+
+      try {
+        const resp = await fetch("/api/relationship-forecast", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            youName,
+            partnerName,
+            vibe,
+            timeframe
+          }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok || !data || !data.forecast) {
+          throw new Error(data && data.error ? data.error : "Bad response");
+        }
+
+        placeholder.style.display = "none";
+        forecastText.style.display = "block";
+        forecastText.textContent = data.forecast;
+
+        chipText.textContent =
+          data.mode === "demo"
+            ? "Demo mode · billing limit reached"
+            : "AI mode · generated forecast";
+        if (data.mode === "demo") {
+          chipMode.classList.add("chip-demo");
+        } else {
+          chipMode.classList.remove("chip-demo");
+        }
+
+        statusText.textContent = "Done. Don’t take it too seriously.";
+      } catch (err) {
+        console.error(err);
+        placeholder.style.display = "block";
+        placeholder.innerHTML = `
+          <div style="text-align:center;font-size:13px;">
+            Something went wrong.<br>Try again in a moment.
+          </div>
+        `;
+        forecastText.style.display = "none";
+        statusText.textContent = "Generation failed. Try again.";
+        statusText.classList.add("status-error");
+      } finally {
+        isGenerating = false;
+        generateButton.disabled = false;
+        generateLabel.textContent = "Generate forecast";
+      }
+    }
+
+    generateButton.addEventListener("click", () => {
+      if (isGenerating) return;
+      generateForecast();
+    });
+  </script>
+</body>
+</html>
