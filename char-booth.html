@@ -513,15 +513,15 @@
       // TODO: podmień ten "fake timeout" na prawdziwe wywołanie do backendu
       // który wyśle zdjęcie + styl i odeśle wygenerowany obrazek.
       try {
-        await fakeGenerate();
-      } catch (err) {
-        console.error(err);
-        statusText.textContent = 'Something went wrong. Try again.';
-        statusText.classList.add('status-error');
-      } finally {
-        isGenerating = false;
-        generateButton.disabled = !uploadedImageBlob;
-      }
+    await realGenerate();
+  } catch (err) {
+    console.error(err);
+    statusText.textContent = 'Something went wrong. Try again.';
+    statusText.classList.add('status-error');
+  } finally {
+    isGenerating = false;
+    generateButton.disabled = !uploadedImageBlob;
+  }
     });
 
     async function realGenerate() {
