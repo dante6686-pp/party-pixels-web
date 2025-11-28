@@ -76,7 +76,102 @@ export default async function handler(req, res) {
       imageBase64: image,
     });
   } catch (err) {
+    export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  try {
+    const { style } = req.body || {};
+
+    if (!style) {
+      res.status(400).json({ error: "Missing style" });
+      return;
+    }
+
+    const stylePrompt = styleToPrompt(style);
+
+    const prompt = `
+      High quality portrait of a person, shoulders up, clean background.
+      ${stylePrompt}
+    `.trim();
+
+    const response = await client.images.generate({
+      model: "gpt-image-1",
+      prompt,
+      size: "1024x1024",
+      n: 1,
+    });
+
+    const image = response.data[0]?.b64_json;
+
+    if (!image) {
+      res.status(500).json({ error: "No image returned from model" });
+      return;
+    }
+
+    res.status(200).json({
+      imageBase64: image,
+    });
+  } catch (err) {
+    export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  try {
+    const { style } = req.body || {};
+
+    if (!style) {
+      res.status(400).json({ error: "Missing style" });
+      return;
+    }
+
+    const stylePrompt = styleToPrompt(style);
+
+    const prompt = `
+      High quality portrait of a person, shoulders up, clean background.
+      ${stylePrompt}
+    `.trim();
+
+    const response = await client.images.generate({
+      model: "gpt-image-1",
+      prompt,
+      size: "1024x1024",
+      n: 1,
+    });
+
+    const image = response.data[0]?.b64_json;
+
+    if (!image) {
+      res.status(500).json({ error: "No image returned from model" });
+      return;
+    }
+
+    res.status(200).json({
+      imageBase64: image,
+    });
+  } catch (err) {
     console.error("FACE REMIX ERROR:", err);
+
+    // SPECJALNY CASE: limit billing
+    if (
+      err?.code === "billing_hard_limit_reached" ||
+      err?.error?.code === "billing_hard_limit_reached"
+    ) {
+      res.status(402).json({
+        error: "billing_limit",
+        message: "Billing hard limit has been reached.",
+      });
+      return;
+    }
+
     res.status(500).json({ error: "Generation failed" });
+  }
+    }
+  }
+    }
   }
 }
