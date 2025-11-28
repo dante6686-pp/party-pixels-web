@@ -1,10 +1,9 @@
-import OpenAI from "openai";
+const OpenAI = require("openai");
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Mapujemy wartości z selecta na tekstowy prompt stylu
 function styleToPrompt(style) {
   switch (style) {
     case "disney_princess":
@@ -32,15 +31,26 @@ function styleToPrompt(style) {
   }
 }
 
-// Standardowy handler Vercel serverless (Node)
-export default async function handler(req, res) {
+// Vercel Node API route – CommonJS
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
 
   try {
-    const { style } = req.body || {};
+    let body = req.body;
+
+    // na wszelki wypadek: jak przyszło jako string, spróbuj zparsować
+    if (typeof body === "string") {
+      try {
+        body = JSON.parse(body);
+      } catch (e) {
+        // ignorujemy, wtedy body zostaje stringiem
+      }
+    }
+
+    const style = body && body.style;
 
     if (!style) {
       res.status(400).json({ error: "Missing style" });
@@ -49,101 +59,20 @@ export default async function handler(req, res) {
 
     const stylePrompt = styleToPrompt(style);
 
-    const prompt = `
-      High quality portrait of a person, shoulders up, clean background.
-      ${stylePrompt}
-    `.trim();
-
-    // Wołamy OpenAI images API
-    const response = await client.images.generate({
-  model: "gpt-image-1",
-  prompt,
-  size: "1024x1024",
-  n: 1,
-  // gpt-image-1 ZAWSZE zwraca base64 w data[0].b64_json,
-  // więc nie podajemy już response_format.
-});
-
-    const image = response.data[0]?.b64_json;
-
-    if (!image) {
-      res.status(500).json({ error: "No image returned from model" });
-      return;
-    }
-
-    // Zwracamy base64 do frontendu
-    res.status(200).json({
-      imageBase64: image,
-    });
-  } catch (err) {
-    export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
-
-  try {
-    const { style } = req.body || {};
-
-    if (!style) {
-      res.status(400).json({ error: "Missing style" });
-      return;
-    }
-
-    const stylePrompt = styleToPrompt(style);
-
-    const prompt = `
-      High quality portrait of a person, shoulders up, clean background.
-      ${stylePrompt}
-    `.trim();
+    const prompt = (
+      "High quality portrait of a person, shoulders up, clean background. " +
+      stylePrompt
+    ).trim();
 
     const response = await client.images.generate({
       model: "gpt-image-1",
       prompt,
       size: "1024x1024",
       n: 1,
+      // bez response_format – gpt-image-1 i tak zwraca b64_json
     });
 
-    const image = response.data[0]?.b64_json;
-
-    if (!image) {
-      res.status(500).json({ error: "No image returned from model" });
-      return;
-    }
-
-    res.status(200).json({
-      imageBase64: image,
-    });
-  } catch (err) {
-    export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
-
-  try {
-    const { style } = req.body || {};
-
-    if (!style) {
-      res.status(400).json({ error: "Missing style" });
-      return;
-    }
-
-    const stylePrompt = styleToPrompt(style);
-
-    const prompt = `
-      High quality portrait of a person, shoulders up, clean background.
-      ${stylePrompt}
-    `.trim();
-
-    const response = await client.images.generate({
-      model: "gpt-image-1",
-      prompt,
-      size: "1024x1024",
-      n: 1,
-    });
-
-    const image = response.data[0]?.b64_json;
+    const image = response.data && response.data[0] && response.data[0].b64_json;
 
     if (!image) {
       res.status(500).json({ error: "No image returned from model" });
@@ -156,10 +85,12 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error("FACE REMIX ERROR:", err);
 
-    // SPECJALNY CASE: limit billing
+    // specjalny case: limit billing
     if (
-      err?.code === "billing_hard_limit_reached" ||
-      err?.error?.code === "billing_hard_limit_reached"
+      err && (
+        err.code === "billing_hard_limit_reached" ||
+        (err.error && err.error.code === "billing_hard_limit_reached")
+      )
     ) {
       res.status(402).json({
         error: "billing_limit",
@@ -170,8 +101,4 @@ export default async function handler(req, res) {
 
     res.status(500).json({ error: "Generation failed" });
   }
-    }
-  }
-    }
-  }
-}
+};
