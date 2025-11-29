@@ -56,6 +56,47 @@ function buildDemoForecast(youName, partnerName, vibe, timeframeText) {
     `${pair}: this is less soulmates, more co-op roguelike. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, you'll level up your communication, die emotionally once or twice, then respawn with snacks and a meme apology.`,
     `${pair}: if red flags were push notifications, both of your phones would be on do not disturb. Still, ${timeframeText} there's at least 73% chance of accidental tenderness, unexpected honesty and one dangerously good hug.`,
     `${pair}: canonically, this ship should not work, but the fanfic version absolutely does. ${timeframeText} expect plot twists, chaotic chemistry and one scene that feels like the season finale nobody ordered.`,
+      `${pair}: the chemistry is giving ‘chaotic good with a touch of emotional damage’. ${timeframeText} you'll alternate between flirting like you're in a rom-com and communicating like two NPCs using preset dialogue options.`,
+
+  `${pair}: both of you pretend you don’t care, but your search history says otherwise. ${timeframeText} expect one dangerously long voice note, a shared meme at 2am, and a moment where eye contact lasts half a second too long.`,
+
+  `${pair}: relationship status: “vibing, but also panicking”. ${timeframeText} at least one conversation will begin with “this might sound crazy but…”. The other person will absolutely love it and pretend they don’t.`,
+
+  `${pair}: emotionally? mid. energetically? unhinged. ${timeframeText} you’ll experience soulmate-level synchronicity followed by an argument about who forgot the charger.`,
+
+  `${pair}: both of you have ‘main character energy’, which means absolutely nothing gets resolved. ${timeframeText} expect plot twists, cliffhangers and at least one “accidental” cuddle.`,
+
+  `${pair}: this connection is like a cursed TikTok filter: chaotic but somehow accurate. ${timeframeText}, one of you will say something too honest and the other will pretend not to hear it while blushing like an idiot.`,
+
+  `${pair}: your dynamic is 40% flirting, 40% avoiding the truth, and 20% sending memes instead of expressing feelings. ${timeframeText}, the emotional Wi-Fi signal will improve slightly — but only when both of you are sleepy.`,
+
+  `${pair}: you two are a perfect example of “they act like a couple but they insist they're not.” ${timeframeText} expect one moment so romantic it scares you both into running in opposite directions for 48 hours.`,
+
+  `${pair}: there's undeniable chemistry, but also undeniable stupidity. ${timeframeText} at least one decision will be made based purely on vibes and it will somehow work out.`,
+
+  `${pair}: your hearts say “maybe”, your brains say “absolutely not”, and your texts say “wyd?”. ${timeframeText} you'll grow closer through pure coincidence and questionable timing.`,
+
+  `${pair}: living proof that two crackheads can balance each other out. ${timeframeText} expect a surprise emotional breakthrough disguised as a joke.`,
+
+  `${pair}: love language? Bullying each other affectionately until someone blushes. ${timeframeText}, you will unexpectedly get soft and it will break the space-time continuum.`,
+
+  `${pair}: there’s enough tension here to power a small city. ${timeframeText}, someone will say something uncomfortably sincere and then immediately pretend they didn’t.`,
+
+  `${pair}: the connection is real, the flags are red, and the banter is elite. ${timeframeText} expect chaotic flirting, one misunderstanding, and a reconciliation worthy of season finales.`,
+
+  `${pair}: you two communicate emotionally like two raccoons fighting over a slice of pizza. ${timeframeText} you’ll still somehow bond over a shared craving or niche fandom.`,
+
+  `${pair}: the universe keeps pushing you together like it’s shipping you. ${timeframeText} expect strange synchronicities, like texting at the exact same time or craving the same meal.`,
+
+  `${pair}: this relationship could either be iconic or a cautionary tale. ${timeframeText}, fate will give you a dumb little sign — and you'll both pretend it's not a sign.`,
+
+  `${pair}: both of you have 'I could fix them' syndrome. ${timeframeText}, neither of you will be fixed, but you will have an emotionally cinematic moment in the rain — or in the Uber.`,
+
+  `${pair}: the tension is giving “slow burn enemies-to-lovers but you skipped the enemies part.” ${timeframeText} expect a moment that feels like a confession even though it's technically not.`,
+
+  `${pair}: you two are one intrusive thought away from being a power couple. ${timeframeText}, at least one of you will accidentally overshare in a way that brings you closer.`,
+
+  `${pair}: this bond is like a playlist made at 3am — weird, intimate, chaotic, strangely perfect. ${timeframeText}, someone will say something stupidly adorable and pretend it wasn’t serious.`
   ];
 
   const idx = Math.floor(Math.random() * templates.length);
