@@ -321,4 +321,251 @@
       font-size: 11px;
       text-decoration: none;
       border-radius: 999px;
-      padding:
+      padding: 5px 10px;
+      border: 1px solid rgba(124, 128, 210, 0.8);
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.16), rgba(10, 11, 29, 0.98));
+      white-space: nowrap;
+    }
+
+    .disclaimer {
+      margin-top: 8px;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(33, 36, 73, 0.9);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 560px) {
+      .footer {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-pill"></div>
+        <span>Party&nbsp;Pixels</span>
+      </div>
+      <div class="tag">Am I Annoying You?</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-kicker">web toy · roast · couple chaos</div>
+      <h1>Measure how much you actually annoy each other.</h1>
+      <p>Type your names, pick the vibe, and let the AI (or chaos mode) rate your Annoyance Score™ with a fake-serious mini roast. Works for couples, besties and walking red flags.</p>
+    </section>
+
+    <main class="layout">
+      <!-- LEFT: FORM -->
+      <section class="card">
+        <h2>Who’s annoying who?</h2>
+
+        <div class="field">
+          <label>People involved</label>
+          <div class="row">
+            <div class="field">
+              <label for="youName">You</label>
+              <input id="youName" type="text" placeholder="You">
+            </div>
+            <div class="field">
+              <label for="otherName">The person you torment</label>
+              <input id="otherName" type="text" placeholder="Them">
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="relationshipSelect">What’s the relationship?</label>
+          <select id="relationshipSelect">
+            <option value="partner">Romantic partner / crush</option>
+            <option value="friend">Best friend / chaos friend</option>
+            <option value="situationship">Situationship</option>
+            <option value="coworker">Coworker / boss / colleague</option>
+            <option value="family">Family member</option>
+            <option value="roommate">Roommate / flat goblin</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="vibeSelect">How honest should we be?</label>
+          <select id="vibeSelect">
+            <option value="soft">Soft & gentle</option>
+            <option value="playful">Playful roast</option>
+            <option value="spicy">Spicy & chaotic</option>
+            <option value="toxic_fun">Toxic but still funny</option>
+          </select>
+        </div>
+
+        <div class="actions-row">
+          <button class="btn" id="generateButton">
+            <span id="generateLabel">Am I annoying you?</span>
+          </button>
+          <span class="status" id="statusText">
+            <strong>Ready.</strong> Fill the names first.
+          </span>
+        </div>
+      </section>
+
+      <!-- RIGHT: RESULT -->
+      <section class="card">
+        <h2>Annoyance report</h2>
+        <div class="result-frame">
+          <div class="score-wrap">
+            <div class="score-label">Annoyance Score™</div>
+            <div class="bar-bg">
+              <div class="bar-fill" id="barFill"></div>
+            </div>
+            <div class="score-value" id="scoreValue">—%</div>
+          </div>
+
+          <div class="placeholder" id="placeholder">
+            Your result will appear here.<br><br>
+            If this toy causes an argument, that’s technically data.
+          </div>
+          <div class="analysis-text" id="analysisText" style="display:none;"></div>
+        </div>
+
+        <div class="result-actions">
+          <div class="chip" id="chipMode">
+            <span class="chip-dot"></span>
+            <span id="chipText">No reading yet</span>
+          </div>
+          <a class="toy-link" href="/index.html">← Back to Web Toys</a>
+        </div>
+
+        <div class="disclaimer">
+          This is a joke toy. It’s not therapy, not diagnostic and definitely not a reason to break up. Use responsibly, or irresponsibly but with snacks.
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>Party Pixels · Am I Annoying You?</div>
+      <div>Built fast, mildly toxic.</div>
+    </footer>
+  </div>
+
+  <script>
+    const youNameInput = document.getElementById("youName");
+    const otherNameInput = document.getElementById("otherName");
+    const relationshipSelect = document.getElementById("relationshipSelect");
+    const vibeSelect = document.getElementById("vibeSelect");
+    const generateButton = document.getElementById("generateButton");
+    const generateLabel = document.getElementById("generateLabel");
+    const statusText = document.getElementById("statusText");
+    const barFill = document.getElementById("barFill");
+    const scoreValue = document.getElementById("scoreValue");
+    const placeholder = document.getElementById("placeholder");
+    const analysisText = document.getElementById("analysisText");
+    const chipMode = document.getElementById("chipMode");
+    const chipText = document.getElementById("chipText");
+
+    let isGenerating = false;
+
+    async function generateAnnoyance() {
+      const youName = youNameInput.value.trim() || "You";
+      const otherName = otherNameInput.value.trim() || "Them";
+      const relationship = relationshipSelect.value;
+      const vibe = vibeSelect.value;
+
+      if (!youNameInput.value.trim() && !otherNameInput.value.trim()) {
+        statusText.textContent = "At least put one name in, you menace.";
+        statusText.classList.add("status-error");
+        return;
+      }
+
+      statusText.classList.remove("status-error");
+      isGenerating = true;
+      generateButton.disabled = true;
+      generateLabel.textContent = "Calculating chaos…";
+
+      placeholder.innerHTML = `
+        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="spinner"></div>
+            <div>Scanning red flags and annoying habits…</div>
+          </div>
+        </div>
+      `;
+      analysisText.style.display = "none";
+
+      try {
+        const resp = await fetch("/api/annoying-you", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            youName,
+            otherName,
+            relationship,
+            vibe
+          }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (!resp.ok || !data || typeof data.score !== "number" || !data.analysis) {
+          throw new Error(data && data.error ? data.error : "Bad response");
+        }
+
+        const score = Math.max(0, Math.min(100, Math.round(data.score)));
+
+        barFill.style.width = score + "%";
+        scoreValue.textContent = score + "%";
+
+        placeholder.style.display = "none";
+        analysisText.style.display = "block";
+        analysisText.textContent = data.analysis;
+
+        chipText.textContent =
+          data.mode === "demo"
+            ? "Demo mode · billing / quota limit hit"
+            : "AI mode · fake-psychology enabled";
+
+        if (data.mode === "demo") {
+          chipMode.classList.add("chip-demo");
+        } else {
+          chipMode.classList.remove("chip-demo");
+        }
+
+        statusText.textContent = "Done. Please don't actually start a fight over this.";
+      } catch (err) {
+        console.error(err);
+        barFill.style.width = "0%";
+        scoreValue.textContent = "—%";
+        placeholder.style.display = "block";
+        placeholder.innerHTML = `
+          <div style="text-align:left;font-size:13px;">
+            Something went wrong.<br>Try again in a moment.
+          </div>
+        `;
+        analysisText.style.display = "none";
+        statusText.textContent = "Generation failed. Try again.";
+        statusText.classList.add("status-error");
+      } finally {
+        isGenerating = false;
+        generateButton.disabled = false;
+        generateLabel.textContent = "Am I annoying you?";
+      }
+    }
+
+    generateButton.addEventListener("click", () => {
+      if (isGenerating) return;
+      generateAnnoyance();
+    });
+  </script>
+</body>
+</html>
