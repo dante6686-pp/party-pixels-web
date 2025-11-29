@@ -97,6 +97,29 @@ function buildDemoForecast(youName, partnerName, vibe, timeframeText) {
   `${pair}: you two are one intrusive thought away from being a power couple. ${timeframeText}, at least one of you will accidentally overshare in a way that brings you closer.`,
 
   `${pair}: this bond is like a playlist made at 3am — weird, intimate, chaotic, strangely perfect. ${timeframeText}, someone will say something stupidly adorable and pretend it wasn’t serious.`
+    `${pair}: the sexual tension between you two could power a small neon city. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, expect one ‘accidental’ touch that lasts way too long and immediately ruins both of your concentration for hours.`,
+
+`${pair}: let’s be honest — the flirting is basically foreplay at this point. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, someone will send a message that toes the line between “cute” and “I want you”, and the other one will absolutely NOT handle it well.`,
+
+`${pair}: this is giving “we pretend it’s a joke but we’d totally make out if the lighting was right.” ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, expect a moment of eye contact that feels like PG-13 but implies R-rated intentions.`,
+
+`${pair}: you two have chemistry that would get flagged by HR. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, someone will ‘accidentally’ compliment something way too specific — jawline, hands, voice — and then pretend it wasn’t sexual. It absolutely was.`,
+
+`${pair}: the vibe? dangerously flirty. emotionally? questionable. physically? if you stood too close, the air would combust. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, expect at least one moment where both of you pretend you’re not imagining the same thing.`,
+
+`${pair}: both of you are one bad decision away from making memories you'd never admit in public. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, the tension spikes — especially when one of you says something unintentionally hot.`,
+
+`${pair}: this connection screams “we’d be a disaster but the sex would be immaculate.” ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, prepare for a flirt so spicy it short-circuits your common sense.`,
+
+`${pair}: this isn’t love language, this is thirst language. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, someone will say something playful that sounds suspiciously like an invitation. The other will blush, laugh, and save it for later.`,
+
+`${pair}: you two radiate ‘should we?’ energy. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, something small — a look, a sentence, a stupid inside joke — will flip the vibe from wholesome to horny in 0.4 seconds.`,
+
+`${pair}: if sexual tension paid rent, you’d own real estate by now. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, expect one situation where you’re both dangerously close, neither of you moves away, and the universe holds its breath.`,
+
+`${pair}: emotionally unstable, physically compatible, spiritually feral. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, the forecast shows elevated risk of “accidental intimacy” — touches, whispers, leaning in a bit too close.`,
+
+`${pair}: there’s a high chance of thirst-driven decisions. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, someone will say “stop, you’re so annoying” and mean “please keep flirting with me until I fold.”`,
   ];
 
   const idx = Math.floor(Math.random() * templates.length);
