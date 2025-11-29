@@ -44,14 +44,22 @@ function timeframeToText(timeframe) {
   }
 }
 
+// 🎲 lista szalonych forecastów demo
 function buildDemoForecast(youName, partnerName, vibe, timeframeText) {
-  return (
-    `${youName} & ${partnerName}: demo mode prophecy.\n\n` +
-    `You two are giving strong “${vibe.replace("_", " ")}” energy. ` +
-    `Expect at least one deep talk, two stupid inside jokes, ` +
-    `and one moment of pure cringe ${timeframeText}. ` +
-    `Whether it ends in cuddles, chaos or both – you definitely won't be bored.`
-  );
+  const pair = `${youName} & ${partnerName}`;
+  const vibePretty = vibe.replace(/_/g, " ");
+
+  const templates = [
+    `${pair}: you two are giving strong “${vibePretty}” energy. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, expect at least one deep talk at a stupid hour, one inside joke that refuses to die, and one moment where you both pretend you're totally fine while clearly not being fine.`,
+    `${pair}: astrology is fake, but the chaos is real. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)} you'll ping-pong between “we're so cute” and “who allowed this situationship to exist”. Somehow it still works. Mostly because you're both too stubborn to admit you care.`,
+    `${pair}: emotional Wi-Fi signal is unstable but still connected. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)} there will be: one suspiciously perfect day, two petty arguments about nothing, and a random moment when you look at each other and think “oh no, I might actually be in trouble here”.`,
+    `${pair}: this is less soulmates, more co-op roguelike. ${timeframeText.charAt(0).toUpperCase() + timeframeText.slice(1)}, you'll level up your communication, die emotionally once or twice, then respawn with snacks and a meme apology.`,
+    `${pair}: if red flags were push notifications, both of your phones would be on do not disturb. Still, ${timeframeText} there's at least 73% chance of accidental tenderness, unexpected honesty and one dangerously good hug.`,
+    `${pair}: canonically, this ship should not work, but the fanfic version absolutely does. ${timeframeText} expect plot twists, chaotic chemistry and one scene that feels like the season finale nobody ordered.`,
+  ];
+
+  const idx = Math.floor(Math.random() * templates.length);
+  return templates[idx];
 }
 
 module.exports = async function handler(req, res) {
@@ -65,7 +73,9 @@ module.exports = async function handler(req, res) {
     if (typeof body === "string") {
       try {
         body = JSON.parse(body);
-      } catch (e) {}
+      } catch (e) {
+        body = {};
+      }
     }
 
     const youName = (body && body.youName) || "You";
@@ -118,18 +128,31 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error("RELATIONSHIP FORECAST ERROR:", err);
 
-    // jeśli dobity billing, lecimy w demo mode, żeby toy nie umarł
-    if (
+    // 🔴 fallback na demo przy problemach z billingiem / limitem / kwotą
+    const isBillingProblem =
       err &&
-      (err.code === "billing_hard_limit_reached" ||
-        (err.error && err.error.code === "billing_hard_limit_reached"))
-    ) {
-      const body =
-        typeof req.body === "string"
-          ? (() => {
-              try { return JSON.parse(req.body); } catch (e) { return {}; }
-            })()
-          : req.body || {};
+      (
+        err.code === "billing_hard_limit_reached" ||
+        err.code === "insufficient_quota" ||
+        (err.error && (
+          err.error.code === "billing_hard_limit_reached" ||
+          err.error.code === "insufficient_quota"
+        )) ||
+        err.status === 429 ||
+        err.statusCode === 429
+      );
+
+    if (isBillingProblem) {
+      let body = req.body;
+      if (typeof body === "string") {
+        try {
+          body = JSON.parse(body);
+        } catch (e) {
+          body = {};
+        }
+      } else {
+        body = body || {};
+      }
 
       const youName = (body && body.youName) || "You";
       const partnerName = (body && body.partnerName) || "Them";
@@ -146,6 +169,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
+    // inne błędy – normalny 500
     res.status(500).json({ error: "Generation failed" });
   }
 };
