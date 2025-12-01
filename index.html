@@ -6,6 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
+    .user-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(6, 9, 24, 0.9);
+    }
+
     :root {
       --bg: #050712;
       --bg2: #0b0f23;
@@ -318,7 +327,9 @@
         <span>Party&nbsp;Pixels</span>
       </div>
       <div class="tag">Web Toys</div>
-      <a class="toy-link" href="/account.html">Account</a>
+      <a class="toy-link" href="/account.html" id="accountLink">Account</a>
+      <span id="userBadge" class="user-badge">Not logged in</span>
+
     </header>
 
     <!-- BANNER -->
@@ -556,6 +567,37 @@
   </div>
 
   <script src="/tipjar.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://dyfrzwhycqnqntvkuxy.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d2h5Y3FucW50dmt1eHkiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzY3ODY4OSwiZXhwIjoyMDU5MjU0Njg5fQ.BskE2afnGLDtkv4kMWOTCEt4_mH2T85X5o_oMEAtSsc";
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const userBadge = document.getElementById("userBadge");
+  const accountLink = document.getElementById("accountLink");
+
+  // dopisz redirect do linku Account
+  if (accountLink) {
+    const redirectPath = encodeURIComponent(window.location.pathname + window.location.search);
+    accountLink.href = `/account.html?redirect=${redirectPath}`;
+  }
+
+  async function updateUserBadge() {
+    if (!userBadge) return;
+    const { data } = await supabase.auth.getUser();
+    const user = data?.user;
+    if (user && user.email) {
+      userBadge.textContent = `Logged in as ${user.email}`;
+    } else {
+      userBadge.textContent = "Not logged in";
+    }
+  }
+
+  updateUserBadge();
+</script>
+
   
 </body>
 </html>
