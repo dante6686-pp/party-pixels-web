@@ -1,7 +1,7 @@
 // Party Pixels – wspólny auth helper dla wszystkich stron
 
-const SUPABASE_URL = "https://dyfrzwhycqnqntvkuxy.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d2h5Y3FucW50dmt1eHkiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0MzY3ODY4OSwiZXhwIjoyMDU5MjU0Njg5fQ.BskE2afnGLDtkv4kMWOTCEt4_mH2T85X5o_oMEAtSsc";
+const SUPABASE_URL = "https://dyfrzwxhycqnqntvkuxy.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d3hoeWNxbnFudHZrdXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1ODM5MjgsImV4cCI6MjA4MDE1OTkyOH0.n4jP0q7YZY-jQaSnHUkKWyI9wM02iHXnRXS31AATnY0";
 
 const ppSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
