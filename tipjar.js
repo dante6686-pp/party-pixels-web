@@ -10,7 +10,7 @@
 
   wrapper.innerHTML = `
     <span style="font-size:11px;color:#9a9ac0;">Enjoying the toys?</span>
-    <a href="https://paypal.me/Dante6686" target="_blank" rel="noopener"
+    <a href="paypal.me/PartyPixelsPayPal" target="_blank" rel="noopener"
       style="
         display:inline-flex;
         align-items:center;
