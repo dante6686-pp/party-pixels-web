@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Party Pixels – Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #050712;
+      --card: #101324;
+      --accent: #ff5cff;
+      --accent2: #5c8aff;
+      --text: #f4f4ff;
+      --muted: #9a9ac0;
+      --border: #24273a;
+      --danger: #ff4b6b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #181b39 0, #050712 48%, #02030a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px 14px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .brand-pill {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.7);
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      background: rgba(6, 9, 24, 0.9);
+      white-space: nowrap;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 10px 0 4px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .card {
+      background:
+        radial-gradient(circle at top left, rgba(255, 92, 255, 0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.2), transparent 65%),
+        linear-gradient(145deg, rgba(10, 14, 35, 0.96), rgba(4, 5, 14, 0.98));
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 14px 14px 16px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      font-size: 13px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(6, 9, 24, 0.9);
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      border-color: var(--accent);
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.2), rgba(7, 10, 28, 0.95));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input {
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(6, 9, 24, 0.95);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(255, 92, 255, 0.2);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #050712;
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.6);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.05s ease;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 0 10px rgba(255, 92, 255, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .status {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      min-height: 16px;
+    }
+
+    .status-error {
+      color: var(--danger);
+    }
+
+    .status-ok {
+      color: #4ade80;
+    }
+
+    .account-state {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .account-email {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .footer {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(33, 36, 73, 0.9);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    a.link {
+      color: var(--accent2);
+      text-decoration: none;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-pill"></div>
+        <span>Party&nbsp;Pixels</span>
+      </div>
+      <div class="tag">Account</div>
+    </header>
+
+    <section>
+      <h1>Your Party Pixels account</h1>
+      <p>Create an account to save your premium access and future toys. No bullshit, just email + password.</p>
+    </section>
+
+    <section class="card" id="authCard">
+      <div id="loggedOutView">
+        <div class="tabs">
+          <button class="tab-btn active" id="tabLogin">Log in</button>
+          <button class="tab-btn" id="tabSignup">Sign up</button>
+        </div>
+
+        <div id="formLogin">
+          <div class="field">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••">
+          </div>
+          <button class="btn" id="loginButton">Log in</button>
+        </div>
+
+        <div id="formSignup" style="display:none;">
+          <div class="field">
+            <label for="signupEmail">Email</label>
+            <input type="email" id="signupEmail" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" placeholder="min. 6 characters">
+          </div>
+          <button class="btn" id="signupButton">Create account</button>
+        </div>
+
+        <div class="status" id="statusMessage"></div>
+      </div>
+
+      <div id="loggedInView" style="display:none;">
+        <div class="account-state">
+          Logged in as:<br>
+          <span class="account-email" id="accountEmail"></span>
+          <div class="pill">
+            <span>Premium:</span>
+            <span id="premiumState">not yet</span>
+          </div>
+        </div>
+        <button class="btn" id="logoutButton">Log out</button>
+        <div class="status" id="statusMessageLogged"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>← <a class="link" href="/index.html">Back to Web Toys</a></div>
+      <div>Later: Stripe + real premium flag.</div>
+    </footer>
+  </div>
+
+  <!-- Supabase client z CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // TODO: PODMIEN TE DWA STRINGI NA SWOJE Z SUPABASE
+    const SUPABASE_URL = "https://TWÓJ-PROJECT-URL.supabase.co";
+    const SUPABASE_ANON_KEY = "TWÓJ_ANON_PUBLIC_KEY";
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const tabLogin = document.getElementById("tabLogin");
+    const tabSignup = document.getElementById("tabSignup");
+    const formLogin = document.getElementById("formLogin");
+    const formSignup = document.getElementById("formSignup");
+
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const signupEmail = document.getElementById("signupEmail");
+    const signupPassword = document.getElementById("signupPassword");
+
+    const loginButton = document.getElementById("loginButton");
+    const signupButton = document.getElementById("signupButton");
+    const logoutButton = document.getElementById("logoutButton");
+
+    const statusMessage = document.getElementById("statusMessage");
+    const statusMessageLogged = document.getElementById("statusMessageLogged");
+
+    const loggedOutView = document.getElementById("loggedOutView");
+    const loggedInView = document.getElementById("loggedInView");
+    const accountEmail = document.getElementById("accountEmail");
+    const premiumState = document.getElementById("premiumState");
+
+    function setStatus(msg, type = "") {
+      statusMessage.textContent = msg;
+      statusMessage.classList.remove("status-error", "status-ok");
+      if (type === "error") statusMessage.classList.add("status-error");
+      if (type === "ok") statusMessage.classList.add("status-ok");
+    }
+
+    function setStatusLogged(msg, type = "") {
+      statusMessageLogged.textContent = msg;
+      statusMessageLogged.classList.remove("status-error", "status-ok");
+      if (type === "error") statusMessageLogged.classList.add("status-error");
+      if (type === "ok") statusMessageLogged.classList.add("status-ok");
+    }
+
+    tabLogin.addEventListener("click", () => {
+      tabLogin.classList.add("active");
+      tabSignup.classList.remove("active");
+      formLogin.style.display = "block";
+      formSignup.style.display = "none";
+      setStatus("");
+    });
+
+    tabSignup.addEventListener("click", () => {
+      tabSignup.classList.add("active");
+      tabLogin.classList.remove("active");
+      formSignup.style.display = "block";
+      formLogin.style.display = "none";
+      setStatus("");
+    });
+
+    async function refreshUser() {
+      const { data } = await supabase.auth.getUser();
+      const user = data?.user || null;
+
+      if (user) {
+        loggedOutView.style.display = "none";
+        loggedInView.style.display = "block";
+        accountEmail.textContent = user.email || "(no email)";
+
+        // tutaj później podłączymy realną flagę premium z bazy
+        premiumState.textContent = "not yet";
+
+      } else {
+        loggedOutView.style.display = "block";
+        loggedInView.style.display = "none";
+      }
+    }
+
+    loginButton.addEventListener("click", async () => {
+      setStatus("Logging in…");
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
+
+      if (!email || !password) {
+        setStatus("Fill email and password.", "error");
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        setStatus(error.message || "Could not log in.", "error");
+      } else {
+        setStatus("");
+        await refreshUser();
+        setStatusLogged("Logged in.", "ok");
+      }
+    });
+
+    signupButton.addEventListener("click", async () => {
+      setStatus("Creating account…");
+      const email = signupEmail.value.trim();
+      const password = signupPassword.value;
+
+      if (!email || !password) {
+        setStatus("Fill email and password.", "error");
+        return;
+      }
+
+      const { error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        setStatus(error.message || "Could not sign up.", "error");
+      } else {
+        setStatus("Account created. You can log in now.", "ok");
+        // opcjonalnie: od razu przełącz na login
+        tabLogin.click();
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      setStatusLogged("Logging out…");
+      await supabase.auth.signOut();
+      setStatusLogged("Logged out.", "ok");
+      await refreshUser();
+    });
+
+    // na start: sprawdź czy ktoś jest zalogowany
+    refreshUser();
+  </script>
+</body>
+</html>
