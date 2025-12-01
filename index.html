@@ -1,29 +1,20 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Party Pixels – Web Toys Hub</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Party Pixels – Web Toys</title>
 
   <style>
-    .user-badge {
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      background: rgba(6, 9, 24, 0.9);
-    }
-
     :root {
-      --bg: #050712;
-      --bg2: #0b0f23;
-      --card: #101324;
-      --accent: #ff5cff;
-      --accent2: #5c8aff;
+      --bg1: #050712;
+      --bg2: #0a0e21;
       --text: #f4f4ff;
       --muted: #9a9ac0;
       --border: #24273a;
+      --accent1: #ff5cff;
+      --accent2: #5c8aff;
+      --cardbg: rgba(10, 14, 35, 0.84);
     }
 
     * {
@@ -32,24 +23,24 @@
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #181b39 0, #050712 48%, #02030a 100%);
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
+      background: radial-gradient(circle at top, #181b39 0%, var(--bg1) 50%, #02030a 100%);
       color: var(--text);
       min-height: 100vh;
-    }
-
-    .page {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 20px 14px 40px;
-    }
-
-    .topbar {
       display: flex;
+      flex-direction: column;
       align-items: center;
+    }
+
+    /* TOP BAR */
+    header.topbar {
+      width: 100%;
+      max-width: 880px;
+      display: flex;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 20px;
+      align-items: center;
+      padding: 18px 20px;
     }
 
     .brand {
@@ -57,565 +48,226 @@
       align-items: center;
       gap: 10px;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-size: 13px;
+      font-size: 18px;
+      letter-spacing: 0.04em;
     }
 
     .brand-pill {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 18px rgba(255, 92, 255, 0.7);
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 0 15px rgba(255, 92, 255, 0.6);
     }
 
-    .tag {
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-badge {
       font-size: 11px;
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
       color: var(--muted);
       background: rgba(6, 9, 24, 0.9);
       white-space: nowrap;
     }
 
-    .hero {
-      margin-bottom: 26px;
-    }
-
-    .hero-kicker {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .hero-title {
-      font-size: clamp(26px, 5vw, 36px);
-      margin: 0 0 8px;
-    }
-
-    .hero-sub {
-      margin: 0;
-      max-width: 520px;
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    .hero-sub strong {
+    .account-link {
+      font-size: 12px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent2);
       color: var(--text);
-      font-weight: 600;
+      text-decoration: none;
+      background: rgba(20, 28, 52, 0.6);
+      white-space: nowrap;
     }
 
-    .hero-strip {
-      margin-top: 18px;
+    .account-link:hover {
+      border-color: var(--accent1);
+    }
+
+    /* GRID */
+    .page {
+      width: 100%;
+      max-width: 880px;
+      padding: 10px 20px 40px;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .badge {
-      font-size: 11px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(111, 115, 187, 0.6);
-      background: radial-gradient(circle at top left, rgba(255, 92, 255, 0.16), rgba(7, 9, 26, 0.95));
-      color: var(--muted);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 8px rgba(255, 92, 255, 0.9);
-    }
-
-    .section-title-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-      margin-top: 10px;
-    }
-
-    .section-title-row h2 {
-      font-size: 16px;
-      margin: 0;
-    }
-
-    .section-title-row span {
-      font-size: 11px;
-      color: var(--muted);
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 6px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    @media (max-width: 800px) {
-      .grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 560px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
     }
 
     .toy-card {
-      position: relative;
-      border-radius: 18px;
-      padding: 12px 11px 12px;
       background:
-        radial-gradient(circle at top, rgba(255, 92, 255, 0.15), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.25), transparent 65%),
-        linear-gradient(145deg, rgba(10, 14, 35, 0.96), rgba(4, 5, 14, 0.98));
+        radial-gradient(circle at top left, rgba(255, 92, 255, 0.14), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.18), transparent 70%),
+        var(--cardbg);
       border: 1px solid var(--border);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      min-height: 130px;
+      justify-content: space-between;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
     }
 
     .toy-label-row {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
-      align-items: flex-start;
+      font-size: 11px;
+      margin-bottom: 6px;
     }
 
     .toy-type-pill {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(158, 161, 216, 0.55);
+      border: 1px solid var(--border);
       color: var(--muted);
-      background: rgba(7, 9, 25, 0.95);
-    }
-
-    .toy-status {
-      font-size: 10px;
-      padding: 3px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(63, 201, 114, 0.7);
-      color: #96f9c2;
-      background: rgba(10, 35, 23, 0.9);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      white-space: nowrap;
-    }
-
-    .toy-status-soon {
-      border-color: rgba(255, 202, 117, 0.7);
-      color: #ffd68c;
-      background: rgba(47, 33, 6, 0.95);
     }
 
     .toy-title {
-      font-size: 15px;
-      margin: 2px 0 2px;
+      margin: 6px 0 6px;
+      font-size: 18px;
+      font-weight: 700;
     }
 
     .toy-desc {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--muted);
-      margin: 0;
+      margin-bottom: 16px;
     }
 
     .toy-footer {
-      margin-top: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .toy-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
     }
 
     .toy-tag {
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(14, 17, 40, 0.95);
-      border: 1px solid rgba(47, 50, 101, 0.9);
-      font-size: 10px;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
     }
 
     .toy-link {
-      font-size: 11px;
+      font-size: 12px;
       text-decoration: none;
+      color: var(--accent2);
+      border: 1px solid var(--accent2);
+      padding: 6px 12px;
       border-radius: 999px;
-      padding: 5px 9px;
-      border: 1px solid rgba(124, 128, 210, 0.8);
-      color: var(--text);
-      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.16), rgba(10, 11, 29, 0.98));
       white-space: nowrap;
     }
 
-    .toy-link.disabled {
-      opacity: 0.6;
-      border-style: dashed;
-      pointer-events: none;
+    .toy-link:hover {
+      border-color: var(--accent1);
+      color: var(--accent1);
     }
 
-    .toy-link span {
-      opacity: 0.85;
-    }
-
-    .footer {
-      margin-top: 26px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(33, 36, 73, 0.9);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 11px;
+    footer.footer {
+      margin-top: 40px;
+      padding: 20px 0;
+      font-size: 12px;
       color: var(--muted);
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .footer a {
-      color: var(--muted);
-      text-decoration: none;
-      border-bottom: 1px dotted rgba(154, 156, 210, 0.4);
-    }
-
-    .footer a:hover {
-      color: var(--text);
-    }
-
-    .hint {
-      margin-top: 10px;
-      font-size: 11px;
-      color: var(--muted);
+      width: 100%;
+      max-width: 880px;
+      border-top: 1px solid rgba(33, 36, 73, 0.7);
+      text-align: center;
     }
   </style>
 </head>
-<body>
-  <div class="page">
-    <!-- TOPBAR -->
 
+<body>
+
+  <!-- TOP BAR -->
   <header class="topbar">
-  <div class="brand">
-    <div class="brand-pill"></div>
-    <span>Party&nbsp;Pixels</span>
-  </div>
-  <!--
-  <div style="display:flex;gap:8px;align-items:center;">
-    <span class="user-badge" data-pp-user-badge>Not logged in</span>
-    <a class="toy-link" href="/account.html" data-pp-account-link>Account</a>
-  </div>
-  
+    <div class="brand">
+      <div class="brand-pill"></div>
+      Party Pixels
+    </div>
+
+    <div class="topbar-right">
+      <span class="user-badge" data-pp-user-badge>Not logged in</span>
+      <a class="account-link" href="/account.html" data-pp-account-link>Account</a>
+    </div>
   </header>
 
-    
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-pill"></div>
-        <span>Party&nbsp;Pixels</span>
-      </div>
-      <div class="tag">Web Toys</div>
-      <a class="toy-link" href="/account.html" id="accountLink">Account</a>
-      <span id="userBadge" class="user-badge">Not logged in</span>
-    -->
+  <!-- MAIN CONTENT -->
+  <div class="page">
+    <div class="section-title">Web Toys</div>
 
-    </header>
+    <div class="grid">
 
-    <!-- BANNER -->
-<div style="text-align:center; margin-bottom:25px;">
-  <img src="PPWT-banner-4.jpg" 
-       alt="Web Toys Banner"
-       style="max-width:100%; border-radius:18px; box-shadow:0 0 20px rgba(0,0,0,0.4);">
-</div>
-
-<section class="hero">
-    
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-kicker">tiny experiments · browser only · no install</div>
-      <h1 class="hero-title">Playground of weird little web toys.</h1>
-      <p class="hero-sub">
-        A collection of tiny interactive pages: generators, mini-games and visual toys.
-        Built fast, broken often, updated whenever the mood hits.
-      </p>
-
-      <div class="hero-strip">
-        <div class="badge">
-          <span class="badge-dot"></span>
-          Live in your browser
+      <!-- 1: Face Remix -->
+      <article class="toy-card">
+        <div class="toy-label-row">
+          <span class="toy-type-pill">Image</span>
+          <span class="toy-status">Live</span>
         </div>
-        <div class="badge">
-          🧪 New toys appear without warning
+        <h3 class="toy-title">Face Remix</h3>
+        <p class="toy-desc">Upload your photo and transform it into Disney, Anime, Pixar, cyberpunk and more.</p>
+        <div class="toy-footer">
+          <span class="toy-tag">AI image</span>
+          <a class="toy-link" href="/face-remix.html">Open →</a>
         </div>
-        <div class="badge">
-          🎮 Made for clicks, taps & curiosity
+      </article>
+
+      <!-- 2: Relationship Forecast -->
+      <article class="toy-card">
+        <div class="toy-label-row">
+          <span class="toy-type-pill">Couples</span>
+          <span class="toy-status">Live</span>
         </div>
-      </div>
-    </section>
+        <h3 class="toy-title">Relationship Forecast</h3>
+        <p class="toy-desc">Enter two names and get a chaotic romance prediction, from sweet to unhinged.</p>
+        <div class="toy-footer">
+          <span class="toy-tag">AI text</span>
+          <a class="toy-link" href="/relationship-forecast.html">Open →</a>
+        </div>
+      </article>
 
-    <!-- TOYS GRID -->
-    <section>
-      <div class="section-title-row">
-        <h2>Web Toys</h2>
-        <span>Pick a toy and dive in.</span>
-      </div>
+      <!-- 3: Annoying You -->
+      <article class="toy-card">
+        <div class="toy-label-row">
+          <span class="toy-type-pill">Chaos</span>
+          <span class="toy-status">Live</span>
+        </div>
+        <h3 class="toy-title">Am I Annoying You?</h3>
+        <p class="toy-desc">Type two names and calculate the Annoyance Score™ — a playful roast for couples.</p>
+        <div class="toy-footer">
+          <span class="toy-tag">AI text</span>
+          <a class="toy-link" href="/annoying-you.html">Open →</a>
+        </div>
+      </article>
 
-      <div class="grid">
-        <!-- 1: FACE REMIX -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Generator</span>
-            <span class="toy-status">Live</span>
-          </div>
-          <h3 class="toy-title">Character Booth</h3>
-          <p class="toy-desc">
-            Upload a selfie, choose a vibe – princess, cyberpunk, anime hero – and let the pixels
-            turn you into a stylized character.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">selfie → character</span>
-              <span class="toy-tag">AI ready</span>
-            </div>
-        
-            <a class="toy-link" href="/face-remix.html">
-              <span>Open toy →</span>
-            </a>
-          </div>
-        </article>
-
-        <!-- 7: RELATIONSHIP FORECAST -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Generator</span>
-            <span class="toy-status">Live</span>
-          </div>
-          <h3 class="toy-title">Relationship Forecast</h3>
-          <p class="toy-desc">
-            Type your names, pick the vibe and get a fake-serious love forecast:
-            half roast, half horoscope, 100% entertainment.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">AI text</span>
-              <span class="toy-tag">love toy</span>
-            </div>
-            <a class="toy-link" href="/relationship-forecast.html">
-              <span>Open toy →</span>
-            </a>
-          </div>
-        </article>
-
-        <!--  X: AM I ANNOYING YOU -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Generator</span>
-            <span class="toy-status">Live</span>
-          </div>
-          <h3 class="toy-title">Am I Annoying You?</h3>
-          <p class="toy-desc">
-            A chaotic couples-toy: type two names and get an Annoyance Score™
-            with a playful roast. Works for partners, besties, situationships
-            and anyone who tests your patience.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">AI text</span>
-              <span class="toy-tag">roast</span>
-              <span class="toy-tag">couples</span>
-            </div>
-            <a class="toy-link" href="/annoying-you.html">
-              <span>Open toy →</span>
-            </a>
-          </div>
-        </article>
-
-        <!-- 2: TAP TO SURVIVE (placeholder) -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Mini game</span>
-            <span class="toy-status toy-status-soon">Soon</span>
-          </div>
-          <h3 class="toy-title">Tap to Survive</h3>
-          <p class="toy-desc">
-            One finger, one tiny character, one draining life bar.
-            Tap to keep them alive as the chaos ramps up.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">mobile-friendly</span>
-              <span class="toy-tag">arcade</span>
-            </div>
-            <a class="toy-link disabled" href="#">
-              <span>In progress</span>
-            </a>
-          </div>
-        </article>
-
-        <!-- 3: Noise Canvas (placeholder) -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Visual toy</span>
-            <span class="toy-status toy-status-soon">Soon</span>
-          </div>
-          <h3 class="toy-title">Noise Canvas</h3>
-          <p class="toy-desc">
-            Click or tap to mutate a field of pixel noise. Glitches, pulses
-            and generative chaos in your browser.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">glitch</span>
-              <span class="toy-tag">satisfying</span>
-            </div>
-            <a class="toy-link disabled" href="#">
-              <span>In progress</span>
-            </a>
-          </div>
-        </article>
-
-        <!-- 4: Mood Spinner (placeholder) -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Generator</span>
-            <span class="toy-status toy-status-soon">Soon</span>
-          </div>
-          <h3 class="toy-title">Mood Spinner</h3>
-          <p class="toy-desc">
-            Spin a wheel of random prompts, aesthetics and vibes for your next drawing,
-            track or game idea.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">idea prompts</span>
-              <span class="toy-tag">creative</span>
-            </div>
-            <a class="toy-link disabled" href="#">
-              <span>In progress</span>
-            </a>
-          </div>
-        </article>
-
-        <!-- 5: Pixel Echo (placeholder) -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Mini game</span>
-            <span class="toy-status toy-status-soon">Soon</span>
-          </div>
-          <h3 class="toy-title">Pixel Echo</h3>
-          <p class="toy-desc">
-            Memory toy: watch a pattern of blinking pixels, then try to tap it back in order.
-            Gets harder the longer you last.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">memory</span>
-              <span class="toy-tag">challenge</span>
-            </div>
-            <a class="toy-link disabled" href="#">
-              <span>In progress</span>
-            </a>
-          </div>
-        </article>
-
-        <!-- 6: Web Toy Slot (empty placeholder) -->
-        <article class="toy-card">
-          <div class="toy-label-row">
-            <span class="toy-type-pill">Slot</span>
-            <span class="toy-status toy-status-soon">Soon</span>
-          </div>
-          <h3 class="toy-title">Next Party Toy</h3>
-          <p class="toy-desc">
-            Reserved slot for the next experiment. Could be your favorite one —
-            something small, weird and dangerously addictive.
-          </p>
-          <div class="toy-footer">
-            <div class="toy-tags">
-              <span class="toy-tag">coming next</span>
-            </div>
-            <a class="toy-link disabled" href="#">
-              <span>Not yet</span>
-            </a>
-          </div>
-        </article>
-      </div>
-
-      <p class="hint">
-        Tip for future you: każdą kartę możesz podpiąć pod osobny plik HTML (np. <code>/tap-to-survive.html</code>),
-        gdy tylko dodasz go do repo.
-      </p>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div>Party Pixels · Web Toys Lab</div>
-      <div class="footer-links">
-        <span>Built fast, break often.</span>
-      </div>
-    </footer>
+    </div>
   </div>
 
-  <script src="/tipjar.js"></script>
+  <footer class="footer">
+    Party Pixels © 2025 — more toys coming soon 👾
+  </footer>
 
+  <!-- AUTH -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SUPABASE_URL = "https://dyfrzwxhycqnqntvkuxy.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d3hoeWNxbnFudHZrdXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1ODM5MjgsImV4cCI6MjA4MDE1OTkyOH0.n4jP0q7YZY-jQaSnHUkKWyI9wM02iHXnRXS31AATnY0";
+  <script src="/pp-auth.js"></script>
 
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  const userBadge = document.getElementById("userBadge");
-  const accountLink = document.getElementById("accountLink");
-
-  // dopisz redirect do linku Account
-  if (accountLink) {
-    const redirectPath = encodeURIComponent(window.location.pathname + window.location.search);
-    accountLink.href = `/account.html?redirect=${redirectPath}`;
-  }
-
-  async function updateUserBadge() {
-    if (!userBadge) return;
-    const { data } = await supabase.auth.getUser();
-    const user = data?.user;
-    if (user && user.email) {
-      userBadge.textContent = `Logged in as ${user.email}`;
-    } else {
-      userBadge.textContent = "Not logged in";
-    }
-  }
-
-  updateUserBadge();
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/pp-auth.js"></script>
-  
 </body>
 </html>
