@@ -583,7 +583,27 @@
         return;
       }
 
-         const { error: insertError } = await window.ppSupabase
+      // jeśli Supabase nie jest jeszcze załadowany
+      if (typeof window.ppSupabase === "undefined") {
+        gameMessage.textContent =
+          `New best: ${scoreText}s – (auth not ready, score only local).`;
+        return;
+      }
+
+      try {
+        const { data, error: userError } = await window.ppSupabase.auth.getUser();
+        const user = data?.user || null;
+
+        if (userError || !user) {
+          gameMessage.textContent =
+            `New best: ${scoreText}s – log in to save it to the global leaderboard.`;
+          return;
+        }
+
+        const email = user.email || null;
+        const user_id = user.id;
+
+            const { error: insertError } = await window.ppSupabase
       .from("tap_scores")
       .insert([{ user_id, email, score: timeSurvived }]);
 
@@ -595,6 +615,13 @@
       gameMessage.textContent =
         `New best: ${scoreText}s – saved to global leaderboard.`;
       charMode.textContent = "Record saved";
+    }
+
+      } catch (err) {
+        console.error("Unexpected error saving score", err);
+        gameMessage.textContent =
+          `New best: ${scoreText}s – couldn't save score.`;
+      }
     }
 
     function gameLoop(now) {
