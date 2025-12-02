@@ -6,66 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-
-    .topbar {
-  width: 100%;
-  max-width: 880px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 20px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: 0.04em;
-}
-
-.brand-pill {
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent1), var(--accent2));
-  box-shadow: 0 0 15px rgba(255, 92, 255, 0.6);
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.user-badge {
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  background: rgba(6, 9, 24, 0.9);
-  white-space: nowrap;
-}
-
-.account-link {
-  font-size: 12px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--accent2);
-  color: var(--text);
-  text-decoration: none;
-  background: rgba(20, 28, 52, 0.6);
-  white-space: nowrap;
-}
-
-.account-link:hover {
-  border-color: var(--accent1);
-}
-
-    
     :root {
       --bg: #050712;
       --card: #101324;
@@ -424,19 +364,14 @@
   </style>
 </head>
 <body>
-
-<!-- TOP BAR -->
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-pill"></div>
-      Party Pixels
-    </div>
-
-    <div class="topbar-right">
-      <span class="user-badge" data-pp-user-badge>Not logged in</span>
-      <a class="account-link" href="/account.html" data-pp-account-link>Account</a>
-    </div>
-  </header>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-pill"></div>
+        <span>Party&nbsp;Pixels</span>
+      </div>
+      <div class="tag">Face Remix</div>
+    </header>
 
     <section class="hero">
       <div class="hero-kicker">web toy · selfie → character</div>
@@ -687,9 +622,6 @@
   </script>
 
   <script src="/tipjar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js"></script>
-
   
 </body>
 </html>
