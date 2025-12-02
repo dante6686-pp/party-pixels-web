@@ -485,23 +485,35 @@
       </article>
     </section>
 
+    <div class="game-stats-row">
+  ...
+</div>
+
+<div style="margin-top:6px;font-size:12px;">
+  <a class="back-link" href="/tap-to-survive-highscores.html">
+    View global highscores →
+  </a>
+</div>
+
+
     <footer class="footer">
       <div>Party Pixels · Tap to Survive (browser prototype)</div>
       <div>Built to be expanded into a full mobile / PC game.</div>
     </footer>
   </main>
 
-  <!-- GAME LOGIC + AUTH HOOK -->
+  
+
+    <!-- GAME LOGIC + HIGHSCORE SAVE -->
   <script>
-    // Simple Tap to Survive logic (client-side only)
     const maxLife = 100;
     let life = maxLife;
     let running = true;
     let tapCount = 0;
     let timeSurvived = 0;
-    let bestTime = 0;
+    let bestTime = 0;           // lokalny rekord na tej sesji
     let lastTimestamp = performance.now();
-    const drainPerSecond = 7; // ile życia schodzi na sekundę
+    const drainPerSecond = 7;   // ile życia schodzi na sekundę
     const healPerTap = 5;
 
     const lifeBar = document.getElementById("lifeBar");
@@ -526,7 +538,7 @@
 
       if (!running && life <= 0) {
         gameMessage.classList.add("gameover");
-        gameMessage.textContent = "You died. Tap 'Restart run' to try again.";
+        // konkretna wiadomość ustawiamy w handleRunEnd()
         charAvatar.textContent = "💀";
         charStatus.textContent = `"Ok, that hurt."`;
         charMode.textContent = "Game over";
@@ -534,13 +546,14 @@
         gameMessage.classList.remove("gameover");
       }
 
-      if (pct > 0.6) {
+      const pct2 = Math.max(0, Math.min(1, life / maxLife));
+      if (pct2 > 0.6) {
         charAvatar.textContent = "😎";
         charStatus.textContent = `"This is fine."`;
-      } else if (pct > 0.3) {
+      } else if (pct2 > 0.3) {
         charAvatar.textContent = "😰";
         charStatus.textContent = `"Starting to panic a bit."`;
-      } else if (pct > 0) {
+      } else if (pct2 > 0) {
         charAvatar.textContent = "😱";
         charStatus.textContent = `"HELP. TAP FASTER."`;
       }
@@ -559,6 +572,57 @@
       updateUI();
     }
 
+    async function handleRunEnd(isNewBest) {
+      updateUI();
+
+      const scoreText = timeSurvived.toFixed(1);
+
+      // jeśli nie new best – po prostu info
+      if (!isNewBest) {
+        gameMessage.textContent = `You died. Time: ${scoreText}s (no new record).`;
+        return;
+      }
+
+      // jeśli Supabase nie jest jeszcze załadowany
+      if (typeof window.ppSupabase === "undefined") {
+        gameMessage.textContent =
+          `New best: ${scoreText}s – (auth not ready, score only local).`;
+        return;
+      }
+
+      try {
+        const { data, error: userError } = await window.ppSupabase.auth.getUser();
+        const user = data?.user || null;
+
+        if (userError || !user) {
+          gameMessage.textContent =
+            `New best: ${scoreText}s – log in to save it to the global leaderboard.`;
+          return;
+        }
+
+        const email = user.email || null;
+        const user_id = user.id;
+
+        const { error: insertError } = await window.ppSupabase
+          .from("tap_scores")
+          .insert([{ user_id, email, score: timeSurvived }]);
+
+        if (insertError) {
+          console.error("Error saving score", insertError);
+          gameMessage.textContent =
+            `New best: ${scoreText}s – couldn't save score (server error).`;
+        } else {
+          gameMessage.textContent =
+            `New best: ${scoreText}s – saved to global leaderboard.`;
+          charMode.textContent = "Record saved";
+        }
+      } catch (err) {
+        console.error("Unexpected error saving score", err);
+        gameMessage.textContent =
+          `New best: ${scoreText}s – couldn't save score.`;
+      }
+    }
+
     function gameLoop(now) {
       const deltaSeconds = (now - lastTimestamp) / 1000;
       lastTimestamp = now;
@@ -570,11 +634,18 @@
         if (life <= 0) {
           life = 0;
           running = false;
+
+          let isNewBest = false;
           if (timeSurvived > bestTime) {
             bestTime = timeSurvived;
+            isNewBest = true;
           }
+
           tapButton.disabled = true;
           restartButton.disabled = false;
+
+          // obsługa końca runa + zapis wyniku (async)
+          handleRunEnd(isNewBest);
         }
         updateUI();
       }
@@ -597,6 +668,7 @@
     resetGame();
     requestAnimationFrame(gameLoop);
   </script>
+
 
   <!-- AUTH (shared) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
