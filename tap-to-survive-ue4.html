@@ -6,6 +6,55 @@
   <title>Party Pixels – Tap to Survive (UE4 Game)</title>
 
   <style>
+
+    .gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gallery-main {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: radial-gradient(circle at top, rgba(255, 92, 255, 0.08), rgba(5, 7, 18, 0.96));
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-main img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.gallery-thumb {
+  width: 80px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: pointer;
+  opacity: 0.6;
+  border: 1px solid transparent;
+  flex: 0 0 auto;
+}
+
+.gallery-thumb.active {
+  opacity: 1;
+  border-color: var(--accent2);
+  box-shadow: 0 0 8px rgba(92, 138, 255, 0.7);
+}
+    
     :root {
       --bg1: #050712;
       --bg2: #0a0e21;
@@ -409,14 +458,23 @@
       <article class="card">
         <div class="section-label">Preview</div>
         <h2>Trailer / Screenshots</h2>
-        <div class="trailer-frame">
-          <div>
-            <div style="margin-bottom:6px;">Future spot for trailer, GIF or UE4 gameplay capture.</div>
-            <div style="font-size:11px;opacity:0.8;">
-              For now this is a placeholder. Once you have a build and capture, just drop the video or image here.
-            </div>
-          </div>
-        </div>
+        <div class="gallery">
+    <div class="gallery-main">
+      <img id="galleryMain"
+           src="/media/tap-01.png"
+           alt="Tap to Survive screenshot">
+    </div>
+    <div class="gallery-thumbs">
+      <img class="gallery-thumb active"
+           src="/media/tap-01.jpg"
+           data-full="/media/tap-01.png"
+           alt="Screenshot 1">
+      <img class="gallery-thumb"
+           src="/media/tap-02.png"
+           data-full="/media/tap-02.png"
+           alt="Screenshot 2">
+    </div>
+  </div>
       </article>
 
       <!-- RIGHT: BUILDS / DOWNLOADS -->
@@ -511,6 +569,24 @@
       <div>Landing page for the full game build.</div>
     </footer>
   </main>
+
+  <script>
+  // Simple screenshot gallery logic
+  (function () {
+    const main = document.getElementById("galleryMain");
+    const thumbs = document.querySelectorAll(".gallery-thumb");
+    if (!main || !thumbs.length) return;
+
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        thumbs.forEach((t) => t.classList.remove("active"));
+        thumb.classList.add("active");
+        const full = thumb.dataset.full || thumb.src;
+        main.src = full;
+      });
+    });
+  })();
+  </script>
 
   <!-- AUTH (shared) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
