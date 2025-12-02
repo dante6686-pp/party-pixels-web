@@ -289,10 +289,11 @@
           .limit(50);
 
         if (error) {
-          console.error(error);
-          statusEl.textContent = "Error loading highscores.";
-          return;
-        }
+  console.error(error);
+  statusEl.textContent = "Error loading highscores: " + (error.message || '');
+  return;
+}
+
 
         if (!data || data.length === 0) {
           statusEl.textContent = "No scores yet. Be the first to die gloriously.";
