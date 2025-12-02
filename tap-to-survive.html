@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Party Pixels – Tap to Survive</title>
+
+  <style>
+    :root {
+      --bg1: #050712;
+      --bg2: #0a0e21;
+      --text: #f4f4ff;
+      --muted: #9a9ac0;
+      --border: #24273a;
+      --accent1: #ff5cff;
+      --accent2: #5c8aff;
+      --danger: #ff4b6b;
+      --cardbg: rgba(10, 14, 35, 0.88);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
+      background: radial-gradient(circle at top, #181b39 0%, var(--bg1) 50%, #02030a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* TOP BAR (shared) */
+    header.topbar {
+      width: 100%;
+      max-width: 880px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-pill {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 0 15px rgba(255, 92, 255, 0.6);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: rgba(6, 9, 24, 0.9);
+      white-space: nowrap;
+    }
+
+    .account-link {
+      font-size: 12px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--accent2);
+      color: var(--text);
+      text-decoration: none;
+      background: rgba(20, 28, 52, 0.6);
+      white-space: nowrap;
+    }
+
+    .account-link:hover {
+      border-color: var(--accent1);
+    }
+
+    /* PAGE LAYOUT */
+    .page {
+      width: 100%;
+      max-width: 880px;
+      padding: 4px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .game-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+    }
+
+    .game-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .game-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      max-width: 420px;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.3fr) minmax(0, 2fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 780px) {
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background:
+        radial-gradient(circle at top left, rgba(255, 92, 255, 0.14), transparent 60%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.18), transparent 70%),
+        var(--cardbg);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 16px 16px 18px;
+      box-shadow: 0 18px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    /* GAME VIEW */
+    .game-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .life-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .life-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .life-bar-bg {
+      width: 100%;
+      height: 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 40, 60, 0.9);
+      background: linear-gradient(90deg, #200012, #190015);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .life-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #facc15, #fb7185);
+      transition: width 0.12s linear;
+    }
+
+    .game-character {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.2), rgba(5, 7, 18, 0.96));
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .char-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 30% 0%, rgba(255, 255, 255, 0.35), transparent 55%),
+        linear-gradient(135deg, #f97316, #ef4444);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 18px rgba(248, 113, 113, 0.6);
+    }
+
+    .char-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .char-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .char-status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .char-mode {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.9);
+      color: #fedc74;
+      background: rgba(40, 24, 8, 0.9);
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    .game-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-main {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: #050712;
+      box-shadow: 0 0 18px rgba(255, 92, 255, 0.8);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .btn-main:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 0 10px rgba(255, 92, 255, 0.5);
+    }
+
+    .btn-main:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--border);
+      background: rgba(10, 13, 31, 0.9);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .btn-secondary:active {
+      transform: translateY(1px);
+    }
+
+    .game-stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stat-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+    }
+
+    .game-message {
+      font-size: 13px;
+      margin-top: 8px;
+      min-height: 18px;
+      color: var(--muted);
+    }
+
+    .game-message.gameover {
+      color: var(--danger);
+      font-weight: 600;
+    }
+
+    /* RIGHT CARD: HELP / INFO */
+    .info-list {
+      font-size: 13px;
+      color: var(--muted);
+      padding-left: 18px;
+      margin: 6px 0 10px;
+    }
+
+    .info-list li {
+      margin-bottom: 4px;
+    }
+
+    .info-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .info-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #4ade80;
+      box-shadow: 0 0 9px rgba(74, 222, 128, 0.9);
+    }
+
+    .back-link {
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--accent2);
+    }
+
+    .back-link:hover {
+      color: var(--accent1);
+    }
+
+    footer.footer {
+      margin-top: 24px;
+      padding: 16px 0 24px;
+      font-size: 12px;
+      color: var(--muted);
+      width: 100%;
+      max-width: 880px;
+      border-top: 1px solid rgba(33, 36, 73, 0.7);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    @media (max-width: 600px) {
+      footer.footer {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR (shared) -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-pill"></div>
+      Party Pixels
+    </div>
+
+    <div class="topbar-right">
+      <span class="user-badge" data-pp-user-badge>Not logged in</span>
+      <a class="account-link" href="/account.html" data-pp-account-link>Account</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="game-header">
+      <div>
+        <div class="game-title">Tap to Survive</div>
+        <div class="game-tagline">
+          Your tiny hero is constantly losing life. Tap to keep them alive as long as possible. 
+          No upgrades, no pause, just pure panic.
+        </div>
+      </div>
+      <a class="back-link" href="/index.html">← Back to Web Toys</a>
+    </section>
+
+    <section class="game-layout">
+      <!-- LEFT: GAME -->
+      <article class="card">
+        <h2>Game</h2>
+
+        <div class="game-screen">
+          <div class="life-bar-wrap">
+            <div class="life-label-row">
+              <span>Life</span>
+              <span id="lifeText">100 / 100</span>
+            </div>
+            <div class="life-bar-bg">
+              <div class="life-bar-fill" id="lifeBar"></div>
+            </div>
+          </div>
+
+          <div class="game-character">
+            <div class="char-avatar" id="charAvatar">😵</div>
+            <div class="char-meta">
+              <div class="char-name">Little Survivor</div>
+              <div class="char-status" id="charStatus">"I’m fine. Probably."</div>
+              <div class="char-mode" id="charMode">Normal mode</div>
+            </div>
+          </div>
+
+          <div class="game-actions">
+            <button class="btn-main" id="tapButton">
+              <span>Tap to survive</span>
+            </button>
+            <button class="btn-secondary" id="restartButton" disabled>
+              Restart run
+            </button>
+          </div>
+
+          <div class="game-stats-row">
+            <div class="stat-pill">
+              Time survived: <span id="timeSurvived">0.0</span>s
+            </div>
+            <div class="stat-pill">
+              Best: <span id="bestTime">0.0</span>s
+            </div>
+            <div class="stat-pill">
+              Taps: <span id="tapCount">0</span>
+            </div>
+          </div>
+
+          <div class="game-message" id="gameMessage">
+            Keep tapping before the bar hits zero.
+          </div>
+        </div>
+      </article>
+
+      <!-- RIGHT: INFO / HOW TO PLAY -->
+      <article class="card">
+        <h2>How it works</h2>
+        <ul class="info-list">
+          <li>Your life drains automatically over time.</li>
+          <li>Each tap restores a bit of life.</li>
+          <li>When life hits 0, the run ends.</li>
+          <li>Try to survive as long as you can.</li>
+        </ul>
+
+        <p class="game-tagline">
+          This is a tiny browser prototype of <strong>Tap to Survive</strong>. 
+          The full game can have upgrades, hazards, power-ups and more chaos.
+        </p>
+
+        <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <span class="info-badge">
+            <span class="info-dot"></span>
+            Prototype mode
+          </span>
+          <span style="font-size:11px;color:var(--muted);">
+            No saving, no backend – pure client-side stress.
+          </span>
+        </div>
+      </article>
+    </section>
+
+    <footer class="footer">
+      <div>Party Pixels · Tap to Survive (browser prototype)</div>
+      <div>Built to be expanded into a full mobile / PC game.</div>
+    </footer>
+  </main>
+
+  <!-- GAME LOGIC + AUTH HOOK -->
+  <script>
+    // Simple Tap to Survive logic (client-side only)
+    const maxLife = 100;
+    let life = maxLife;
+    let running = true;
+    let tapCount = 0;
+    let timeSurvived = 0;
+    let bestTime = 0;
+    let lastTimestamp = performance.now();
+    const drainPerSecond = 7; // ile życia schodzi na sekundę
+    const healPerTap = 5;
+
+    const lifeBar = document.getElementById("lifeBar");
+    const lifeText = document.getElementById("lifeText");
+    const tapButton = document.getElementById("tapButton");
+    const restartButton = document.getElementById("restartButton");
+    const timeSurvivedEl = document.getElementById("timeSurvived");
+    const bestTimeEl = document.getElementById("bestTime");
+    const tapCountEl = document.getElementById("tapCount");
+    const gameMessage = document.getElementById("gameMessage");
+    const charAvatar = document.getElementById("charAvatar");
+    const charStatus = document.getElementById("charStatus");
+    const charMode = document.getElementById("charMode");
+
+    function updateUI() {
+      const pct = Math.max(0, Math.min(1, life / maxLife));
+      lifeBar.style.width = (pct * 100) + "%";
+      lifeText.textContent = `${Math.max(0, Math.round(life))} / ${maxLife}`;
+      timeSurvivedEl.textContent = timeSurvived.toFixed(1);
+      bestTimeEl.textContent = bestTime.toFixed(1);
+      tapCountEl.textContent = tapCount;
+
+      if (!running && life <= 0) {
+        gameMessage.classList.add("gameover");
+        gameMessage.textContent = "You died. Tap 'Restart run' to try again.";
+        charAvatar.textContent = "💀";
+        charStatus.textContent = `"Ok, that hurt."`;
+        charMode.textContent = "Game over";
+      } else {
+        gameMessage.classList.remove("gameover");
+      }
+
+      if (pct > 0.6) {
+        charAvatar.textContent = "😎";
+        charStatus.textContent = `"This is fine."`;
+      } else if (pct > 0.3) {
+        charAvatar.textContent = "😰";
+        charStatus.textContent = `"Starting to panic a bit."`;
+      } else if (pct > 0) {
+        charAvatar.textContent = "😱";
+        charStatus.textContent = `"HELP. TAP FASTER."`;
+      }
+    }
+
+    function resetGame() {
+      life = maxLife;
+      timeSurvived = 0;
+      tapCount = 0;
+      running = true;
+      lastTimestamp = performance.now();
+      tapButton.disabled = false;
+      restartButton.disabled = true;
+      charMode.textContent = "Normal mode";
+      gameMessage.textContent = "Keep tapping before the bar hits zero.";
+      updateUI();
+    }
+
+    function gameLoop(now) {
+      const deltaSeconds = (now - lastTimestamp) / 1000;
+      lastTimestamp = now;
+
+      if (running) {
+        life -= drainPerSecond * deltaSeconds;
+        timeSurvived += deltaSeconds;
+
+        if (life <= 0) {
+          life = 0;
+          running = false;
+          if (timeSurvived > bestTime) {
+            bestTime = timeSurvived;
+          }
+          tapButton.disabled = true;
+          restartButton.disabled = false;
+        }
+        updateUI();
+      }
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    tapButton.addEventListener("click", () => {
+      if (!running) return;
+      life = Math.min(maxLife, life + healPerTap);
+      tapCount += 1;
+      updateUI();
+    });
+
+    restartButton.addEventListener("click", () => {
+      resetGame();
+    });
+
+    // Start
+    resetGame();
+    requestAnimationFrame(gameLoop);
+  </script>
+
+  <!-- AUTH (shared) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+</body>
+</html>
