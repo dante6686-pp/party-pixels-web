@@ -7,13 +7,28 @@
 
   <style>
     .user-badge {
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      background: rgba(6, 9, 24, 0.9);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: rgba(6, 9, 24, 0.9);
     }
+
+    .account-link {
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--accent2);
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(20, 28, 52, 0.6);
+  white-space: nowrap;
+}
+
+.account-link:hover {
+  border-color: var(--accent1);
+}
 
     :root {
       --bg: #050712;
@@ -50,6 +65,12 @@
       justify-content: space-between;
       gap: 10px;
       margin-bottom: 20px;
+    }
+
+    .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
     }
 
     .brand {
