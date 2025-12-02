@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Party Pixels – Tap to Survive</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Party Pixels – Tap to Survive (Web Toy)</title>
 
   <style>
     :root {
@@ -34,7 +34,8 @@
       align-items: center;
     }
 
-    /* TOP BAR (shared) */
+    /* TOP BAR */
+
     header.topbar {
       width: 100%;
       max-width: 880px;
@@ -92,45 +93,43 @@
       border-color: var(--accent1);
     }
 
-    /* PAGE LAYOUT */
+    /* PAGE */
+
     .page {
       width: 100%;
       max-width: 880px;
       padding: 4px 20px 40px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
-    .game-header {
+    .header-row {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
-      gap: 10px;
       align-items: baseline;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .game-title {
+    .title {
       font-size: 22px;
       font-weight: 700;
     }
 
-    .game-tagline {
+    .subtitle {
       font-size: 13px;
       color: var(--muted);
-      max-width: 420px;
     }
 
-    .game-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 2.3fr) minmax(0, 2fr);
-      gap: 20px;
+    .back-link {
+      font-size: 12px;
+      text-decoration: none;
+      color: var(--accent2);
     }
 
-    @media (max-width: 780px) {
-      .game-layout {
-        grid-template-columns: 1fr;
-      }
+    .back-link:hover {
+      color: var(--accent1);
     }
 
     .card {
@@ -144,217 +143,187 @@
       box-shadow: 0 18px 32px rgba(0, 0, 0, 0.6);
     }
 
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 16px;
-    }
-
-    /* GAME VIEW */
-    .game-screen {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .life-bar-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .life-label-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
       color: var(--muted);
+      margin-bottom: 6px;
     }
 
-    .life-bar-bg {
+    /* GAME CARD */
+
+    .life-bar-shell {
       width: 100%;
-      height: 16px;
+      height: 14px;
       border-radius: 999px;
-      border: 1px solid rgba(120, 40, 60, 0.9);
-      background: linear-gradient(90deg, #200012, #190015);
+      border: 1px solid rgba(120, 40, 80, 0.8);
+      background: rgba(9, 9, 23, 0.95);
       overflow: hidden;
-      position: relative;
+      margin-bottom: 6px;
     }
 
     .life-bar-fill {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
       width: 100%;
+      height: 100%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #22c55e, #facc15, #fb7185);
-      transition: width 0.12s linear;
+      background: linear-gradient(90deg, #4ade80, #facc15, #fb7185);
+      transition: width 0.08s linear;
     }
 
-    .game-character {
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.2), rgba(5, 7, 18, 0.96));
-      padding: 12px;
+    .life-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.5fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .char-card {
+      border-radius: 16px;
+      border: 1px solid rgba(56, 63, 120, 0.9);
+      background: radial-gradient(circle at top left, rgba(255, 92, 92, 0.2), rgba(5, 7, 18, 0.96));
+      padding: 10px 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
     .char-avatar {
       width: 56px;
       height: 56px;
       border-radius: 18px;
-      background:
-        radial-gradient(circle at 30% 0%, rgba(255, 255, 255, 0.35), transparent 55%),
-        linear-gradient(135deg, #f97316, #ef4444);
+      background: radial-gradient(circle at top, #fb7185, #7f1d1d);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 0 18px rgba(248, 113, 113, 0.6);
+      font-size: 28px;
     }
 
-    .char-meta {
+    .char-text-main {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
 
     .char-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
     }
 
-    .char-status {
+    .char-quote {
       font-size: 12px;
       color: var(--muted);
     }
 
     .char-mode {
       font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(250, 204, 21, 0.9);
-      color: #fedc74;
-      background: rgba(40, 24, 8, 0.9);
-      align-self: flex-start;
       margin-top: 4px;
+      color: #facc15;
     }
 
-    .game-actions {
+    .game-buttons {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
-      align-items: center;
+      margin-top: 12px;
     }
 
     .btn-main {
-      border: none;
+      flex: 1;
+      padding: 10px 14px;
       border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      border: none;
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      color: #050712;
-      box-shadow: 0 0 18px rgba(255, 92, 255, 0.8);
-      text-transform: uppercase;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
       letter-spacing: 0.08em;
-    }
-
-    .btn-main:active {
-      transform: translateY(1px) scale(0.99);
-      box-shadow: 0 0 10px rgba(255, 92, 255, 0.5);
+      text-transform: uppercase;
+      cursor: pointer;
     }
 
     .btn-main:disabled {
-      opacity: 0.6;
+      opacity: 0.5;
       cursor: default;
-      box-shadow: none;
     }
 
-    .btn-secondary {
-      border: 1px solid var(--border);
-      background: rgba(10, 13, 31, 0.9);
+    .btn-ghost {
+      padding: 10px 14px;
       border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 12px;
-      color: var(--muted);
+      border: 1px solid rgba(99, 102, 241, 0.7);
+      background: rgba(11, 15, 40, 0.95);
+      color: var(--text);
+      font-size: 13px;
       cursor: pointer;
     }
 
-    .btn-secondary:active {
-      transform: translateY(1px);
+    .btn-ghost:disabled {
+      opacity: 0.4;
+      cursor: default;
     }
 
-    .game-stats-row {
+    .stats-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      font-size: 12px;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 11px;
       color: var(--muted);
     }
 
     .stat-pill {
       padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(46, 51, 100, 0.9);
+      background: rgba(6, 9, 24, 0.96);
+    }
+
+    .side-card {
+      border-radius: 16px;
+      border: 1px solid rgba(56, 63, 120, 0.9);
+      background: rgba(7, 9, 24, 0.96);
+      padding: 10px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .game-message {
-      font-size: 13px;
-      margin-top: 8px;
-      min-height: 18px;
+      margin-top: 10px;
+      font-size: 12px;
       color: var(--muted);
     }
 
     .game-message.gameover {
       color: var(--danger);
-      font-weight: 600;
     }
 
-    /* RIGHT CARD: HELP / INFO */
-    .info-list {
-      font-size: 13px;
-      color: var(--muted);
-      padding-left: 18px;
-      margin: 6px 0 10px;
-    }
-
-    .info-list li {
-      margin-bottom: 4px;
-    }
-
-    .info-badge {
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      display: inline-flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .info-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #4ade80;
-      box-shadow: 0 0 9px rgba(74, 222, 128, 0.9);
-    }
-
-    .back-link {
+    .leaderboard-link {
+      margin-top: 6px;
       font-size: 12px;
-      text-decoration: none;
-      color: var(--accent2);
     }
 
-    .back-link:hover {
+    .leaderboard-link a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+
+    .leaderboard-link a:hover {
       color: var(--accent1);
     }
 
@@ -372,7 +341,7 @@
       gap: 8px;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 640px) {
       footer.footer {
         flex-direction: column;
       }
@@ -380,14 +349,12 @@
   </style>
 </head>
 <body>
-
-  <!-- TOP BAR (shared) -->
+  <!-- TOP BAR -->
   <header class="topbar">
     <div class="brand">
       <div class="brand-pill"></div>
       Party Pixels
     </div>
-
     <div class="topbar-right">
       <span class="user-badge" data-pp-user-badge>Not logged in</span>
       <a class="account-link" href="/account.html" data-pp-account-link>Account</a>
@@ -395,125 +362,87 @@
   </header>
 
   <main class="page">
-    <section class="game-header">
+    <section class="header-row">
       <div>
-        <div class="game-title">Tap to Survive</div>
-        <div class="game-tagline">
-          Your tiny hero is constantly losing life. Tap to keep them alive as long as possible. 
-          No upgrades, no pause, just pure panic.
+        <div class="title">Tap to Survive – Web Toy</div>
+        <div class="subtitle">
+          Panic mini-game: your life is draining constantly. Tap to stay alive as long as you can.
         </div>
       </div>
       <a class="back-link" href="/index.html">← Back to Web Toys</a>
     </section>
 
-    <section class="game-layout">
-      <!-- LEFT: GAME -->
-      <article class="card">
-        <h2>Game</h2>
+    <section class="card">
+      <div class="section-label">Game</div>
 
-        <div class="game-screen">
-          <div class="life-bar-wrap">
-            <div class="life-label-row">
-              <span>Life</span>
-              <span id="lifeText">100 / 100</span>
-            </div>
-            <div class="life-bar-bg">
-              <div class="life-bar-fill" id="lifeBar"></div>
-            </div>
-          </div>
+      <div class="life-bar-shell">
+        <div id="lifeBar" class="life-bar-fill"></div>
+      </div>
+      <div class="life-row">
+        <span>Life</span>
+        <span id="lifeText">100 / 100</span>
+      </div>
 
-          <div class="game-character">
-            <div class="char-avatar" id="charAvatar">😵</div>
-            <div class="char-meta">
+      <div class="game-layout">
+        <!-- LEFT: main game -->
+        <div>
+          <div class="char-card">
+            <div id="charAvatar" class="char-avatar">😎</div>
+            <div class="char-text-main">
               <div class="char-name">Little Survivor</div>
-              <div class="char-status" id="charStatus">"I’m fine. Probably."</div>
-              <div class="char-mode" id="charMode">Normal mode</div>
+              <div id="charStatus" class="char-quote">"This is fine."</div>
+              <div id="charMode" class="char-mode">Normal mode</div>
             </div>
           </div>
 
-          <div class="game-actions">
-            <button class="btn-main" id="tapButton">
-              <span>Tap to survive</span>
-            </button>
-            <button class="btn-secondary" id="restartButton" disabled>
-              Restart run
-            </button>
+          <div class="game-buttons">
+            <button id="tapButton" class="btn-main">Tap to survive</button>
+            <button id="restartButton" class="btn-ghost" disabled>Restart run</button>
           </div>
 
-          <div class="game-stats-row">
-            <div class="stat-pill">
-              Time survived: <span id="timeSurvived">0.0</span>s
-            </div>
-            <div class="stat-pill">
-              Best: <span id="bestTime">0.0</span>s
-            </div>
-            <div class="stat-pill">
-              Taps: <span id="tapCount">0</span>
-            </div>
+          <div class="stats-row">
+            <div class="stat-pill">Time survived: <span id="timeSurvived">0.0</span>s</div>
+            <div class="stat-pill">Best: <span id="bestTime">0.0</span>s</div>
+            <div class="stat-pill">Taps: <span id="tapCount">0</span></div>
           </div>
 
-          <div class="game-message" id="gameMessage">
+          <div id="gameMessage" class="game-message">
             Keep tapping before the bar hits zero.
           </div>
+
+          <div class="leaderboard-link">
+            <a href="/tap-to-survive-highscores.html">View global highscores →</a>
+          </div>
         </div>
-      </article>
 
-      <!-- RIGHT: INFO / HOW TO PLAY -->
-      <article class="card">
-        <h2>How it works</h2>
-        <ul class="info-list">
-          <li>Your life drains automatically over time.</li>
-          <li>Each tap restores a bit of life.</li>
-          <li>When life hits 0, the run ends.</li>
-          <li>Try to survive as long as you can.</li>
-        </ul>
-
-        <p class="game-tagline">
-          This is a tiny browser prototype of <strong>Tap to Survive</strong>. 
-          The full game can have upgrades, hazards, power-ups and more chaos.
-        </p>
-
-        <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <span class="info-badge">
-            <span class="info-dot"></span>
-            Prototype mode
-          </span>
-          <span style="font-size:11px;color:var(--muted);">
-            No saving, no backend – pure client-side stress.
-          </span>
+        <!-- RIGHT: explanation -->
+        <div class="side-card">
+          <strong>How it works</strong>
+          <span>• Your life drains automatically over time.</span>
+          <span>• Every tap restores a bit of life.</span>
+          <span>• Survive as long as you can – your best run can be saved to the global leaderboard if you’re logged in.</span>
+          <span>• Mobile tip: spam that thumb, but watch your screen 😉</span>
         </div>
-      </article>
+      </div>
     </section>
 
-    <div class="game-stats-row">
-  ...
-</div>
-
-<div style="margin-top:6px;font-size:12px;">
-  <a class="back-link" href="/tap-to-survive-highscores.html">
-    View global highscores →
-  </a>
-</div>
-
-
     <footer class="footer">
-      <div>Party Pixels · Tap to Survive (browser prototype)</div>
-      <div>Built to be expanded into a full mobile / PC game.</div>
+      <div>Party Pixels · Tap to Survive</div>
+      <div>Prototype web toy with Supabase highscores.</div>
     </footer>
   </main>
 
-  
-
-    <!-- GAME LOGIC + HIGHSCORE SAVE -->
+  <!-- GAME LOGIC + HIGHSCORE SAVE -->
   <script>
     const maxLife = 100;
     let life = maxLife;
     let running = true;
     let tapCount = 0;
     let timeSurvived = 0;
-    let bestTime = 0;           // lokalny rekord na tej sesji
+    let bestTime = 0;
     let lastTimestamp = performance.now();
-    const drainPerSecond = 7;   // ile życia schodzi na sekundę
+
+    const drainPerSecond = 7;
     const healPerTap = 5;
 
     const lifeBar = document.getElementById("lifeBar");
@@ -530,7 +459,7 @@
 
     function updateUI() {
       const pct = Math.max(0, Math.min(1, life / maxLife));
-      lifeBar.style.width = (pct * 100) + "%";
+      lifeBar.style.width = String(pct * 100) + "%";
       lifeText.textContent = `${Math.max(0, Math.round(life))} / ${maxLife}`;
       timeSurvivedEl.textContent = timeSurvived.toFixed(1);
       bestTimeEl.textContent = bestTime.toFixed(1);
@@ -538,7 +467,6 @@
 
       if (!running && life <= 0) {
         gameMessage.classList.add("gameover");
-        // konkretna wiadomość ustawiamy w handleRunEnd()
         charAvatar.textContent = "💀";
         charStatus.textContent = `"Ok, that hurt."`;
         charMode.textContent = "Game over";
@@ -548,14 +476,23 @@
 
       const pct2 = Math.max(0, Math.min(1, life / maxLife));
       if (pct2 > 0.6) {
-        charAvatar.textContent = "😎";
-        charStatus.textContent = `"This is fine."`;
+        if (running) {
+          charAvatar.textContent = "😎";
+          charStatus.textContent = `"This is fine."`;
+          charMode.textContent = "Normal mode";
+        }
       } else if (pct2 > 0.3) {
-        charAvatar.textContent = "😰";
-        charStatus.textContent = `"Starting to panic a bit."`;
+        if (running) {
+          charAvatar.textContent = "😰";
+          charStatus.textContent = `"Starting to panic a bit."`;
+          charMode.textContent = "Getting spicy";
+        }
       } else if (pct2 > 0) {
-        charAvatar.textContent = "😱";
-        charStatus.textContent = `"HELP. TAP FASTER."`;
+        if (running) {
+          charAvatar.textContent = "😱";
+          charStatus.textContent = `"HELP. TAP FASTER."`;
+          charMode.textContent = "Panic mode";
+        }
       }
     }
 
@@ -567,26 +504,30 @@
       lastTimestamp = performance.now();
       tapButton.disabled = false;
       restartButton.disabled = true;
-      charMode.textContent = "Normal mode";
       gameMessage.textContent = "Keep tapping before the bar hits zero.";
+      charMode.textContent = "Normal mode";
       updateUI();
     }
 
     async function handleRunEnd(isNewBest) {
       updateUI();
-
       const scoreText = timeSurvived.toFixed(1);
 
-      // jeśli nie new best – po prostu info
       if (!isNewBest) {
         gameMessage.textContent = `You died. Time: ${scoreText}s (no new record).`;
         return;
       }
 
-      // jeśli Supabase nie jest jeszcze załadowany
+      // NEW BEST LOCAL
+      if (timeSurvived > bestTime) {
+        bestTime = timeSurvived;
+        bestTimeEl.textContent = bestTime.toFixed(1);
+      }
+
+      // brak klienta supabase
       if (typeof window.ppSupabase === "undefined") {
         gameMessage.textContent =
-          `New best: ${scoreText}s – (auth not ready, score only local).`;
+          `New best: ${scoreText}s – auth client not ready, score only local.`;
         return;
       }
 
@@ -600,23 +541,28 @@
           return;
         }
 
-        const email = user.email || null;
         const user_id = user.id;
+        const email = user.email || null;
 
-       const { error: insertError } = await window.ppSupabase
-    .from("tap_scores")
-    .insert([{ user_id, email, score: timeSurvived }]);
+        const { error: insertError } = await window.ppSupabase
+          .from("tap_scores")
+          .insert([{ user_id, email, score: timeSurvived }]);
 
-if (insertError) {
-    console.error("Error saving score", insertError);
-    gameMessage.textContent =
-        `New best: ${scoreText}s – couldn't save score (${insertError.message || 'server error'}).`;
-} else {
-    gameMessage.textContent =
-        `New best: ${scoreText}s – saved to global leaderboard.`;
-    charMode.textContent = "Record saved";
-}
-
+        if (insertError) {
+          console.error("Error saving score", insertError);
+          gameMessage.textContent =
+            `New best: ${scoreText}s – couldn't save score (${insertError.message || 'server error'}).`;
+        } else {
+          gameMessage.textContent =
+            `New best: ${scoreText}s – saved to global leaderboard.`;
+          charMode.textContent = "Record saved";
+        }
+      } catch (err) {
+        console.error("Unexpected error saving score", err);
+        gameMessage.textContent =
+          `New best: ${scoreText}s – couldn't save score (unexpected error).`;
+      }
+    }
 
     function gameLoop(now) {
       const deltaSeconds = (now - lastTimestamp) / 1000;
@@ -629,17 +575,10 @@ if (insertError) {
         if (life <= 0) {
           life = 0;
           running = false;
-
-          let isNewBest = false;
-          if (timeSurvived > bestTime) {
-            bestTime = timeSurvived;
-            isNewBest = true;
-          }
-
           tapButton.disabled = true;
           restartButton.disabled = false;
 
-          // obsługa końca runa + zapis wyniku (async)
+          const isNewBest = timeSurvived > bestTime;
           handleRunEnd(isNewBest);
         }
         updateUI();
@@ -659,13 +598,12 @@ if (insertError) {
       resetGame();
     });
 
-    // Start
+    // start
     resetGame();
     requestAnimationFrame(gameLoop);
   </script>
 
-
-  <!-- AUTH (shared) -->
+  <!-- AUTH (Supabase client + pp-auth musi wystawić window.ppSupabase) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
 </body>
