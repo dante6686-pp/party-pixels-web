@@ -603,26 +603,20 @@
         const email = user.email || null;
         const user_id = user.id;
 
-            const { error: insertError } = await window.ppSupabase
-      .from("tap_scores")
-      .insert([{ user_id, email, score: timeSurvived }]);
+       const { error: insertError } = await window.ppSupabase
+    .from("tap_scores")
+    .insert([{ user_id, email, score: timeSurvived }]);
 
-    if (insertError) {
-      console.error("Error saving score", insertError);
-      gameMessage.textContent =
+if (insertError) {
+    console.error("Error saving score", insertError);
+    gameMessage.textContent =
         `New best: ${scoreText}s – couldn't save score (${insertError.message || 'server error'}).`;
-    } else {
-      gameMessage.textContent =
+} else {
+    gameMessage.textContent =
         `New best: ${scoreText}s – saved to global leaderboard.`;
-      charMode.textContent = "Record saved";
-    }
+    charMode.textContent = "Record saved";
+}
 
-      } catch (err) {
-        console.error("Unexpected error saving score", err);
-        gameMessage.textContent =
-          `New best: ${scoreText}s – couldn't save score.`;
-      }
-    }
 
     function gameLoop(now) {
       const deltaSeconds = (now - lastTimestamp) / 1000;
