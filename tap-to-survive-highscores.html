@@ -413,60 +413,59 @@
       // helper: wypasiony format daty
 
       function formatWhen(ts) {
-  if (!ts) return "";
+  try {
+    if (!ts) return "";
 
-  let d = new Date(ts);
-
-  // Jeśli parsowanie nie wyszło, spróbuj z dopiętym "Z"
-  if (isNaN(d.getTime())) {
-    if (typeof ts === "string" && !/[zZ]|[+\-]\d\d:?\d\d$/.test(ts)) {
-      d = new Date(ts + "Z");
-      if (isNaN(d.getTime())) return "";
-    } else {
+    // Supabase timestamptz -> normalny ISO string
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) {
       return "";
     }
+
+    const now = new Date();
+    const diffMs = now - d;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    const time = d.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    const sameDay =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
+
+    if (sameDay) {
+      return `Today, ${time}`;
+    }
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+
+    const isYesterday =
+      d.getDate() === yesterday.getDate() &&
+      d.getMonth() === yesterday.getMonth() &&
+      d.getFullYear() === yesterday.getFullYear();
+
+    if (isYesterday) {
+      return `Yesterday, ${time}`;
+    }
+
+    if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    }
+
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }) + ` — ${time}`;
+  } catch (e) {
+    console.error("formatWhen error", e);
+    return "";
   }
-
-  const now = new Date();
-  const diffMs = now - d;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  const time = d.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-
-  const sameDay =
-    d.getDate() === now.getDate() &&
-    d.getMonth() === now.getMonth() &&
-    d.getFullYear() === now.getFullYear();
-
-  if (sameDay) {
-    return `Today, ${time}`;
-  }
-
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-
-  const isYesterday =
-    d.getDate() === yesterday.getDate() &&
-    d.getMonth() === yesterday.getMonth() &&
-    d.getFullYear() === yesterday.getFullYear();
-
-  if (isYesterday) {
-    return `Yesterday, ${time}`;
-  }
-
-  if (diffDays < 7) {
-    return `${diffDays} days ago`;
-  }
-
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  }) + ` — ${time}`;
-      }
+}
       
 
       try {
