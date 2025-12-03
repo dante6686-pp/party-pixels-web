@@ -411,53 +411,63 @@
       let currentUser = null;
 
       // helper: wypasiony format daty
+
       function formatWhen(ts) {
-        if (!ts) return "";
+  if (!ts) return "";
 
-        const fixed = ts.endsWith("Z") ? ts : ts + "Z";
-        const d = new Date(fixed);
-        if (isNaN(d.getTime())) return "";
+  let d = new Date(ts);
 
-        const now = new Date();
-        const diffMs = now - d;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  // Jeśli parsowanie nie wyszło, spróbuj z dopiętym "Z"
+  if (isNaN(d.getTime())) {
+    if (typeof ts === "string" && !/[zZ]|[+\-]\d\d:?\d\d$/.test(ts)) {
+      d = new Date(ts + "Z");
+      if (isNaN(d.getTime())) return "";
+    } else {
+      return "";
+    }
+  }
 
-        const time = d.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit"
-        });
+  const now = new Date();
+  const diffMs = now - d;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-        const sameDay =
-          d.getDate() === now.getDate() &&
-          d.getMonth() === now.getMonth() &&
-          d.getFullYear() === now.getFullYear();
+  const time = d.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 
-        if (sameDay) {
-          return `Today, ${time}`;
-        }
+  const sameDay =
+    d.getDate() === now.getDate() &&
+    d.getMonth() === now.getMonth() &&
+    d.getFullYear() === now.getFullYear();
 
-        const yesterday = new Date(now);
-        yesterday.setDate(now.getDate() - 1);
+  if (sameDay) {
+    return `Today, ${time}`;
+  }
 
-        const isYesterday =
-          d.getDate() === yesterday.getDate() &&
-          d.getMonth() === yesterday.getMonth() &&
-          d.getFullYear() === yesterday.getFullYear();
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
 
-        if (isYesterday) {
-          return `Yesterday, ${time}`;
-        }
+  const isYesterday =
+    d.getDate() === yesterday.getDate() &&
+    d.getMonth() === yesterday.getMonth() &&
+    d.getFullYear() === yesterday.getFullYear();
 
-        if (diffDays < 7) {
-          return `${diffDays} days ago`;
-        }
+  if (isYesterday) {
+    return `Yesterday, ${time}`;
+  }
 
-        return d.toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric"
-        }) + ` — ${time}`;
+  if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  }
+
+  return d.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  }) + ` — ${time}`;
       }
+      
 
       try {
         const { data: userData } = await window.ppSupabase.auth.getUser();
@@ -466,7 +476,7 @@
         const { data, error } = await window.ppSupabase
           .from("tts_scores")
           .select("user_id, email, score, created_at")
-          .order("score", { ascending: false })
+          .order("score", { ascending: fale })
           .limit(200);
 
         if (error) {
