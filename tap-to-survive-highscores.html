@@ -283,7 +283,7 @@
         const currentUser = userData?.user || null;
 
         const { data, error } = await window.ppSupabase
-          .from("tap_scores")
+          .from("tts_scores")
           .select("email, score, created_at, user_id")
           .order("score", { ascending: false })
           .limit(50);
