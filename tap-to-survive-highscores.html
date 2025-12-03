@@ -233,7 +233,7 @@
       color: var(--muted);
     }
 
-    /* trophy / ranking badges */
+    /* trophy badges */
 
     .rank-badge {
       display: inline-flex;
@@ -399,7 +399,6 @@
 
       if (!tbody || !statusEl) return;
 
-      // jeśli klient auth się nie załadował
       if (typeof window.ppSupabase === "undefined") {
         tbody.innerHTML = `
           <tr><td colspan="4" style="padding: 14px;">
@@ -411,16 +410,63 @@
 
       let currentUser = null;
 
+      // helper: wypasiony format daty
+      function formatWhen(ts) {
+        if (!ts) return "";
+
+        const fixed = ts.endsWith("Z") ? ts : ts + "Z";
+        const d = new Date(fixed);
+        if (isNaN(d.getTime())) return "";
+
+        const now = new Date();
+        const diffMs = now - d;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        const time = d.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+
+        const sameDay =
+          d.getDate() === now.getDate() &&
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear();
+
+        if (sameDay) {
+          return `Today, ${time}`;
+        }
+
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+
+        const isYesterday =
+          d.getDate() === yesterday.getDate() &&
+          d.getMonth() === yesterday.getMonth() &&
+          d.getFullYear() === yesterday.getFullYear();
+
+        if (isYesterday) {
+          return `Yesterday, ${time}`;
+        }
+
+        if (diffDays < 7) {
+          return `${diffDays} days ago`;
+        }
+
+        return d.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }) + ` — ${time}`;
+      }
+
       try {
-        // pobierz aktualnie zalogowanego
         const { data: userData } = await window.ppSupabase.auth.getUser();
         currentUser = userData?.user || null;
 
-        // pobierz surowe wyniki – wiele wpisów na usera
         const { data, error } = await window.ppSupabase
           .from("tts_scores")
           .select("user_id, email, score, created_at")
-          .order("score", { ascending: false })   // wyższy score = lepiej (dłużej żył)
+          .order("score", { ascending: false })
           .limit(200);
 
         if (error) {
@@ -442,26 +488,18 @@
           return;
         }
 
-        // 🔥 AGREGACJA: jeden najlepszy wynik na usera
-        // kluczem jest user_id jeśli istnieje, inaczej email
+        // per-user best
         const bestByUser = new Map();
 
         for (const row of data) {
           const key = row.user_id || (row.email ?? "").toLowerCase();
           if (!key) continue;
-
-          const existing = bestByUser.get(key);
-          if (!existing) {
-            bestByUser.set(key, row); // dane już są posortowane od najlepszego
-          }
+          if (!bestByUser.get(key)) bestByUser.set(key, row);
         }
 
         const uniqueScores = Array.from(bestByUser.values());
-
-        // sortowanie per-user po score (najwyższy first)
         uniqueScores.sort((a, b) => (b.score || 0) - (a.score || 0));
 
-        // helper do maskowania emaila
         function maskEmail(email) {
           if (!email || typeof email !== "string") return "(unknown)";
           const [name, domain] = email.split("@");
@@ -470,70 +508,11 @@
           return name[0] + name[1] + "***@" + domain;
         }
 
-        // helper format daty
-        
-
-        // rysowanie
         tbody.innerHTML = "";
 
-        uniqueScores.forEach((rofunction formatWhen(ts) {
-  if (!ts) return "";
-
-  // Normalize timestamp (Supabase sometimes omits Z)
-  const fixed = ts.endsWith("Z") ? ts : ts + "Z";
-  const d = new Date(fixed);
-  if (isNaN(d.getTime())) return "";
-
-  const now = new Date();
-
-  // Calculate difference in days
-  const diffMs = now - d;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  // Helper: HH:MM
-  const time = d.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-
-  // Today
-  const sameDay =
-    d.getDate() === now.getDate() &&
-    d.getMonth() === now.getMonth() &&
-    d.getFullYear() === now.getFullYear();
-
-  if (sameDay) {
-    return `Today, ${time}`;
-  }
-
-  // Yesterday
-  const yesterday = new Date(now);
-  yesterday.setDate(now.getDate() - 1);
-
-  const isYesterday =
-    d.getDate() === yesterday.getDate() &&
-    d.getMonth() === yesterday.getMonth() &&
-    d.getFullYear() === yesterday.getFullYear();
-
-  if (isYesterday) {
-    return `Yesterday, ${time}`;
-  }
-
-  // 2–6 days ago
-  if (diffDays < 7) {
-    return `${diffDays} days ago`;
-  }
-
-  // Full date for older scores
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  }) + ` — ${time}`;
-      }w, index) => {
+        uniqueScores.forEach((row, index) => {
           const tr = document.createElement("tr");
 
-          // czy to wiersz aktualnego usera?
           let isMe = false;
           if (currentUser) {
             if (row.user_id && row.user_id === currentUser.id) {
@@ -551,7 +530,6 @@
 
           const rank = index + 1;
 
-          // rank badge / numer
           const rankTd = document.createElement("td");
           rankTd.className = "score-rank";
           const badge = document.createElement("div");
@@ -562,7 +540,6 @@
           badge.textContent = rank;
           rankTd.appendChild(badge);
 
-          // player
           const playerTd = document.createElement("td");
           playerTd.className = "score-player";
           playerTd.textContent = maskEmail(row.email);
@@ -570,17 +547,15 @@
           if (isMe) {
             const mePill = document.createElement("span");
             mePill.className = "me-pill";
-            mePill.innerHTML = "You&nbsp;★";
+            mePill.innerHTML = "YOU&nbsp;★";
             playerTd.appendChild(mePill);
           }
 
-          // best time
           const bestTd = document.createElement("td");
           bestTd.className = "score-best";
           const scoreVal = Number(row.score || 0);
           bestTd.textContent = scoreVal.toFixed(1);
 
-          // when
           const whenTd = document.createElement("td");
           whenTd.className = "score-when";
           whenTd.textContent = formatWhen(row.created_at);
