@@ -504,47 +504,47 @@
     }
 
     async function saveBestToSupabase() {
-      const scoreText = timeSurvived.toFixed(1);
+  const scoreText = timeSurvived.toFixed(1);
 
-      // jeśli klient jeszcze nie gotowy
-      if (typeof window.ppSupabase === "undefined") {
-        gameMessage.textContent =
-          `New best: ${scoreText}s – auth client not ready, score only local.`;
-        return;
-      }
+  // jeśli klient jeszcze nie gotowy
+  if (typeof window.ppSupabase === "undefined") {
+    gameMessage.textContent =
+      `New best: ${scoreText}s – auth client not ready, score only local.`;
+    return;
+  }
 
-      try {
-        const { data, error: userError } = await window.ppSupabase.auth.getUser();
-        const user = data?.user || null;
+  try {
+    const { data: data2, error: userError } = await window.ppSupabase.auth.getUser();
+    const user = data2?.user || null;
 
-        if (userError || !user) {
-          gameMessage.textContent =
-            `New best: ${scoreText}s – log in to save it to the global leaderboard.`;
-          return;
-        }
-
-        const user_id = user.id;
-        const email = user.email || null;
-
-        const { error: insertError } = await window.ppSupabase
-          .from("tts_scores")
-          .insert([{ user_id, email, created_at, score: timeSurvived }]);
-
-        if (insertError) {
-          console.error("Error saving score", insertError);
-          gameMessage.textContent =
-            `New best: ${scoreText}s – couldn't save score (${insertError.message || 'server error'}).`;
-        } else {
-          gameMessage.textContent =
-            `New best: ${scoreText}s – saved to global leaderboard.`;
-          charMode.textContent = "Record saved";
-        }
-      } catch (err) {
-        console.error("Unexpected error saving score", err);
-        gameMessage.textContent =
-          `New best: ${timeSurvived.toFixed(1)}s – couldn't save score (unexpected error).`;
-      }
+    if (userError || !user) {
+      gameMessage.textContent =
+        `New best: ${scoreText}s – log in to save it to the global leaderboard.`;
+      return;
     }
+
+    const user_id = user.id;
+    const email = user.email || null;
+
+    const { error: insertError } = await window.ppSupabase
+      .from("tts_scores")
+      .insert([{ user_id, email, score: timeSurvived }]);
+
+    if (insertError) {
+      console.error("Error saving score", insertError);
+      gameMessage.textContent =
+        `New best: ${scoreText}s – couldn't save score (${insertError.message || "server error"}).`;
+    } else {
+      gameMessage.textContent =
+        `New best: ${scoreText}s – saved to global leaderboard.`;
+      charMode.textContent = "Record saved";
+    }
+  } catch (err) {
+    console.error("Unexpected error saving score", err);
+    gameMessage.textContent =
+      `New best: ${timeSurvived.toFixed(1)}s – couldn't save score (unexpected error).`;
+  }
+}
 
     async function handleRunEnd() {
       running = false;
