@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tap to Survive 2: Overload – Party Pixels Web Toy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #ff9a9e 0%, #6a11cb 50%, #111827 100%);
+      color: #f9fafb;
+    }
+
+    .game-wrapper {
+      width: 100%;
+      max-width: 480px;
+      padding: 16px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.9);
+      border-radius: 18px;
+      padding: 16px 14px 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      backdrop-filter: blur(12px);
+    }
+
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .title-row h1 {
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.7rem;
+      margin-bottom: 10px;
+      opacity: 0.85;
+    }
+
+    .stat-chip {
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.9);
+      border: 1px solid rgba(75, 85, 99, 0.8);
+    }
+
+    .bars {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      margin-bottom: 2px;
+      opacity: 0.85;
+    }
+
+    .bar-shell {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(31, 41, 55, 0.9);
+      overflow: hidden;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 50%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      transition: width 0.12s linear;
+    }
+
+    .bar-fill.chaos {
+      background: linear-gradient(90deg, #f97316, #ef4444);
+    }
+
+    .bar-fill.wave {
+      background: linear-gradient(90deg, #38bdf8, #6366f1);
+    }
+
+    .tap-zone {
+      margin-top: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #tapButton {
+      width: 100%;
+      padding: 16px 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      background: radial-gradient(circle at top, #22c55e, #16a34a);
+      color: #022c22;
+      box-shadow: 0 12px 25px rgba(16, 185, 129, 0.35);
+      transform: translateY(0);
+      transition: transform 0.06s ease, box-shadow 0.06s ease, filter 0.06s ease;
+    }
+
+    #tapButton:active {
+      transform: translateY(2px) scale(0.99);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.25);
+      filter: brightness(0.95);
+    }
+
+    #tapButton.disabled {
+      background: radial-gradient(circle at top, #6b7280, #4b5563);
+      color: #e5e7eb;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.7rem;
+      margin-bottom: 6px;
+      opacity: 0.9;
+    }
+
+    .status-row span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-pill {
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.85;
+    }
+
+    .status-pill.bad {
+      border-color: rgba(248, 113, 113, 0.9);
+      color: #fecaca;
+    }
+
+    .status-pill.good {
+      border-color: rgba(52, 211, 153, 0.9);
+      color: #bbf7d0;
+    }
+
+    .log-box {
+      font-size: 0.7rem;
+      height: 82px;
+      overflow: hidden;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .log-line {
+      opacity: 0.8;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .log-line.system {
+      color: #a5b4fc;
+    }
+
+    .log-line.event {
+      color: #facc15;
+    }
+
+    .log-line.negative {
+      color: #fecaca;
+    }
+
+    .footer-row {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      opacity: 0.7;
+    }
+
+    .footer-row a {
+      color: #a5b4fc;
+      text-decoration: none;
+    }
+
+    .footer-row a:hover {
+      text-decoration: underline;
+    }
+
+    /* Upgrade modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 20;
+    }
+
+    .overlay.visible {
+      display: flex;
+    }
+
+    .overlay-card {
+      width: 100%;
+      max-width: 420px;
+      background: #020617;
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8);
+    }
+
+    .overlay-card h2 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .overlay-sub {
+      font-size: 0.7rem;
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+
+    .upgrade-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .upgrade-btn {
+      width: 100%;
+      text-align: left;
+      padding: 8px 9px;
+      border-radius: 12px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      background: radial-gradient(circle at top, #111827, #020617);
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: transform 0.06s ease, box-shadow 0.06s ease, border-color 0.08s ease;
+    }
+
+    .upgrade-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.9);
+      border-color: #6366f1;
+    }
+
+    .upgrade-name {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .upgrade-desc {
+      opacity: 0.8;
+    }
+
+    .overlay-hint {
+      font-size: 0.65rem;
+      opacity: 0.7;
+      text-align: right;
+    }
+
+    /* Game over ribbon */
+    .game-over-banner {
+      position: absolute;
+      top: 10px;
+      right: -35px;
+      transform: rotate(15deg);
+      background: linear-gradient(120deg, #ef4444, #b91c1c);
+      color: #fef2f2;
+      padding: 4px 40px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+      display: none;
+    }
+
+    .game-over-banner.visible {
+      display: block;
+    }
+
+    .top-right {
+      position: relative;
+    }
+
+    .restart-btn {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: transparent;
+      color: #e5e7eb;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .restart-btn:hover {
+      background: rgba(31, 41, 55, 0.9);
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 14px 12px 15px;
+      }
+      #tapButton {
+        padding: 14px 8px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-wrapper">
+    <div class="card">
+      <div class="title-row">
+        <div>
+          <h1>Tap to Survive 2</h1>
+          <div class="subtitle">Overload Protocol</div>
+        </div>
+        <div class="top-right">
+          <span class="subtitle" id="waveLabel">Fala 1</span>
+          <button class="restart-btn" id="restartButton">Restart</button>
+          <div class="game-over-banner" id="gameOverBanner">You Died</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip">
+          HP: <span id="hpStat">100 / 100</span>
+        </div>
+        <div class="stat-chip">
+          Tap: <span id="tapStat">+5</span>
+        </div>
+        <div class="stat-chip">
+          Drain: <span id="drainStat">4/s</span>
+        </div>
+      </div>
+
+      <div class="bars">
+        <div>
+          <div class="bar-label">
+            <span>Life Support</span>
+            <span id="hpPercentLabel">100%</span>
+          </div>
+          <div class="bar-shell">
+            <div class="bar-fill" id="hpBar"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="bar-label">
+            <span>Chaos Meter</span>
+            <span id="chaosPercentLabel">0%</span>
+          </div>
+          <div class="bar-shell">
+            <div class="bar-fill chaos" id="chaosBar"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="bar-label">
+            <span>Wave Timer</span>
+            <span id="waveTimeLabel">20.0s</span>
+          </div>
+          <div class="bar-shell">
+            <div class="bar-fill wave" id="waveBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tap-zone">
+        <button id="tapButton">Tap to Stay Alive</button>
+        <div class="status-row">
+          <span>
+            Status:
+            <span class="status-pill" id="statusLabel">Stable</span>
+          </span>
+          <span>
+            Effects:
+            <span class="status-pill good" id="buffLabel" style="display:none;">Buff</span>
+            <span class="status-pill bad" id="debuffLabel" style="display:none;">Debuff</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="log-box" id="logBox">
+        <!-- log lines -->
+      </div>
+
+      <div class="footer-row">
+        <span>Party Pixels Web Toy</span>
+        <span>Prototype build • v2.0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade overlay -->
+  <div class="overlay" id="upgradeOverlay">
+    <div class="overlay-card">
+      <h2>Upgrade Run</h2>
+      <div class="overlay-sub">
+        Przetrwałeś falę. Wybierz jedną mutację, która zostanie z Tobą do końca tego runa.
+      </div>
+      <div class="upgrade-list" id="upgradeList">
+        <!-- buttons JS -->
+      </div>
+      <div class="overlay-hint">Tip: Te efekty się stackują.</div>
+    </div>
+  </div>
+
+  <script>
+    const tapButton = document.getElementById("tapButton");
+    const restartButton = document.getElementById("restartButton");
+    const hpBar = document.getElementById("hpBar");
+    const chaosBar = document.getElementById("chaosBar");
+    const waveBar = document.getElementById("waveBar");
+    const hpStat = document.getElementById("hpStat");
+    const tapStat = document.getElementById("tapStat");
+    const drainStat = document.getElementById("drainStat");
+    const hpPercentLabel = document.getElementById("hpPercentLabel");
+    const chaosPercentLabel = document.getElementById("chaosPercentLabel");
+    const waveTimeLabel = document.getElementById("waveTimeLabel");
+    const waveLabel = document.getElementById("waveLabel");
+    const statusLabel = document.getElementById("statusLabel");
+    const buffLabel = document.getElementById("buffLabel");
+    const debuffLabel = document.getElementById("debuffLabel");
+    const logBox = document.getElementById("logBox");
+    const upgradeOverlay = document.getElementById("upgradeOverlay");
+    const upgradeList = document.getElementById("upgradeList");
+    const gameOverBanner = document.getElementById("gameOverBanner");
+
+    const state = {
+      wave: 1,
+      maxHp: 100,
+      hp: 100,
+      tapPower: 5,
+      baseTapPower: 5,
+      baseDrain: 4,
+      drainPerSecond: 4,
+      chaos: 0,
+      chaosPerTap: 2,
+      chaosPerSecond: 1,
+      waveDuration: 20,
+      waveTimeLeft: 20,
+      alive: true,
+      inUpgradeChoice: false,
+      lastTime: performance.now(),
+      reverseTapsUntil: 0,
+      healBlockedUntil: 0,
+      doubleTapUntil: 0,
+      buffActive: false,
+      debuffActive: false
+    };
+
+    const upgradesPool = [
+      {
+        id: "tap_plus",
+        name: "Finger Overdrive",
+        desc: "+2 leczenia z tapnięcia.",
+        apply: () => {
+          state.tapPower += 2;
+        }
+      },
+      {
+        id: "hp_plus",
+        name: "Extra Tank",
+        desc: "+20 maksymalnego HP i natychmiastowe leczenie o 20.",
+        apply: () => {
+          state.maxHp += 20;
+          state.hp = Math.min(state.maxHp, state.hp + 20);
+        }
+      },
+      {
+        id: "drain_down",
+        name: "Slow Bleed",
+        desc: "–1 HP/s z utraty życia.",
+        apply: () => {
+          state.drainPerSecond = Math.max(0.5, state.drainPerSecond - 1);
+        }
+      },
+      {
+        id: "chaos_cooling",
+        name: "Chaos Cooling",
+        desc: "Chaos rośnie wolniej o ok. 30%.",
+        apply: () => {
+          state.chaosPerSecond *= 0.7;
+          state.chaosPerTap *= 0.7;
+        }
+      },
+      {
+        id: "burst_heal",
+        name: "Emergency Patch",
+        desc: "Natychmiast leczysz się o 35% maksymalnego HP.",
+        apply: () => {
+          state.hp = Math.min(
+            state.maxHp,
+            state.hp + state.maxHp * 0.35
+          );
+        }
+      },
+      {
+        id: "wave_shield",
+        name: "Wave Shield",
+        desc: "Na początku każdej fali dostajesz +15 tymczasowego HP.",
+        apply: () => {
+          state.extraWaveHp = (state.extraWaveHp || 0) + 15;
+        }
+      }
+    ];
+
+    const chaosEvents = [
+      "reverse_taps",
+      "heal_burst",
+      "double_tap",
+      "hp_lock"
+    ];
+
+    function log(message, type = "system") {
+      const div = document.createElement("div");
+      div.className = `log-line ${type}`;
+      div.textContent = message;
+      logBox.prepend(div);
+      while (logBox.childElementCount > 6) {
+        logBox.removeChild(logBox.lastChild);
+      }
+    }
+
+    function clamp(v, min, max) {
+      return Math.min(max, Math.max(min, v));
+    }
+
+    function setTapButtonEnabled(enabled) {
+      if (enabled) {
+        tapButton.classList.remove("disabled");
+        tapButton.disabled = false;
+      } else {
+        tapButton.classList.add("disabled");
+        tapButton.disabled = true;
+      }
+    }
+
+    function updateUI() {
+      const hpPercent = (state.hp / state.maxHp) * 100;
+      hpBar.style.width = clamp(hpPercent, 0, 100) + "%";
+      hpPercentLabel.textContent = clamp(hpPercent, 0, 100).toFixed(0) + "%";
+      hpStat.textContent = `${Math.max(0, state.hp.toFixed(0))} / ${state.maxHp}`;
+
+      const chaosPercent = clamp(state.chaos, 0, 100);
+      chaosBar.style.width = chaosPercent + "%";
+      chaosPercentLabel.textContent = chaosPercent.toFixed(0) + "%";
+
+      const waveProgress = clamp(
+        1 - state.waveTimeLeft / state.waveDuration,
+        0,
+        1
+      );
+      waveBar.style.width = (waveProgress * 100).toFixed(1) + "%";
+      waveTimeLabel.textContent = state.waveTimeLeft.toFixed(1) + "s";
+
+      waveLabel.textContent = "Fala " + state.wave;
+
+      tapStat.textContent = `+${state.tapPower}`;
+      drainStat.textContent = `${state.drainPerSecond.toFixed(1)}/s`;
+
+      // status text
+      if (!state.alive) {
+        statusLabel.textContent = "Offline";
+      } else if (state.waveTimeLeft < 5) {
+        statusLabel.textContent = "Critical";
+      } else if (state.hp < state.maxHp * 0.3) {
+        statusLabel.textContent = "Danger";
+      } else {
+        statusLabel.textContent = "Stable";
+      }
+
+      // buffs/debuffs
+      const now = performance.now();
+      state.buffActive =
+        now < state.doubleTapUntil || now < state.healBurstUntil;
+      state.debuffActive =
+        now < state.reverseTapsUntil || now < state.healBlockedUntil;
+
+      buffLabel.style.display = state.buffActive ? "inline-flex" : "none";
+      debuffLabel.style.display = state.debuffActive ? "inline-flex" : "none";
+    }
+
+    function triggerChaosEvent() {
+      state.chaos = 0;
+      const eventId =
+        chaosEvents[Math.floor(Math.random() * chaosEvents.length)];
+      const now = performance.now();
+
+      switch (eventId) {
+        case "reverse_taps":
+          state.reverseTapsUntil = now + 10000;
+          log(
+            "CHAOS EVENT: Reverse Flow – przez 10s tapnięcia ranią zamiast leczyć!",
+            "negative event"
+          );
+          break;
+        case "heal_burst":
+          const healAmount = state.maxHp * 0.4;
+          state.hp = clamp(state.hp + healAmount, 0, state.maxHp);
+          state.healBurstUntil = now + 4000;
+          log(
+            "CHAOS EVENT: Healing Surge – +40% HP i chwilowy boost stabilności.",
+            "event"
+          );
+          break;
+        case "double_tap":
+          state.doubleTapUntil = now + 8000;
+          log(
+            "CHAOS EVENT: Overload Fingers – przez 8s leczenie z tapnięć x2.",
+            "event"
+          );
+          break;
+        case "hp_lock":
+          state.healBlockedUntil = now + 7000;
+          log(
+            "CHAOS EVENT: Lockdown – przez 7s nie możesz się leczyć z tapów.",
+            "negative"
+          );
+          break;
+      }
+    }
+
+    function showUpgrades() {
+      state.inUpgradeChoice = true;
+      setTapButtonEnabled(false);
+      upgradeList.innerHTML = "";
+
+      const poolCopy = [...upgradesPool];
+      const chosen = [];
+      while (poolCopy.length && chosen.length < 3) {
+        const idx = Math.floor(Math.random() * poolCopy.length);
+        chosen.push(poolCopy.splice(idx, 1)[0]);
+      }
+
+      chosen.forEach((upg) => {
+        const btn = document.createElement("button");
+        btn.className = "upgrade-btn";
+        btn.dataset.upgradeId = upg.id;
+
+        const name = document.createElement("div");
+        name.className = "upgrade-name";
+        name.textContent = upg.name;
+
+        const desc = document.createElement("div");
+        desc.className = "upgrade-desc";
+        desc.textContent = upg.desc;
+
+        btn.appendChild(name);
+        btn.appendChild(desc);
+
+        btn.addEventListener("click", () => {
+          upg.apply();
+          log(`Wybrałeś: ${upg.name}.`, "system");
+          upgradeOverlay.classList.remove("visible");
+          state.inUpgradeChoice = false;
+          startNextWave();
+        });
+
+        upgradeList.appendChild(btn);
+      });
+
+      upgradeOverlay.classList.add("visible");
+    }
+
+    function startNextWave() {
+      state.wave += 1;
+
+      // rosnąca trudność
+      state.drainPerSecond += 0.8;
+      state.chaosPerSecond += 0.1;
+      state.waveDuration += 2;
+      state.waveTimeLeft = state.waveDuration;
+
+      // bonus z reliktu wave_shield (jeśli zdobyty)
+      if (state.extraWaveHp) {
+        state.hp = clamp(state.hp + state.extraWaveHp, 0, state.maxHp);
+        log(
+          `Wave Shield: +${state.extraWaveHp} HP na start fali ${state.wave}.`,
+          "system"
+        );
+      }
+
+      log(`Nowa fala: ${state.wave}. Ciśnienie rośnie...`, "system");
+      setTapButtonEnabled(true);
+    }
+
+    function resetGame() {
+      state.wave = 1;
+      state.maxHp = 100;
+      state.hp = 100;
+      state.tapPower = 5;
+      state.baseTapPower = 5;
+      state.baseDrain = 4;
+      state.drainPerSecond = 4;
+      state.chaos = 0;
+      state.chaosPerTap = 2;
+      state.chaosPerSecond = 1;
+      state.waveDuration = 20;
+      state.waveTimeLeft = 20;
+      state.alive = true;
+      state.inUpgradeChoice = false;
+      state.lastTime = performance.now();
+      state.reverseTapsUntil = 0;
+      state.healBlocke
