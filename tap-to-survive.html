@@ -528,7 +528,7 @@
 
         const { error: insertError } = await window.ppSupabase
           .from("tts_scores")
-          .insert([{ user_id, email, score: timeSurvived }]);
+          .insert([{ user_id, email, created_at, score: timeSurvived }]);
 
         if (insertError) {
           console.error("Error saving score", insertError);
