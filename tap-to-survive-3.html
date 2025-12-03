@@ -810,3 +810,143 @@
               </div>
               <button class="small-btn" id="nightUnlockBtn">Odblokuj / Przełącz</button>
             </div>
+          </div>
+        </div>
+
+        <div class="panel-hint">
+          Aktywne relikty wpływają na każdy nowy run. Możesz mieć włączone oba naraz, jeśli lubisz cierpieć.
+        </div>
+      </section>
+
+      <!-- BAR VIEW -->
+      <section id="barView" class="view">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Bar & Ruiny</div>
+            <div class="panel-sub">Miejsce, gdzie ludzie udają, że jeszcze żyją.</div>
+          </div>
+          <button class="back-btn" data-back>← Miasto</button>
+        </div>
+
+        <div class="bar-text">
+          Na razie barman tylko słucha. W przyszłości pojawią się tu daily challenges z bonusowym scrapem
+          i dziwnymi modyfikatorami runa.
+        </div>
+
+        <div class="bar-quote">
+          „Jeśli dalej tapujesz w tym tempie, to albo uratujesz się z tej dziury… albo złamiesz ekran.”
+        </div>
+
+        <div class="daily-pill">
+          Daily system: COMING SOON (bardzo)
+        </div>
+      </section>
+
+      <!-- RUN VIEW -->
+      <section id="runView" class="view">
+        <div class="run-header">
+          <div class="run-left">
+            <h2>Run: Overload</h2>
+            <div class="subtitle" id="runSubtitle">Bunkier online. Wszystkie systemy udają stabilność.</div>
+          </div>
+          <div class="run-right">
+            <div>Fala <span id="waveLabel">1</span></div>
+            <div style="opacity:0.75;">Run scrap: <span id="runScrapLabel">0</span></div>
+          </div>
+        </div>
+
+        <div class="run-bars">
+          <div>
+            <div class="bar-label">
+              <span id="hpLabelTitle">Life Support</span>
+              <span id="hpPercentLabel">100%</span>
+            </div>
+            <div class="bar-shell">
+              <div class="bar-fill" id="hpBar"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="bar-label">
+              <span>Chaos Meter</span>
+              <span id="chaosPercentLabel">0%</span>
+            </div>
+            <div class="bar-shell">
+              <div class="bar-fill chaos" id="chaosBar"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="bar-label">
+              <span>Wave Timer</span>
+              <span id="waveTimeLabel">20.0s</span>
+            </div>
+            <div class="bar-shell">
+              <div class="bar-fill wave" id="waveBar"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="run-stats-row">
+          <div class="chip">
+            HP: <span id="hpStat">100 / 100</span>
+          </div>
+          <div class="chip">
+            Tap: <span id="tapStat">+5</span>
+          </div>
+          <div class="chip">
+            Drain: <span id="drainStat">4/s</span>
+          </div>
+        </div>
+
+        <div class="tap-zone">
+          <button id="tapButton">Tap to Stay Alive</button>
+          <div class="run-status-row">
+            <span>Status: <span class="pill" id="statusPill">Stable</span></span>
+            <span>
+              Efekty:
+              <span class="pill good" id="buffLabel" style="display:none;">Buff</span>
+              <span class="pill bad" id="debuffLabel" style="display:none;">Debuff</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="log-box" id="logBox"></div>
+
+        <div class="run-bottom-row">
+          <div>Prototype build • balans: „tak sobie”</div>
+          <div class="run-controls">
+            <button class="tiny-btn" id="runRestartBtn">Restart run</button>
+            <button class="tiny-btn" id="runBackBtn">Przerwij & Miasto</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RUN END OVERLAY -->
+      <div class="overlay-root" id="runEndOverlay">
+        <div class="overlay-card">
+          <div class="overlay-title">Run zakończony</div>
+          <div class="overlay-text" id="runEndMessage">
+            Umierasz w popiele. Wieża radiowa zapisuje tylko szum.
+          </div>
+          <div class="overlay-stats">
+            Fala: <span id="endWaveLabel">1</span><br />
+            Zdobyty scrap: <span id="endScrapLabel">0</span><br />
+            Całkowity scrap: <span id="endTotalScrapLabel">0</span>
+          </div>
+          <div class="overlay-actions">
+            <button class="small-btn" id="endCityBtn">← Wróć do miasta</button>
+            <button class="small-btn" id="endRestartBtn">Nowy run</button>
+          </div>
+          <div class="overlay-hint">
+            Tip: Warsztat + relikty potrafią z tego zrobić bardzo niezdrowe doświadczenie.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIKA GRY -->
+  <script src="/tap3.js"></script>
+</body>
+</html>
