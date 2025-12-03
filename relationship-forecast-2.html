@@ -13,6 +13,63 @@
       justify-content: center;
       padding: 40px 12px;
     }
+
+    /* ==== Custom slider styling (Relationship Forecast) ==== */
+
+/* Track (tło) */
+.card input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #818cf8, #ec4899);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Chrome/Edge thumb (kółko) */
+.card input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  border: 3px solid #818cf8;
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
+  cursor: grab;
+  transition: 0.2s;
+}
+
+.card input[type="range"]::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* Firefox */
+.card input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  border: 3px solid #818cf8;
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
+  cursor: grab;
+  transition: 0.2s;
+}
+
+.card input[type="range"]::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+}
+
+/* Firefox track */
+.card input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: linear-gradient(90deg, #818cf8, #ec4899);
+  border-radius: 999px;
+}
+    
     .card {
       width: 100%;
       max-width: 720px;
