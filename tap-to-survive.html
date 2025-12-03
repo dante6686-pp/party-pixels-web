@@ -18,9 +18,7 @@
       --cardbg: rgba(10, 14, 35, 0.88);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -93,7 +91,7 @@
       border-color: var(--accent1);
     }
 
-    /* PAGE */
+    /* PAGE LAYOUT */
 
     .page {
       width: 100%;
@@ -151,7 +149,7 @@
       margin-bottom: 6px;
     }
 
-    /* GAME CARD */
+    /* GAME UI */
 
     .life-bar-shell {
       width: 100%;
@@ -415,12 +413,12 @@
           </div>
         </div>
 
-        <!-- RIGHT: explanation -->
+        <!-- RIGHT: info -->
         <div class="side-card">
           <strong>How it works</strong>
           <span>• Your life drains automatically over time.</span>
           <span>• Every tap restores a bit of life.</span>
-          <span>• Survive as long as you can – your best run can be saved to the global leaderboard if you’re logged in.</span>
+          <span>• Survive as long as you can – your best run can be saved to the global leaderboard if you're logged in.</span>
           <span>• Mobile tip: spam that thumb, but watch your screen 😉</span>
         </div>
       </div>
@@ -434,6 +432,7 @@
 
   <!-- GAME LOGIC + HIGHSCORE SAVE -->
   <script>
+    // basic game state
     const maxLife = 100;
     let life = maxLife;
     let running = true;
@@ -445,6 +444,7 @@
     const drainPerSecond = 7;
     const healPerTap = 5;
 
+    // UI refs
     const lifeBar = document.getElementById("lifeBar");
     const lifeText = document.getElementById("lifeText");
     const tapButton = document.getElementById("tapButton");
@@ -459,7 +459,7 @@
 
     function updateUI() {
       const pct = Math.max(0, Math.min(1, life / maxLife));
-      lifeBar.style.width = String(pct * 100) + "%";
+      lifeBar.style.width = (pct * 100) + "%";
       lifeText.textContent = `${Math.max(0, Math.round(life))} / ${maxLife}`;
       timeSurvivedEl.textContent = timeSurvived.toFixed(1);
       bestTimeEl.textContent = bestTime.toFixed(1);
@@ -475,24 +475,18 @@
       }
 
       const pct2 = Math.max(0, Math.min(1, life / maxLife));
-      if (pct2 > 0.6) {
-        if (running) {
-          charAvatar.textContent = "😎";
-          charStatus.textContent = `"This is fine."`;
-          charMode.textContent = "Normal mode";
-        }
-      } else if (pct2 > 0.3) {
-        if (running) {
-          charAvatar.textContent = "😰";
-          charStatus.textContent = `"Starting to panic a bit."`;
-          charMode.textContent = "Getting spicy";
-        }
-      } else if (pct2 > 0) {
-        if (running) {
-          charAvatar.textContent = "😱";
-          charStatus.textContent = `"HELP. TAP FASTER."`;
-          charMode.textContent = "Panic mode";
-        }
+      if (pct2 > 0.6 && running) {
+        charAvatar.textContent = "😎";
+        charStatus.textContent = `"This is fine."`;
+        charMode.textContent = "Normal mode";
+      } else if (pct2 > 0.3 && running) {
+        charAvatar.textContent = "😰";
+        charStatus.textContent = `"Starting to panic a bit."`;
+        charMode.textContent = "Getting spicy";
+      } else if (pct2 > 0 && running) {
+        charAvatar.textContent = "😱";
+        charStatus.textContent = `"HELP. TAP FASTER."`;
+        charMode.textContent = "Panic mode";
       }
     }
 
@@ -509,22 +503,10 @@
       updateUI();
     }
 
-    async function handleRunEnd(isNewBest) {
-      updateUI();
+    async function saveBestToSupabase() {
       const scoreText = timeSurvived.toFixed(1);
 
-      if (!isNewBest) {
-        gameMessage.textContent = `You died. Time: ${scoreText}s (no new record).`;
-        return;
-      }
-
-      // NEW BEST LOCAL
-      if (timeSurvived > bestTime) {
-        bestTime = timeSurvived;
-        bestTimeEl.textContent = bestTime.toFixed(1);
-      }
-
-      // brak klienta supabase
+      // jeśli klient jeszcze nie gotowy
       if (typeof window.ppSupabase === "undefined") {
         gameMessage.textContent =
           `New best: ${scoreText}s – auth client not ready, score only local.`;
@@ -545,7 +527,7 @@
         const email = user.email || null;
 
         const { error: insertError } = await window.ppSupabase
-          .from("tap_scores")
+          .from("tts_scores")
           .insert([{ user_id, email, score: timeSurvived }]);
 
         if (insertError) {
@@ -560,8 +542,27 @@
       } catch (err) {
         console.error("Unexpected error saving score", err);
         gameMessage.textContent =
-          `New best: ${scoreText}s – couldn't save score (unexpected error).`;
+          `New best: ${timeSurvived.toFixed(1)}s – couldn't save score (unexpected error).`;
       }
+    }
+
+    async function handleRunEnd() {
+      running = false;
+      tapButton.disabled = true;
+      restartButton.disabled = false;
+
+      const scoreText = timeSurvived.toFixed(1);
+
+      if (timeSurvived > bestTime) {
+        bestTime = timeSurvived;
+        bestTimeEl.textContent = bestTime.toFixed(1);
+        gameMessage.textContent = `New best: ${scoreText}s`;
+        await saveBestToSupabase();
+      } else {
+        gameMessage.textContent = `You died. Time: ${scoreText}s (no new record).`;
+      }
+
+      updateUI();
     }
 
     function gameLoop(now) {
@@ -574,13 +575,9 @@
 
         if (life <= 0) {
           life = 0;
-          running = false;
-          tapButton.disabled = true;
-          restartButton.disabled = false;
-
-          const isNewBest = timeSurvived > bestTime;
-          handleRunEnd(isNewBest);
+          handleRunEnd();
         }
+
         updateUI();
       }
 
@@ -603,7 +600,7 @@
     requestAnimationFrame(gameLoop);
   </script>
 
-  <!-- AUTH (Supabase client + pp-auth musi wystawić window.ppSupabase) -->
+  <!-- AUTH: supabase client + pp-auth (musi ustawić window.ppSupabase) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
 </body>
