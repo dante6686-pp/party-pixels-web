@@ -2,588 +2,412 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Party Pixels – Tap to Survive · Highscores</title>
+  <title>Tap to Survive – Highscores · Party Pixels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
 
   <style>
-    :root {
-      --bg1: #050712;
-      --bg2: #0a0e21;
-      --text: #f4f4ff;
-      --muted: #9a9ac0;
-      --border: #24273a;
-      --accent1: #ff5cff;
-      --accent2: #5c8aff;
-      --accent3: #22c55e;
-      --cardbg: rgba(10, 14, 35, 0.88);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI";
-      background: radial-gradient(circle at top, #181b39 0%, var(--bg1) 50%, #02030a 100%);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* TOP BAR */
-
-    header.topbar {
-      width: 100%;
-      max-width: 880px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 20px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 18px;
-      letter-spacing: 0.04em;
-    }
-
-    .brand-pill {
-      width: 24px;
-      height: 24px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      box-shadow: 0 0 15px rgba(255, 92, 255, 0.6);
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .user-badge {
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      background: rgba(6, 9, 24, 0.9);
-      white-space: nowrap;
-    }
-
-    .account-link {
-      font-size: 12px;
-      padding: 7px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--accent2);
-      color: var(--text);
-      text-decoration: none;
-      background: rgba(20, 28, 52, 0.6);
-      white-space: nowrap;
-    }
-
-    .account-link:hover {
-      border-color: var(--accent1);
-    }
-
-    /* PAGE */
-
-    .page {
-      width: 100%;
-      max-width: 880px;
-      padding: 4px 20px 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .title {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      font-size: 13px;
-      color: var(--muted);
+    .page-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 16px 64px;
+      color: #f5f5ff;
     }
 
     .back-link {
-      font-size: 12px;
+      display: inline-block;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      color: #9fb5ff;
       text-decoration: none;
-      color: var(--accent2);
     }
-
     .back-link:hover {
-      color: var(--accent1);
+      text-decoration: underline;
     }
 
     .card {
-      background:
-        radial-gradient(circle at top left, rgba(255, 92, 255, 0.14), transparent 60%),
-        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.18), transparent 70%),
-        var(--cardbg);
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      padding: 16px 16px 18px;
-      box-shadow: 0 18px 32px rgba(0, 0, 0, 0.6);
+      background: radial-gradient(circle at top left, #26204b, #0c0d1a);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
     }
 
-    .scores-header {
+    .subtitle {
+      font-size: 0.9rem;
+      color: #a9b2e8;
+      margin-bottom: 24px;
+    }
+
+    .leaderboard-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #b4bdf4;
     }
 
-    .scores-caption {
-      font-size: 12px;
-      color: var(--muted);
+    .leaderboard-header small {
+      font-size: 0.8rem;
+      color: #c8d0ff;
     }
 
-    .scores-caption strong {
-      color: #e5e5ff;
-    }
-
-    .table-wrapper {
-      border-radius: 16px;
-      border: 1px solid rgba(45, 49, 90, 0.9);
-      overflow: hidden;
-      background: radial-gradient(circle at top left, rgba(76, 81, 191, 0.25), rgba(5, 7, 18, 0.96));
-    }
-
-    table.scores-table {
+    table.leaderboard {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
-      min-width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #191731, #101322);
     }
 
-    table.scores-table thead {
-      background: linear-gradient(90deg, rgba(12, 18, 46, 0.95), rgba(23, 32, 82, 0.95));
+    .leaderboard thead {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(10px);
     }
 
-    table.scores-table th,
-    table.scores-table td {
-      padding: 10px 14px;
+    .leaderboard th,
+    .leaderboard td {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+
+    .leaderboard th {
       text-align: left;
-    }
-
-    table.scores-table th {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      border-bottom: 1px solid rgba(62, 68, 120, 0.9);
-    }
-
-    table.scores-table tbody tr {
-      border-bottom: 1px solid rgba(32, 36, 80, 0.75);
-      background: radial-gradient(circle at left, rgba(92, 138, 255, 0.10), rgba(6, 9, 24, 0.96));
-      transition: background 0.16s ease, transform 0.12s ease, box-shadow 0.12s ease;
-    }
-
-    table.scores-table tbody tr:nth-child(2n) {
-      background: radial-gradient(circle at right, rgba(255, 92, 255, 0.08), rgba(5, 8, 22, 0.98));
-    }
-
-    table.scores-table tbody tr:hover {
-      background: radial-gradient(circle at center, rgba(92, 138, 255, 0.24), rgba(4, 7, 20, 0.98));
-      transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
-    }
-
-    .score-rank {
-      width: 40px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    .score-player {
+      color: #98a2ff;
       font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
     }
 
-    .score-best {
+    .leaderboard th:nth-child(1),
+    .leaderboard td:nth-child(1) {
+      width: 40px;
+      text-align: center;
+    }
+
+    .leaderboard th:nth-child(3),
+    .leaderboard td:nth-child(3) {
+      text-align: right;
+    }
+
+    .leaderboard th:nth-child(4),
+    .leaderboard td:nth-child(4) {
+      text-align: right;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: radial-gradient(circle at left, rgba(123, 97, 255, 0.18), transparent);
+    }
+
+    .rank-cell {
+      font-weight: 600;
+      color: #e5e7ff;
       font-variant-numeric: tabular-nums;
     }
 
-    .score-when {
-      font-size: 11px;
-      color: var(--muted);
+    .score-cell {
+      font-variant-numeric: tabular-nums;
+      color: #fff2b7;
     }
 
-    /* trophy badges */
+    .when-cell {
+      color: #a6b0e2;
+      font-size: 0.8rem;
+    }
 
-    .rank-badge {
+    .you-row {
+      background: linear-gradient(90deg, rgba(0, 255, 149, 0.16), transparent);
+      box-shadow: inset 2px 0 0 #00ff9d;
+    }
+
+    .you-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
+      padding: 2px 8px;
+      margin-left: 6px;
       border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      border: 1px solid rgba(147, 155, 255, 0.9);
-      background: radial-gradient(circle at top, rgba(147, 155, 255, 0.6), rgba(27, 31, 80, 0.9));
-      color: #050714;
-    }
-
-    .rank-1 {
-      border-color: #facc15;
-      background: radial-gradient(circle at top, #facc15, #854d0e);
-      color: #020617;
-    }
-
-    .rank-2 {
-      border-color: #e5e7eb;
-      background: radial-gradient(circle at top, #e5e7eb, #4b5563);
-      color: #020617;
-    }
-
-    .rank-3 {
-      border-color: #f97316;
-      background: radial-gradient(circle at top, #fed7aa, #7c2d12);
-      color: #020617;
-    }
-
-    /* current user highlight */
-
-    .score-row-me {
-      position: relative;
-      border-left: 3px solid var(--accent3);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1), 0 10px 22px rgba(0, 0, 0, 0.7);
-      background:
-        radial-gradient(circle at left, rgba(34, 197, 94, 0.26), rgba(8, 16, 32, 0.98));
-    }
-
-    .score-row-me:hover {
-      background:
-        radial-gradient(circle at center, rgba(34, 197, 94, 0.32), rgba(5, 10, 25, 0.98));
-    }
-
-    .me-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
+      font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.13em;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(22, 163, 74, 0.16);
-      border: 1px solid rgba(34, 197, 94, 0.6);
-      color: #bbf7d0;
-      margin-left: 8px;
+      letter-spacing: 0.16em;
+      background: linear-gradient(90deg, #10b981, #22c55e);
+      color: #04110a;
+      box-shadow: 0 0 0 1px rgba(3, 255, 150, 0.4);
     }
 
-    .scores-status {
+    .status-line {
       margin-top: 10px;
-      font-size: 12px;
-      color: var(--muted);
+      font-size: 0.8rem;
+      color: #aeb5ff;
     }
 
-    footer.footer {
-      margin-top: 24px;
-      padding: 16px 0 24px;
-      font-size: 12px;
-      color: var(--muted);
-      width: 100%;
-      max-width: 880px;
-      border-top: 1px solid rgba(33, 36, 73, 0.7);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    @media (max-width: 640px) {
-      footer.footer { flex-direction: column; }
-      table.scores-table th,
-      table.scores-table td {
-        padding: 8px 10px;
-      }
+    .status-line.error {
+      color: #fca5a5;
     }
   </style>
+
+  <!-- Supabase global CDN (tak jak na index / account) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.48.0/dist/umd/supabase.min.js"></script>
+  <!-- Wspólny auth helper -->
+  <script src="pp-auth.js"></script>
 </head>
 <body>
-  <!-- TOP BAR -->
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-pill"></div>
-      Party Pixels
-    </div>
-    <div class="topbar-right">
-      <span class="user-badge" data-pp-user-badge>Not logged in</span>
-      <a class="account-link" href="/account.html" data-pp-account-link>Account</a>
+  <!-- Top bar z Party Pixels – zakładam, że masz go wstawionego już na innych stronach -->
+  <header class="pp-topbar">
+    <div class="pp-topbar-inner">
+      <a href="/index.html" class="pp-logo">
+        <span class="pp-dot"></span>
+        <span class="pp-wordmark">Party<br />Pixels</span>
+      </a>
+      <div class="pp-topbar-right">
+        <span class="pp-user-badge" data-pp-user-badge>Checking auth…</span>
+        <a href="/account.html" data-pp-account-link class="pp-account-btn">Account</a>
+      </div>
     </div>
   </header>
 
-  <main class="page">
-    <section class="header-row">
-      <div>
-        <div class="title">Tap to Survive – Highscores</div>
-        <div class="subtitle">Top runs from all Party Pixels players.</div>
-      </div>
-      <a class="back-link" href="/tap-to-survive.html">← Back to game</a>
-    </section>
+  <main class="page-wrap">
+    <a href="/tap-to-survive.html" class="back-link">← Back to game</a>
+
+    <h1>Tap to Survive – Highscores</h1>
+    <p class="subtitle">Top runs from all Party Pixels players.</p>
 
     <section class="card">
-      <div class="scores-header">
-        <div class="section-label">Leaderboard</div>
-        <div class="scores-caption">
-          <strong>Best times (seconds).</strong> Higher = you survived longer.
-        </div>
+      <div class="leaderboard-header">
+        <span>LEADERBOARD</span>
+        <span><strong>Best times (seconds).</strong> Higher = you survived longer.</span>
       </div>
 
-      <div class="table-wrapper">
-        <table class="scores-table">
-          <thead>
-            <tr>
-              <th class="score-rank">#</th>
-              <th>Player</th>
-              <th>Best time (s)</th>
-              <th>When</th>
-            </tr>
-          </thead>
-          <tbody id="scoresBody">
+      <table class="leaderboard">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Best time (s)</th>
+            <th>When</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+          <tr>
+            <td colspan="4">Loading highscores…</td>
+          </tr>
+        </tbody>
+      </table>
 
-            <script>
-  // ─────────────────────────────────────────────
-  // Helpery
-  // ─────────────────────────────────────────────
-  function maskEmail(email) {
-    if (!email || typeof email !== "string") return "(unknown)";
-    const [name, domain] = email.split("@");
-    if (!domain) return email;
-    if (name.length <= 2) return email;
-    const visible = name.slice(0, 2);
-    return `${visible}***@${domain}`;
-  }
-
-  function formatWhen(ts) {
-    try {
-      if (!ts) return "";
-
-      const d = new Date(ts);
-      if (isNaN(d.getTime())) {
-        console.warn("Cannot parse created_at:", ts);
-        return "";
-      }
-
-      const now = new Date();
-      const diffMs = now - d;
-      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-      const time = d.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-
-      const sameDay =
-        d.getDate() === now.getDate() &&
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear();
-
-      if (sameDay) return `Today, ${time}`;
-
-      const yesterday = new Date(now);
-      yesterday.setDate(now.getDate() - 1);
-
-      const isYesterday =
-        d.getDate() === yesterday.getDate() &&
-        d.getMonth() === yesterday.getMonth() &&
-        d.getFullYear() === yesterday.getFullYear();
-
-      if (isYesterday) return `Yesterday, ${time}`;
-
-      if (diffDays < 7) return `${diffDays} days ago`;
-
-      return (
-        d.toLocaleDateString(undefined, {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }) + ` — ${time}`
-      );
-    } catch (e) {
-      console.error("formatWhen error", e);
-      return "";
-    }
-  }
-
-  // ─────────────────────────────────────────────
-  // Główna logika leaderboardu
-  // ─────────────────────────────────────────────
-  document.addEventListener("DOMContentLoaded", async () => {
-    const tbody = document.querySelector("#highscoresBody");
-    const statusEl = document.getElementById("highscoresStatus");
-
-    if (!statusEl) {
-      console.error("No #highscoresStatus element found");
-      return;
-    }
-    if (!tbody) {
-      console.error("No #highscoresBody element found");
-      statusEl.textContent = "Internal error: highscores body not found.";
-      return;
-    }
-
-    if (typeof window.ppSupabase === "undefined") {
-      console.error("ppSupabase not available on window");
-      statusEl.textContent = "Leaderboard not available (auth client not loaded).";
-      return;
-    }
-
-    try {
-      // Kto jest zalogowany?
-      const { data: userData, error: userErr } =
-        await window.ppSupabase.auth.getUser();
-      if (userErr) {
-        console.warn("auth.getUser error", userErr);
-      }
-      const currentUser = userData?.user || null;
-      const currentEmail = currentUser?.email || null;
-
-      // Pobierz wyniki
-      const { data, error } = await window.ppSupabase
-        .from("tts_scores")
-        .select("email, score, created_at")
-        .order("score", { ascending: false })
-        .limit(200);
-
-      if (error) {
-        console.error("Error loading highscores:", error);
-        statusEl.textContent = "Error loading highscores.";
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        statusEl.textContent = "No scores yet. Be the first to die gloriously.";
-        return;
-      }
-
-      // Najlepszy wynik per email
-      const bestByEmail = {};
-      for (const row of data) {
-        const email = row.email || "(unknown)";
-        const scoreNum = Number(row.score) || 0;
-
-        if (!bestByEmail[email] || scoreNum > bestByEmail[email].score) {
-          bestByEmail[email] = {
-            email,
-            score: scoreNum,
-            created_at: row.created_at,
-          };
-        }
-      }
-
-      const rows = Object.values(bestByEmail).sort((a, b) => b.score - a.score);
-
-      tbody.innerHTML = "";
-      let yourRank = null;
-
-      rows.forEach((row, index) => {
-        const rank = index + 1;
-        const tr = document.createElement("tr");
-
-        // #
-        const tdRank = document.createElement("td");
-        tdRank.textContent = rank;
-        tdRank.className = "rank-cell";
-        tr.appendChild(tdRank);
-
-        // PLAYER
-        const tdPlayer = document.createElement("td");
-        const label = document.createElement("span");
-        label.textContent = maskEmail(row.email);
-        tdPlayer.appendChild(label);
-
-        if (currentEmail && row.email === currentEmail) {
-          const badge = document.createElement("span");
-          badge.textContent = "YOU ★";
-          badge.className = "you-badge";
-          tdPlayer.appendChild(document.createTextNode(" "));
-          tdPlayer.appendChild(badge);
-          tr.classList.add("you-row");
-          yourRank = rank;
-        }
-
-        tr.appendChild(tdPlayer);
-
-        // BEST TIME
-        const tdScore = document.createElement("td");
-        tdScore.textContent = row.score.toFixed(1);
-        tdScore.className = "score-cell";
-        tr.appendChild(tdScore);
-
-        // WHEN
-        const tdWhen = document.createElement("td");
-        tdWhen.textContent = formatWhen(row.created_at);
-        tdWhen.className = "when-cell";
-        tr.appendChild(tdWhen);
-
-        tbody.appendChild(tr);
-      });
-
-      if (yourRank !== null) {
-        statusEl.textContent = `Showing best run per player. Your rank: #${yourRank}.`;
-      } else {
-        statusEl.textContent = "Showing best run per player.";
-      }
-    } catch (err) {
-      console.error("Unexpected error while loading highscores", err);
-      statusEl.textContent = "Unexpected error while loading highscores.";
-    }
-  });
-</script>
-
-            
-            <tr>
-              <td colspan="4" style="padding: 14px;">
-                Loading highscores…
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div id="scoresStatus" class="scores-status">
-        Leaderboard powered by Supabase.
+      <div id="leaderboardStatus" class="status-line">
+        Loading highscores…
       </div>
     </section>
 
-    <footer class="footer">
-      <div>Party Pixels · Tap to Survive</div>
-      <div>Prototype web toy with Supabase highscores.</div>
-    </footer>
+    <p class="status-line" style="margin-top:16px;">
+      Party Pixels · Tap to Survive<br />
+      Prototype web toy with Supabase highscores.
+    </p>
   </main>
 
-  <!-- Supabase + shared auth helper -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js"></script>
+  <script>
+    // Maskowanie maila
+    function maskEmail(email) {
+      if (!email || typeof email !== "string") return "(unknown)";
+      const [name, domain] = email.split("@");
+      if (!domain) return email;
+      if (name.length <= 2) return email;
+      const visible = name.slice(0, 2);
+      return visible + "***@" + domain;
+    }
 
-  <!-- Highscores logic -->
-  
+    function formatWhen(ts) {
+      try {
+        if (!ts) return "";
+        const d = new Date(ts);
+        if (isNaN(d.getTime())) {
+          console.warn("Cannot parse created_at:", ts);
+          return "";
+        }
+
+        const now = new Date();
+        const diffMs = now - d;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+        const time = d.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+
+        const sameDay =
+          d.getDate() === now.getDate() &&
+          d.getMonth() === now.getMonth() &&
+          d.getFullYear() === now.getFullYear();
+
+        if (sameDay) return "Today, " + time;
+
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+
+        const isYesterday =
+          d.getDate() === yesterday.getDate() &&
+          d.getMonth() === yesterday.getMonth() &&
+          d.getFullYear() === yesterday.getFullYear();
+
+        if (isYesterday) return "Yesterday, " + time;
+
+        if (diffDays < 7) return diffDays + " days ago";
+
+        return (
+          d.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          }) + " — " + time
+        );
+      } catch (e) {
+        console.error("formatWhen error", e);
+        return "";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tbody = document.getElementById("leaderboardBody");
+      const statusEl = document.getElementById("leaderboardStatus");
+
+      if (!tbody || !statusEl) {
+        console.error("Leaderboard DOM elements not found");
+        return;
+      }
+
+      statusEl.textContent = "Loading highscores…";
+
+      if (typeof window.ppSupabase === "undefined") {
+        console.error("ppSupabase is not available on window");
+        tbody.innerHTML =
+          '<tr><td colspan="4">Leaderboard not available (auth client not loaded).</td></tr>';
+        statusEl.textContent =
+          "Leaderboard not available (auth client not loaded).";
+        statusEl.classList.add("error");
+        return;
+      }
+
+      try {
+        // aktualny user (do YOU ★)
+        const { data: userData, error: userErr } =
+          await window.ppSupabase.auth.getUser();
+        if (userErr) console.warn("auth.getUser error", userErr);
+        const currentUser = userData?.user || null;
+        const currentEmail = currentUser?.email || null;
+
+        // pobierz wyniki
+        const { data, error } = await window.ppSupabase
+          .from("tts_scores")
+          .select("email, score, created_at")
+          .order("score", { ascending: false })
+          .limit(200);
+
+        if (error) {
+          console.error("Error loading highscores:", error);
+          tbody.innerHTML =
+            '<tr><td colspan="4">Error loading highscores.</td></tr>';
+          statusEl.textContent = "Error loading highscores.";
+          statusEl.classList.add("error");
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="4">No scores yet. Be the first to die gloriously.</td></tr>';
+          statusEl.textContent =
+            "No scores yet. Be the first to die gloriously.";
+          return;
+        }
+
+        // best run per email
+        const bestByEmail = {};
+        data.forEach((row) => {
+          const email = row.email || "(unknown)";
+          const scoreNum = Number(row.score) || 0;
+          if (!bestByEmail[email] || scoreNum > bestByEmail[email].score) {
+            bestByEmail[email] = {
+              email,
+              score: scoreNum,
+              created_at: row.created_at
+            };
+          }
+        });
+
+        const rows = Object.values(bestByEmail).sort(
+          (a, b) => b.score - a.score
+        );
+
+        tbody.innerHTML = "";
+        let yourRank = null;
+
+        rows.forEach((row, index) => {
+          const tr = document.createElement("tr");
+          const rank = index + 1;
+
+          const tdRank = document.createElement("td");
+          tdRank.textContent = rank;
+          tdRank.className = "rank-cell";
+          tr.appendChild(tdRank);
+
+          const tdPlayer = document.createElement("td");
+          const label = document.createElement("span");
+          label.textContent = maskEmail(row.email);
+          tdPlayer.appendChild(label);
+
+          if (currentEmail && row.email === currentEmail) {
+            const badge = document.createElement("span");
+            badge.textContent = "YOU ★";
+            badge.className = "you-badge";
+            tdPlayer.appendChild(badge);
+            tr.classList.add("you-row");
+            yourRank = rank;
+          }
+
+          tr.appendChild(tdPlayer);
+
+          const tdScore = document.createElement("td");
+          tdScore.textContent = row.score.toFixed(1);
+          tdScore.className = "score-cell";
+          tr.appendChild(tdScore);
+
+          const tdWhen = document.createElement("td");
+          tdWhen.textContent = formatWhen(row.created_at);
+          tdWhen.className = "when-cell";
+          tr.appendChild(tdWhen);
+
+          tbody.appendChild(tr);
+        });
+
+        if (yourRank !== null) {
+          statusEl.textContent =
+            "Showing best run per player. Your rank: #" + yourRank + ".";
+        } else {
+          statusEl.textContent = "Showing best run per player.";
+        }
+      } catch (err) {
+        console.error("Unexpected error while loading highscores", err);
+        tbody.innerHTML =
+          '<tr><td colspan="4">Unexpected error while loading highscores.</td></tr>';
+        statusEl.textContent =
+          "Unexpected error while loading highscores.";
+        statusEl.classList.add("error");
+      }
+    });
+  </script>
 </body>
 </html>
