@@ -51,13 +51,33 @@
       outline: 2px solid #6366f1;
       border-color: transparent;
     }
-    .row {
+    
+    /* Układ pól w Relationship Forecast */
+    .card .rf-row {
       display: flex;
       gap: 10px;
     }
-    .row > div {
+    
+    .card .rf-row > div {
       flex: 1;
+      min-width: 0;       /* ważne żeby input się nie rozpychał */
     }
+    
+    /* Inputy nie mogą wychodzić poza kontener */
+    .card input,
+    .card select,
+    .card textarea {
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+    
+    /* Mobile – jeden pod drugim */
+    @media (max-width: 600px) {
+      .card .rf-row {
+        flex-direction: column;
+      }
+    }
+
     button {
       width: 100%;
       padding: 10px 14px;
@@ -166,7 +186,7 @@
       Pseudo-AI oracle for messy humans. Zero science, 100% vibes.
     </p>
 
-    <div class="row">
+    <div class="rf-row">
       <div>
         <label for="nameA">Person A</label>
         <input id="nameA" placeholder="You / Partner 1" />
@@ -177,7 +197,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="rf-row">
       <div>
         <label for="relType">What are you (for real)?</label>
         <select id="relType">
