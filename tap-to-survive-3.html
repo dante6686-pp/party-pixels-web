@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tap to Survive 3: City of Ash – Party Pixels Web Toy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #0f172a 0%, #020617 60%, #000 100%);
+      color: #e5e7eb;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      max-width: 520px;
+      padding: 16px;
+    }
+
+    .shell {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 20px;
+      padding: 14px 14px 16px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shell header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .title-block h1 {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .title-block .subtitle {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.7;
+    }
+
+    .meta-block {
+      text-align: right;
+      font-size: 0.7rem;
+    }
+
+    .meta-label {
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+    }
+
+    .meta-value {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.6));
+      font-size: 0.7rem;
+      margin-top: 2px;
+    }
+
+    .meta-chip span {
+      opacity: 0.8;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* CITY VIEW */
+
+    #cityView .city-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    .district {
+      position: relative;
+      padding: 10px;
+      min-height: 90px;
+      border-radius: 16px;
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      background: radial-gradient(circle at top, #1e293b, #020617);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.08s ease;
+    }
+
+    .district::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(248, 250, 252, 0.06), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .district:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 13px 24px rgba(0, 0, 0, 0.7);
+      border-color: #6366f1;
+    }
+
+    .district-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 3px;
+    }
+
+    .district-sub {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+
+    .district-tag {
+      position: absolute;
+      bottom: 7px;
+      right: 9px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      opacity: 0.9;
+    }
+
+    .city-footer {
+      font-size: 0.65rem;
+      opacity: 0.75;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .city-footer span:last-child {
+      text-align: right;
+    }
+
+    .city-note {
+      margin-top: 6px;
+      font-size: 0.68rem;
+      opacity: 0.7;
+    }
+
+    /* GENERIC PANEL */
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      gap: 10px;
+    }
+
+    .panel-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .panel-sub {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    .back-btn {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: transparent;
+      color: #e5e7eb;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .back-btn:hover {
+      background: rgba(31, 41, 55, 0.9);
+    }
+
+    /* WORKSHOP */
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+
+    .upgrade-card {
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      background: radial-gradient(circle at top, #020617, #020617);
+      padding: 8px 9px;
+      font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .upgrade-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .upgrade-name {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+    }
+
+    .upgrade-level {
+      opacity: 0.75;
+      font-size: 0.7rem;
+    }
+
+    .upgrade-desc {
+      opacity: 0.78;
+    }
+
+    .upgrade-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 3px;
+    }
+
+    .cost-label {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .pill.bad {
+      border-color: rgba(248, 113, 113, 0.9);
+      color: #fecaca;
+    }
+
+    .pill.good {
+      border-color: rgba(52, 211, 153, 0.9);
+      color: #bbf7d0;
+    }
+
+    .small-btn {
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(129, 140, 248, 0.9);
+      background: radial-gradient(circle at top, #1d253a, #020617);
+      color: #e5e7eb;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .small-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: rgba(75, 85, 99, 0.9);
+    }
+
+    .panel-hint {
+      font-size: 0.65rem;
+      opacity: 0.7;
+      text-align: right;
+      margin-top: 2px;
+    }
+
+    /* RELICS */
+
+    .relic-card {
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.95);
+      background: radial-gradient(circle at top, #0b1120, #020617);
+      padding: 8px 9px;
+      font-size: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .relic-name {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+    }
+
+    .relic-status {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+
+    /* BAR */
+
+    .bar-text {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+
+    .bar-quote {
+      font-size: 0.7rem;
+      opacity: 0.75;
+      margin-top: 4px;
+      border-left: 2px solid rgba(107, 114, 128, 0.9);
+      padding-left: 6px;
+    }
+
+    .daily-pill {
+      display: inline-flex;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.8);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    /* RUN VIEW */
+
+    #runView {
+      margin-top: 4px;
+    }
+
+    .run-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    .run-left h2 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .run-left .subtitle {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    .run-right {
+      text-align: right;
+      font-size: 0.7rem;
+    }
+
+    .run-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+      margin-top: 2px;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      margin-bottom: 2px;
+      opacity: 0.85;
+    }
+
+    .bar-shell {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      overflow: hidden;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 50%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      transition: width 0.12s linear;
+    }
+
+    .bar-fill.chaos {
+      background: linear-gradient(90deg, #f97316, #ef4444);
+    }
+
+    .bar-fill.wave {
+      background: linear-gradient(90deg, #38bdf8, #6366f1);
+    }
+
+    .run-stats-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.7rem;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .chip {
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .tap-zone {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    #tapButton {
+      width: 100%;
+      padding: 16px 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 1.02rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      cursor: pointer;
+      background: radial-gradient(circle at top, #22c55e, #16a34a);
+      color: #022c22;
+      box-shadow: 0 12px 25px rgba(16, 185, 129, 0.36);
+      transform: translateY(0);
+      transition: transform 0.06s ease, box-shadow 0.06s ease, filter 0.06s ease;
+    }
+
+    #tapButton:active {
+      transform: translateY(2px) scale(0.99);
+      box-shadow: 0 6px 14px rgba(16, 185, 129, 0.25);
+      filter: brightness(0.95);
+    }
+
+    #tapButton.disabled {
+      background: radial-gradient(circle at top, #6b7280, #4b5563);
+      color: #e5e7eb;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .run-status-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      opacity: 0.9;
+    }
+
+    .run-status-row span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .log-box {
+      font-size: 0.7rem;
+      height: 80px;
+      overflow: hidden;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(30, 64, 175, 0.9);
+      padding: 5px 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 7px;
+    }
+
+    .log-line {
+      opacity: 0.8;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .log-line.system {
+      color: #a5b4fc;
+    }
+
+    .log-line.event {
+      color: #facc15;
+    }
+
+    .log-line.negative {
+      color: #fecaca;
+    }
+
+    .run-bottom-row {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+
+    .run-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tiny-btn {
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      background: transparent;
+      color: #e5e7eb;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .tiny-btn:hover {
+      background: rgba(31, 41, 55, 0.9);
+    }
+
+    /* OVERLAYS */
+
+    .overlay-root {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.98));
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 20;
+    }
+
+    .overlay-root.visible {
+      display: flex;
+    }
+
+    .overlay-card {
+      width: 100%;
+      max-width: 420px;
+      background: #020617;
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8);
+    }
+
+    .overlay-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+
+    .overlay-text {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      margin-bottom: 8px;
+    }
+
+    .overlay-stats {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .overlay-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .overlay-hint {
+      font-size: 0.65rem;
+      opacity: 0.7;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 480px) {
+      .shell {
+        padding: 12px 10px 14px;
+      }
+      #tapButton {
+        padding: 14px 8px;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-wrapper">
+    <div class="shell">
+      <header>
+        <div class="title-block">
+          <h1>Tap to Survive 3</h1>
+          <div class="subtitle">City of Ash</div>
+        </div>
+        <div class="meta-block">
+          <div class="meta-label">Scrap</div>
+          <div class="meta-value"><span id="metaScrap">0</span></div>
+          <div class="meta-chip">
+            <span>Meta Upgrades</span>
+            <span>•</span>
+            <span id="metaSummary">0 buffs</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- CITY VIEW -->
+      <section id="cityView" class="view active">
+        <div class="panel-sub">
+          Zrujnowane miasto jest twoim hubem. Wybierz dzielnicę i zdecyduj, jak umrzesz tym razem.
+        </div>
+
+        <div class="city-grid">
+          <div class="district" data-target="runView">
+            <div class="district-title">Bunkier</div>
+            <div class="district-sub">Wejście do strefy ognia. Start nowego runa z aktywnymi ulepszeniami i reliktami.</div>
+            <div class="district-tag">Start Run</div>
+          </div>
+
+          <div class="district" data-target="workshopView">
+            <div class="district-title">Warsztat</div>
+            <div class="district-sub">Wydaj scrap na permanentne ulepszenia HP, tap power i tempo krwawienia.</div>
+            <div class="district-tag">Upgrades</div>
+          </div>
+
+          <div class="district" data-target="relicsView">
+            <div class="district-title">Wieża Radiowa</div>
+            <div class="district-sub">Odblokuj relikty, które wypaczają zasady runa. Im głupsze, tym lepsze.</div>
+            <div class="district-tag">Relics</div>
+          </div>
+
+          <div class="district" data-target="barView">
+            <div class="district-title">Bar & Ruiny</div>
+            <div class="district-sub">Dziwne wyzwania, jeszcze dziwniejsi ludzie. Wkrótce więcej chaosu.</div>
+            <div class="district-tag">Dailies</div>
+          </div>
+        </div>
+
+        <div class="city-note">
+          Tip: Scrap zdobywasz kończąc runy. Im dalej dotrwasz, tym większa wypłata złomu.
+        </div>
+
+        <div class="city-footer">
+          <span>Party Pixels • Web Toy</span>
+          <span>Prototype build • v3.0</span>
+        </div>
+      </section>
+
+      <!-- WORKSHOP VIEW -->
+      <section id="workshopView" class="view">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Warsztat</div>
+            <div class="panel-sub">Przerób swój strach na metal i statystyki.</div>
+          </div>
+          <button class="back-btn" data-back>← Miasto</button>
+        </div>
+
+        <div class="card-list">
+          <div class="upgrade-card">
+            <div class="upgrade-card-header">
+              <div class="upgrade-name">Wzmocnione Płuca</div>
+              <div class="upgrade-level" id="hpLevelLabel">Poziom 0</div>
+            </div>
+            <div class="upgrade-desc">
+              +10 maksymalnego HP za poziom dla wszystkich przyszłych runów.
+            </div>
+            <div class="upgrade-footer">
+              <div class="cost-label">
+                Koszt: <span id="hpCostLabel">10</span> scrap
+              </div>
+              <button class="small-btn" id="hpUpgradeBtn">Ulepsz</button>
+            </div>
+          </div>
+
+          <div class="upgrade-card">
+            <div class="upgrade-card-header">
+              <div class="upgrade-name">Stalowe Palce</div>
+              <div class="upgrade-level" id="tapLevelLabel">Poziom 0</div>
+            </div>
+            <div class="upgrade-desc">
+              +1 leczenia z tapnięcia za poziom. Odczuwalne szczególnie w mid game.
+            </div>
+            <div class="upgrade-footer">
+              <div class="cost-label">
+                Koszt: <span id="tapCostLabel">12</span> scrap
+              </div>
+              <button class="small-btn" id="tapUpgradeBtn">Ulepsz</button>
+            </div>
+          </div>
+
+          <div class="upgrade-card">
+            <div class="upgrade-card-header">
+              <div class="upgrade-name">Kontrolowany Krwotok</div>
+              <div class="upgrade-level" id="drainLevelLabel">Poziom 0</div>
+            </div>
+            <div class="upgrade-desc">
+              –0.3 HP/s z bazowego krwawienia za poziom. Nie zatrzyma śmierci, ale ją opóźni.
+            </div>
+            <div class="upgrade-footer">
+              <div class="cost-label">
+                Koszt: <span id="drainCostLabel">15</span> scrap
+              </div>
+              <button class="small-btn" id="drainUpgradeBtn">Ulepsz</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-hint">
+          Ulepszenia działają tylko w nowych runach. Jeśli chcesz poczuć różnicę – wróć do bunkra.
+        </div>
+      </section>
+
+      <!-- RELICS VIEW -->
+      <section id="relicsView" class="view">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Wieża Radiowa</div>
+            <div class="panel-sub">Stare anteny, nowe przekleństwa. Relikty zmieniają zasady gry.</div>
+          </div>
+          <button class="back-btn" data-back>← Miasto</button>
+        </div>
+
+        <div class="card-list">
+          <div class="relic-card">
+            <div class="upgrade-card-header">
+              <div class="relic-name">Glass Universe</div>
+              <div class="relic-status" id="glassStatus">Zablokowany</div>
+            </div>
+            <div class="upgrade-desc">
+              Wszystko zadaje i leczy ~50% więcej. Ty też krwawisz szybciej. Ryzyko = tempo.
+            </div>
+            <div class="upgrade-footer">
+              <div class="cost-label">
+                Koszt odblokowania: <span id="glassCost">40</span> scrap
+              </div>
+              <button class="small-btn" id="glassUnlockBtn">Odblokuj / Przełącz</button>
+            </div>
+          </div>
+
+          <div class="relic-card">
+            <div class="upgrade-card-header">
+              <div class="relic-name">Endless Night</div>
+              <div class="relic-status" id="nightStatus">Zablokowany</div>
+            </div>
+            <div class="upgrade-desc">
+              Pasek HP staje się nieczytelny. Grasz „na czuja”, chaos rośnie odrobinę wolniej.
+            </div>
+            <div class="upgrade-footer">
+              <div class="cost-label">
+                Koszt odblokowania: <span id="nightCost">30</span> scrap
+              </div>
+              <button class="small-btn" id="nightUnlockBtn">Odblokuj / Przełącz</button>
+            </div>
