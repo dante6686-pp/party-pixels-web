@@ -367,7 +367,197 @@
             </tr>
           </thead>
           <tbody id="scoresBody">
-            <tr>
+  <script>
+  // Delikatne maskowanie maila
+  function maskEmail(email) {
+    if (!email || typeof email !== "string") return "(unknown)";
+    const [name, domain] = email.split("@");
+    if (!domain) return email;
+    if (name.length <= 2) return email;
+    const visible = name.slice(0, 2);
+    return `${visible}***@${domain}`;
+  }
+
+  // Formatowanie czasu, działa nawet gdy Supabase daje samo "HH:MM:SS+00"
+  function formatWhen(ts) {
+    try {
+      if (!ts) return "";
+
+      let d = new Date(ts);
+
+      // Jeśli data jest nieprawidłowa (np. sam czas), spróbuj złożyć z dzisiejszą datą
+      if (isNaN(d.getTime())) {
+        if (typeof ts === "string") {
+          const m = ts.match(/(\d{2}):(\d{2}):(\d{2})/);
+          if (m) {
+            const now = new Date();
+            now.setHours(parseInt(m[1], 10), parseInt(m[2], 10), parseInt(m[3], 10), 0);
+            d = now;
+          } else {
+            return "";
+          }
+        } else {
+          return "";
+        }
+      }
+
+      const now = new Date();
+      const diffMs = now - d;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      const time = d.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      const sameDay =
+        d.getDate() === now.getDate() &&
+        d.getMonth() === now.getMonth() &&
+        d.getFullYear() === now.getFullYear();
+
+      if (sameDay) {
+        return `Today, ${time}`;
+      }
+
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+
+      const isYesterday =
+        d.getDate() === yesterday.getDate() &&
+        d.getMonth() === yesterday.getMonth() &&
+        d.getFullYear() === yesterday.getFullYear();
+
+      if (isYesterday) {
+        return `Yesterday, ${time}`;
+      }
+
+      if (diffDays < 7) {
+        return `${diffDays} days ago`;
+      }
+
+      return (
+        d.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        }) + ` — ${time}`
+      );
+    } catch (e) {
+      console.error("formatWhen error", e);
+      return "";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const tbody = document.querySelector("#highscoresBody");
+    const statusEl = document.getElementById("highscoresStatus");
+    if (!tbody) return;
+
+    if (typeof window.ppSupabase === "undefined") {
+      statusEl.textContent = "Leaderboard not available (auth client not loaded).";
+      return;
+    }
+
+    try {
+      // Pobierz info o zalogowanym użytkowniku
+      const { data: userData } = await window.ppSupabase.auth.getUser();
+      const currentUser = userData?.user || null;
+      const currentEmail = currentUser?.email || null;
+
+      // Pobierz raw wyniki
+      const { data, error } = await window.ppSupabase
+        .from("tts_scores")
+        .select("email, score, created_at")
+        .order("score", { ascending: false })
+        .limit(200);
+
+      if (error) {
+        console.error("Error loading highscores:", error);
+        statusEl.textContent = "Error loading highscores.";
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        statusEl.textContent = "No scores yet. Be the first to die gloriously.";
+        return;
+      }
+
+      // Best run per email
+      const bestByEmail = {};
+      for (const row of data) {
+        const email = row.email || "(unknown)";
+        const scoreNum = Number(row.score) || 0;
+
+        if (!bestByEmail[email] || scoreNum > bestByEmail[email].score) {
+          bestByEmail[email] = {
+            email,
+            score: scoreNum,
+            created_at: row.created_at
+          };
+        }
+      }
+
+      const rows = Object.values(bestByEmail).sort((a, b) => b.score - a.score);
+
+      tbody.innerHTML = "";
+      let yourRank = null;
+
+      rows.forEach((row, index) => {
+        const rank = index + 1;
+        const tr = document.createElement("tr");
+
+        // Numer
+        const tdRank = document.createElement("td");
+        tdRank.textContent = rank;
+        tdRank.className = "rank-cell";
+        tr.appendChild(tdRank);
+
+        // Email (z maską)
+        const tdPlayer = document.createElement("td");
+        const label = document.createElement("span");
+        label.textContent = maskEmail(row.email);
+
+        tdPlayer.appendChild(label);
+
+        // "YOU" badge jeśli to Ty
+        if (currentEmail && row.email === currentEmail) {
+          const badge = document.createElement("span");
+          badge.textContent = "YOU ★";
+          badge.className = "you-badge";
+          tdPlayer.appendChild(document.createTextNode(" "));
+          tdPlayer.appendChild(badge);
+          tr.classList.add("you-row");
+          yourRank = rank;
+        }
+
+        tr.appendChild(tdPlayer);
+
+        // Wynik
+        const tdScore = document.createElement("td");
+        tdScore.textContent = row.score.toFixed(1);
+        tdScore.className = "score-cell";
+        tr.appendChild(tdScore);
+
+        // When
+        const tdWhen = document.createElement("td");
+        tdWhen.textContent = formatWhen(row.created_at);
+        tdWhen.className = "when-cell";
+        tr.appendChild(tdWhen);
+
+        tbody.appendChild(tr);
+      });
+
+      if (yourRank !== null) {
+        statusEl.textContent = `Showing best run per player. Your rank: #${yourRank}.`;
+      } else {
+        statusEl.textContent = "Showing best run per player.";
+      }
+    } catch (err) {
+      console.error("Unexpected error while loading highscores", err);
+      statusEl.textContent = "Unexpected error while loading highscores.";
+    }
+  });
+  </script>          <tr>
               <td colspan="4" style="padding: 14px;">
                 Loading highscores…
               </td>
@@ -392,205 +582,6 @@
   <script src="/pp-auth.js"></script>
 
   <!-- Highscores logic -->
-  <script>
-    (async function () {
-      const tbody = document.getElementById("scoresBody");
-      const statusEl = document.getElementById("scoresStatus");
-
-      if (!tbody || !statusEl) return;
-
-      if (typeof window.ppSupabase === "undefined") {
-        tbody.innerHTML = `
-          <tr><td colspan="4" style="padding: 14px;">
-            Leaderboard not available (auth client not loaded).
-          </td></tr>`;
-        statusEl.textContent = "Supabase client not ready.";
-        return;
-      }
-
-      let currentUser = null;
-
-      // helper: wypasiony format daty
-
-      function formatWhen(ts) {
-  try {
-    if (!ts) return "";
-
-    // Supabase timestamptz -> normalny ISO string
-    const d = new Date(ts);
-    if (isNaN(d.getTime())) {
-      return "";
-    }
-
-    const now = new Date();
-    const diffMs = now - d;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    const time = d.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-
-    const sameDay =
-      d.getDate() === now.getDate() &&
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear();
-
-    if (sameDay) {
-      return `Today, ${time}`;
-    }
-
-    const yesterday = new Date(now);
-    yesterday.setDate(now.getDate() - 1);
-
-    const isYesterday =
-      d.getDate() === yesterday.getDate() &&
-      d.getMonth() === yesterday.getMonth() &&
-      d.getFullYear() === yesterday.getFullYear();
-
-    if (isYesterday) {
-      return `Yesterday, ${time}`;
-    }
-
-    if (diffDays < 7) {
-      return `${diffDays} days ago`;
-    }
-
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric"
-    }) + ` — ${time}`;
-  } catch (e) {
-    console.error("formatWhen error", e);
-    return "";
-  }
-}
-      
-
-      try {
-        const { data: userData } = await window.ppSupabase.auth.getUser();
-        currentUser = userData?.user || null;
-
-        const { data, error } = await window.ppSupabase
-          .from("tts_scores")
-          .select("user_id, email, score, created_at")
-          .order("score", { ascending: fale })
-          .limit(200);
-
-        if (error) {
-          console.error(error);
-          tbody.innerHTML = `
-            <tr><td colspan="4" style="padding: 14px;">
-              Error loading highscores.
-            </td></tr>`;
-          statusEl.textContent = "Error loading highscores: " + (error.message || "");
-          return;
-        }
-
-        if (!data || data.length === 0) {
-          tbody.innerHTML = `
-            <tr><td colspan="4" style="padding: 14px;">
-              No scores yet. Be the first to die gloriously.
-            </td></tr>`;
-          statusEl.textContent = "No scores available yet.";
-          return;
-        }
-
-        // per-user best
-        const bestByUser = new Map();
-
-        for (const row of data) {
-          const key = row.user_id || (row.email ?? "").toLowerCase();
-          if (!key) continue;
-          if (!bestByUser.get(key)) bestByUser.set(key, row);
-        }
-
-        const uniqueScores = Array.from(bestByUser.values());
-        uniqueScores.sort((a, b) => (b.score || 0) - (a.score || 0));
-
-        function maskEmail(email) {
-          if (!email || typeof email !== "string") return "(unknown)";
-          const [name, domain] = email.split("@");
-          if (!domain) return email;
-          if (name.length <= 2) return name[0] + "***@" + domain;
-          return name[0] + name[1] + "***@" + domain;
-        }
-
-        tbody.innerHTML = "";
-
-        uniqueScores.forEach((row, index) => {
-          const tr = document.createElement("tr");
-
-          let isMe = false;
-          if (currentUser) {
-            if (row.user_id && row.user_id === currentUser.id) {
-              isMe = true;
-            } else if (
-              row.email &&
-              currentUser.email &&
-              row.email.toLowerCase() === currentUser.email.toLowerCase()
-            ) {
-              isMe = true;
-            }
-          }
-
-          if (isMe) tr.classList.add("score-row-me");
-
-          const rank = index + 1;
-
-          const rankTd = document.createElement("td");
-          rankTd.className = "score-rank";
-          const badge = document.createElement("div");
-          badge.classList.add("rank-badge");
-          if (rank === 1) badge.classList.add("rank-1");
-          if (rank === 2) badge.classList.add("rank-2");
-          if (rank === 3) badge.classList.add("rank-3");
-          badge.textContent = rank;
-          rankTd.appendChild(badge);
-
-          const playerTd = document.createElement("td");
-          playerTd.className = "score-player";
-          playerTd.textContent = maskEmail(row.email);
-
-          if (isMe) {
-            const mePill = document.createElement("span");
-            mePill.className = "me-pill";
-            mePill.innerHTML = "YOU&nbsp;★";
-            playerTd.appendChild(mePill);
-          }
-
-          const bestTd = document.createElement("td");
-          bestTd.className = "score-best";
-          const scoreVal = Number(row.score || 0);
-          bestTd.textContent = scoreVal.toFixed(1);
-
-          const whenTd = document.createElement("td");
-          whenTd.className = "score-when";
-          whenTd.textContent = formatWhen(row.created_at);
-
-          tr.appendChild(rankTd);
-          tr.appendChild(playerTd);
-          tr.appendChild(bestTd);
-          tr.appendChild(whenTd);
-
-          tbody.appendChild(tr);
-        });
-
-        if (currentUser) {
-          statusEl.textContent = "Showing best run per player. Your row is highlighted.";
-        } else {
-          statusEl.textContent = "Showing best run per player. Log in to see your row highlighted.";
-        }
-      } catch (err) {
-        console.error(err);
-        tbody.innerHTML = `
-          <tr><td colspan="4" style="padding: 14px;">
-            Error loading highscores.
-          </td></tr>`;
-        statusEl.textContent = "Unexpected error while loading highscores.";
-      }
-    })();
-  </script>
+  
 </body>
 </html>
