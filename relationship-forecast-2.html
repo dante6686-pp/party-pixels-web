@@ -148,10 +148,15 @@
       to { opacity: 1; transform: translateY(0); }
     }
     @media (max-width: 600px) {
-      .card { padding: 18px; }
-      h1 { font-size: 1.4rem; }
-      .row { flex-direction: column; }
+    .row {
+      flex-direction: column;
+      gap: 0; /* albo 8px jeśli chcesz odstęp */
     }
+  
+    .row > div {
+      width: 100%;
+    }
+  }
   </style>
 </head>
 <body>
