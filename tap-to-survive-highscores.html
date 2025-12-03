@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tap to Survive – Highscores</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Party Pixels – Tap to Survive · Highscores</title>
 
   <style>
     :root {
@@ -14,6 +14,7 @@
       --border: #24273a;
       --accent1: #ff5cff;
       --accent2: #5c8aff;
+      --accent3: #22c55e;
       --cardbg: rgba(10, 14, 35, 0.88);
     }
 
@@ -30,6 +31,8 @@
       flex-direction: column;
       align-items: center;
     }
+
+    /* TOP BAR */
 
     header.topbar {
       width: 100%;
@@ -88,6 +91,8 @@
       border-color: var(--accent1);
     }
 
+    /* PAGE */
+
     .page {
       width: 100%;
       max-width: 880px;
@@ -136,55 +141,166 @@
       box-shadow: 0 18px 32px rgba(0, 0, 0, 0.6);
     }
 
-    table {
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .scores-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .scores-caption {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .scores-caption strong {
+      color: #e5e5ff;
+    }
+
+    .table-wrapper {
+      border-radius: 16px;
+      border: 1px solid rgba(45, 49, 90, 0.9);
+      overflow: hidden;
+      background: radial-gradient(circle at top left, rgba(76, 81, 191, 0.25), rgba(5, 7, 18, 0.96));
+    }
+
+    table.scores-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
-      margin-top: 8px;
+      min-width: 100%;
     }
 
-    th, td {
-      padding: 8px 6px;
+    table.scores-table thead {
+      background: linear-gradient(90deg, rgba(12, 18, 46, 0.95), rgba(23, 32, 82, 0.95));
+    }
+
+    table.scores-table th,
+    table.scores-table td {
+      padding: 10px 14px;
       text-align: left;
     }
 
-    th {
+    table.scores-table th {
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       color: var(--muted);
-      border-bottom: 1px solid rgba(44, 47, 90, 0.9);
+      border-bottom: 1px solid rgba(62, 68, 120, 0.9);
     }
 
-    tr:nth-child(even) td {
-      background: rgba(11, 14, 32, 0.8);
+    table.scores-table tbody tr {
+      border-bottom: 1px solid rgba(32, 36, 80, 0.75);
+      background: radial-gradient(circle at left, rgba(92, 138, 255, 0.10), rgba(6, 9, 24, 0.96));
+      transition: background 0.16s ease, transform 0.12s ease, box-shadow 0.12s ease;
     }
 
-    tr:nth-child(odd) td {
-      background: rgba(7, 9, 24, 0.8);
+    table.scores-table tbody tr:nth-child(2n) {
+      background: radial-gradient(circle at right, rgba(255, 92, 255, 0.08), rgba(5, 8, 22, 0.98));
     }
 
-    td {
-      border-bottom: 1px solid rgba(20, 23, 52, 0.7);
+    table.scores-table tbody tr:hover {
+      background: radial-gradient(circle at center, rgba(92, 138, 255, 0.24), rgba(4, 7, 20, 0.98));
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
     }
 
-    .rank {
+    .score-rank {
       width: 40px;
       font-weight: 600;
+      color: var(--muted);
     }
 
-    .score {
+    .score-player {
+      font-weight: 500;
+    }
+
+    .score-best {
       font-variant-numeric: tabular-nums;
     }
 
-    .you-row {
-      outline: 1px solid var(--accent2);
+    .score-when {
+      font-size: 11px;
+      color: var(--muted);
     }
 
-    .status {
+    /* trophy / ranking badges */
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid rgba(147, 155, 255, 0.9);
+      background: radial-gradient(circle at top, rgba(147, 155, 255, 0.6), rgba(27, 31, 80, 0.9));
+      color: #050714;
+    }
+
+    .rank-1 {
+      border-color: #facc15;
+      background: radial-gradient(circle at top, #facc15, #854d0e);
+      color: #020617;
+    }
+
+    .rank-2 {
+      border-color: #e5e7eb;
+      background: radial-gradient(circle at top, #e5e7eb, #4b5563);
+      color: #020617;
+    }
+
+    .rank-3 {
+      border-color: #f97316;
+      background: radial-gradient(circle at top, #fed7aa, #7c2d12);
+      color: #020617;
+    }
+
+    /* current user highlight */
+
+    .score-row-me {
+      position: relative;
+      border-left: 3px solid var(--accent3);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.1), 0 10px 22px rgba(0, 0, 0, 0.7);
+      background:
+        radial-gradient(circle at left, rgba(34, 197, 94, 0.26), rgba(8, 16, 32, 0.98));
+    }
+
+    .score-row-me:hover {
+      background:
+        radial-gradient(circle at center, rgba(34, 197, 94, 0.32), rgba(5, 10, 25, 0.98));
+    }
+
+    .me-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.16);
+      border: 1px solid rgba(34, 197, 94, 0.6);
+      color: #bbf7d0;
+      margin-left: 8px;
+    }
+
+    .scores-status {
+      margin-top: 10px;
       font-size: 12px;
       color: var(--muted);
-      margin-top: 6px;
     }
 
     footer.footer {
@@ -202,24 +318,21 @@
     }
 
     @media (max-width: 640px) {
-      footer.footer {
-        flex-direction: column;
-      }
-      th:nth-child(4),
-      td:nth-child(4) {
-        display: none; /* chowamy date na małych ekranach */
+      footer.footer { flex-direction: column; }
+      table.scores-table th,
+      table.scores-table td {
+        padding: 8px 10px;
       }
     }
   </style>
 </head>
 <body>
-
+  <!-- TOP BAR -->
   <header class="topbar">
     <div class="brand">
       <div class="brand-pill"></div>
       Party Pixels
     </div>
-
     <div class="topbar-right">
       <span class="user-badge" data-pp-user-badge>Not logged in</span>
       <a class="account-link" href="/account.html" data-pp-account-link>Account</a>
@@ -236,108 +349,221 @@
     </section>
 
     <section class="card">
-      <div class="subtitle">Best times (seconds). Lower = you died slower… kind of.</div>
+      <div class="scores-header">
+        <div class="section-label">Leaderboard</div>
+        <div class="scores-caption">
+          <strong>Best times (seconds).</strong> Higher = you survived longer.
+        </div>
+      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Player</th>
-            <th>Best time (s)</th>
-            <th>When</th>
-          </tr>
-        </thead>
-        <tbody id="scoresBody">
-          <!-- rows z JS -->
-        </tbody>
-      </table>
+      <div class="table-wrapper">
+        <table class="scores-table">
+          <thead>
+            <tr>
+              <th class="score-rank">#</th>
+              <th>Player</th>
+              <th>Best time (s)</th>
+              <th>When</th>
+            </tr>
+          </thead>
+          <tbody id="scoresBody">
+            <tr>
+              <td colspan="4" style="padding: 14px;">
+                Loading highscores…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <div id="scoresStatus" class="status">Loading…</div>
+      <div id="scoresStatus" class="scores-status">
+        Leaderboard powered by Supabase.
+      </div>
     </section>
 
     <footer class="footer">
       <div>Party Pixels · Tap to Survive</div>
-      <div>Leaderboard powered by Supabase.</div>
+      <div>Prototype web toy with Supabase highscores.</div>
     </footer>
   </main>
 
-  <!-- AUTH -->
+  <!-- Supabase + shared auth helper -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
 
-  <!-- Leaderboard script -->
+  <!-- Highscores logic -->
   <script>
     (async function () {
-      const statusEl = document.getElementById("scoresStatus");
       const tbody = document.getElementById("scoresBody");
+      const statusEl = document.getElementById("scoresStatus");
 
+      if (!tbody || !statusEl) return;
+
+      // jeśli klient auth się nie załadował
       if (typeof window.ppSupabase === "undefined") {
-        statusEl.textContent = "Leaderboard not available (auth client not loaded).";
+        tbody.innerHTML = `
+          <tr><td colspan="4" style="padding: 14px;">
+            Leaderboard not available (auth client not loaded).
+          </td></tr>`;
+        statusEl.textContent = "Supabase client not ready.";
         return;
       }
 
-      statusEl.textContent = "Loading…";
+      let currentUser = null;
 
       try {
+        // pobierz aktualnie zalogowanego
         const { data: userData } = await window.ppSupabase.auth.getUser();
-        const currentUser = userData?.user || null;
+        currentUser = userData?.user || null;
 
+        // pobierz surowe wyniki – wiele wpisów na usera
         const { data, error } = await window.ppSupabase
           .from("tts_scores")
-          .select("email, score, created_at, user_id")
-          .order("score", { ascending: false })
-          .limit(50);
+          .select("user_id, email, score, created_at")
+          .order("score", { ascending: false })   // wyższy score = lepiej (dłużej żył)
+          .limit(200);
 
         if (error) {
-  console.error(error);
-  statusEl.textContent = "Error loading highscores: " + (error.message || '');
-  return;
-}
-
-
-        if (!data || data.length === 0) {
-          statusEl.textContent = "No scores yet. Be the first to die gloriously.";
+          console.error(error);
+          tbody.innerHTML = `
+            <tr><td colspan="4" style="padding: 14px;">
+              Error loading highscores.
+            </td></tr>`;
+          statusEl.textContent = "Error loading highscores: " + (error.message || "");
           return;
         }
 
+        if (!data || data.length === 0) {
+          tbody.innerHTML = `
+            <tr><td colspan="4" style="padding: 14px;">
+              No scores yet. Be the first to die gloriously.
+            </td></tr>`;
+          statusEl.textContent = "No scores available yet.";
+          return;
+        }
+
+        // 🔥 AGREGACJA: jeden najlepszy wynik na usera
+        // kluczem jest user_id jeśli istnieje, inaczej email
+        const bestByUser = new Map();
+
+        for (const row of data) {
+          const key = row.user_id || (row.email ?? "").toLowerCase();
+          if (!key) continue;
+
+          const existing = bestByUser.get(key);
+          if (!existing) {
+            bestByUser.set(key, row); // dane już są posortowane od najlepszego
+          }
+        }
+
+        const uniqueScores = Array.from(bestByUser.values());
+
+        // sortowanie per-user po score (najwyższy first)
+        uniqueScores.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+        // helper do maskowania emaila
+        function maskEmail(email) {
+          if (!email || typeof email !== "string") return "(unknown)";
+          const [name, domain] = email.split("@");
+          if (!domain) return email;
+          if (name.length <= 2) return name[0] + "***@" + domain;
+          return name[0] + name[1] + "***@" + domain;
+        }
+
+        // helper format daty
+        function formatWhen(ts) {
+          if (!ts) return "";
+          const d = new Date(ts);
+          if (Number.isNaN(d.getTime())) return "";
+          return d.toLocaleString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          });
+        }
+
+        // rysowanie
         tbody.innerHTML = "";
 
-        data.forEach((row, index) => {
+        uniqueScores.forEach((row, index) => {
           const tr = document.createElement("tr");
+
+          // czy to wiersz aktualnego usera?
+          let isMe = false;
+          if (currentUser) {
+            if (row.user_id && row.user_id === currentUser.id) {
+              isMe = true;
+            } else if (
+              row.email &&
+              currentUser.email &&
+              row.email.toLowerCase() === currentUser.email.toLowerCase()
+            ) {
+              isMe = true;
+            }
+          }
+
+          if (isMe) tr.classList.add("score-row-me");
+
           const rank = index + 1;
 
-          const email = row.email || "Anonymous";
-          // lekko maskujemy maila
-          const displayEmail = email.includes("@")
-            ? email.replace(/(.{2}).+(@.+)/, "$1***$2")
-            : email;
+          // rank badge / numer
+          const rankTd = document.createElement("td");
+          rankTd.className = "score-rank";
+          const badge = document.createElement("div");
+          badge.classList.add("rank-badge");
+          if (rank === 1) badge.classList.add("rank-1");
+          if (rank === 2) badge.classList.add("rank-2");
+          if (rank === 3) badge.classList.add("rank-3");
+          badge.textContent = rank;
+          rankTd.appendChild(badge);
 
-          const score = Number(row.score || 0).toFixed(1);
-          const when = row.created_at
-            ? new Date(row.created_at).toLocaleDateString()
-            : "-";
+          // player
+          const playerTd = document.createElement("td");
+          playerTd.className = "score-player";
+          playerTd.textContent = maskEmail(row.email);
 
-          tr.innerHTML = `
-            <td class="rank">${rank}</td>
-            <td>${displayEmail}</td>
-            <td class="score">${score}</td>
-            <td>${when}</td>
-          `;
-
-          if (currentUser && currentUser.id === row.user_id) {
-            tr.classList.add("you-row");
+          if (isMe) {
+            const mePill = document.createElement("span");
+            mePill.className = "me-pill";
+            mePill.innerHTML = "You&nbsp;★";
+            playerTd.appendChild(mePill);
           }
+
+          // best time
+          const bestTd = document.createElement("td");
+          bestTd.className = "score-best";
+          const scoreVal = Number(row.score || 0);
+          bestTd.textContent = scoreVal.toFixed(1);
+
+          // when
+          const whenTd = document.createElement("td");
+          whenTd.className = "score-when";
+          whenTd.textContent = formatWhen(row.created_at);
+
+          tr.appendChild(rankTd);
+          tr.appendChild(playerTd);
+          tr.appendChild(bestTd);
+          tr.appendChild(whenTd);
 
           tbody.appendChild(tr);
         });
 
-        statusEl.textContent = "";
+        if (currentUser) {
+          statusEl.textContent = "Showing best run per player. Your row is highlighted.";
+        } else {
+          statusEl.textContent = "Showing best run per player. Log in to see your row highlighted.";
+        }
       } catch (err) {
         console.error(err);
-        statusEl.textContent = "Error loading highscores.";
+        tbody.innerHTML = `
+          <tr><td colspan="4" style="padding: 14px;">
+            Error loading highscores.
+          </td></tr>`;
+        statusEl.textContent = "Unexpected error while loading highscores.";
       }
     })();
   </script>
-  
 </body>
 </html>
