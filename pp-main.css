@@ -43,7 +43,26 @@
       background: radial-gradient(circle at top, #181b39 0, #050712 48%, #02030a 100%);
       color: var(--text);
       min-height: 100vh;
+      background-image: url('twoj-obrazek.png');
+      background-repeat: no-repeat;
+      background-size: cover; /* albo contain, jak wolisz */
+      background-position: center center;
+      background-attachment: fixed; /* żeby się nie przesuwał */
     }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url('twoj-obrazek.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.2; /* zmień jak chcesz */
+      z-index: -1; /* to ważne: ląduje POD całą stroną */
+      pointer-events: none;
+    }
+
 
     .page {
       max-width: 960px;
