@@ -294,6 +294,10 @@
 
   <!-- Footer -->
   <div id="footer"></div>
+
+  <!-- PayPal.me Link-->
+  <script src="/tipjar.js"></script>
+  
 </section>
     
 <!-- Load page elements -->
@@ -303,13 +307,6 @@
       .then(res => res.text())
       .then(html => {
         document.getElementById(id).innerHTML = html;
-
-        // Jeżeli to był footer – załaduj tip jar
-        if (part.id === "footer") {
-          const s = document.createElement("script");
-          s.src = "/tipjar.js";
-          document.body.appendChild(s);
-        }
       })
       .catch(err => console.error(`Load error in ${file}:`, err));
   }
