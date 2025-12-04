@@ -203,12 +203,11 @@
     }
 
     @media (max-width: 768px) {
-  body {
-    background-attachment: scroll;
-    background-position: center top;
-    background-size: cover;
+  body::before {
+    position: absolute; /* zamiast fixed jeśli dalej by skakało */
   }
 }
+
 
     .toy-card {
       position: relative;
