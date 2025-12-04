@@ -8,6 +8,15 @@
   <style>
     /* Tu tylko rzeczy specyficzne dla tej strony */
 
+    body.toy-bg-reaction {
+    background-image: url("media/gamethumbs/web-toy-splash.jpg");
+    background-size: cover;        /* wypełnia ekran */
+    background-position: center;   /* środek obrazka */
+    background-repeat: no-repeat;  /* bez powtarzania */
+    background-attachment: fixed;  /* opcjonalnie: parallaxowy feeling */
+    background-color: #000;        /* fallback jakby obrazek się nie wczytał */
+  }
+
     .duel-container {
       max-width: 600px;
       margin: 32px auto 56px;
@@ -139,16 +148,8 @@
         width: 100%;
       }
     }
-     /* Tło strony oparte na splash screenie tej zabawki */
-  body.toy-bg {
-    /* obrazek splasha */
-    background:
-      radial-gradient(circle at top, rgba(5, 7, 18, 0.8), rgba(2, 3, 10, 0.98)),
-      url("media/gamethumbs/web-toy-splash.jpg") center / cover fixed no-repeat;
-    color: var(--text);
-  }
 
-  /* Opcjonalnie: panel środka lekko odcięty od tła */
+  /* Opcjonalnie: panel środka lekko odcięty od tła 
   .page {
     max-width: 960px;
     margin: 0 auto;
@@ -156,10 +157,10 @@
     background: rgba(5, 7, 18, 0.92);
     border-radius: 22px;
     box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75);
-  }
+  }*/
   </style>
 </head>
-<body class="toy-bg">
+<body class="toy-bg-reaction">
   <div class="page">
     
     <!-- Header Top Bar -->
