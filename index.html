@@ -290,35 +290,27 @@
           </div>
         </article>
       </div>
-
-      <p class="hint">
-        Tip for future you: każdą kartę możesz podpiąć pod osobny plik HTML (np. <code>/tap-to-survive.html</code>),
-        gdy tylko dodasz go do repo.
-      </p>
     </section>
 
-    <!--
-    <!-- FOOTER 
-    <footer class="footer">
-      <div>Party Pixels · Web Toys Lab</div>
-      <div class="footer-links">
-        <span>Built fast, break often.</span>
-      </div>
-    </footer>
-  </div>
-
-<script src="/tipjar.js"></script>
-  -->
-
+  <!-- Footer -->
+  <div id="footer"></div>
+</section>
+    
 <!-- Load page elements -->
 <script>
-  fetch("/header.html")
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById("header").innerHTML = data;
-    })
-    .catch(error => console.error("Header load error:", error));
+  function loadPart(id, file) {
+    fetch(file)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById(id).innerHTML = html;
+      })
+      .catch(err => console.error(`Load error in ${file}:`, err));
+  }
+
+  loadPart("header", "/header.html");
+  loadPart("footer", "/footer.html");
 </script>
+
 
 <!-- User authentication/login -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
