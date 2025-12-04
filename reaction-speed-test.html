@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Party Pixels – Reaction Speed Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" href="pp-main.css">
+
+  <style>
+    /* --- SPECYFICZNE DLA TEJ STRONY --- */
+
+    .rs-container {
+      max-width: 600px;
+      margin: 40px auto;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .rs-box {
+      width: 100%;
+      height: 260px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.25s ease, color 0.25s ease;
+      margin-bottom: 20px;
+    }
+
+    .rs-waiting {
+      background: #2c2c45;
+      color: #d0d0ff;
+    }
+
+    .rs-ready {
+      background: #8f2b2b;
+      color: #ffdede;
+    }
+
+    .rs-click {
+      background: #2b8f3e;
+      color: #eaffea;
+    }
+
+    .rs-score {
+      font-size: 1.2rem;
+      margin: 12px 0;
+      opacity: 0.9;
+    }
+
+    .rs-best {
+      font-size: 0.95rem;
+      opacity: 0.7;
+    }
+
+    .rs-btn {
+      display: inline-flex;
+      padding: 10px 22px;
+      font-size: 1rem;
+      border-radius: 10px;
+      background: #6e63ff;
+      color: white;
+      cursor: pointer;
+      border: none;
+      margin-top: 14px;
+      transition: opacity 0.2s;
+    }
+
+    .rs-btn:hover {
+      opacity: 0.8;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    
+    <!-- Header -->
+    <div id="header"></div>
+
+    <!-- CONTENT -->
+    <div class="rs-container">
+
+      <article class="toy-card">
+
+        <div class="toy-label-row">
+          <span class="toy-type-pill">Game</span>
+          <span class="toy-status">LIVE</span>
+        </div>
+
+        <h3 class="toy-title">Reaction Speed Test</h3>
+
+        <p class="toy-desc">
+          Tap when the screen turns green. Test your reflexes in milliseconds.
+        </p>
+
+        <div class="toy-footer">
+          <div class="toy-tags">
+            <span class="toy-tag">reflex</span>
+            <span class="toy-tag">speed</span>
+          </div>
+          <a class="toy-link disabled">
+            <span>You're already here →</span>
+          </a>
+        </div>
+      </article>
+
+      <!-- GAME -->
+      <div id="rs-box" class="rs-box rs-waiting">
+        Tap to start
+      </div>
+
+      <div class="rs-score" id="rs-score">—</div>
+      <div class="rs-best" id="rs-best">Your best: —</div>
+
+      <button class="rs-btn" id="rs-restart">Restart</button>
+
+    </div>
+
+    <!-- TipJar -->
+    <div id="tipjar"></div>
+
+  </div>
+
+  <!-- Header Loader -->
+  <script>
+  fetch("/header.html")
+    .then(r => r.text())
+    .then(t => document.getElementById("header").innerHTML = t)
+    .catch(e => console.error("Header load error:", e));
+  </script>
+
+  <!-- TipJar Loader -->
+  <script src="/tipjar.js"></script>
+
+  <!-- GAME LOGIC -->
+  <script>
+    const box = document.getElementById("rs-box");
+    const scoreOut = document.getElementById("rs-score");
+    const bestOut = document.getElementById("rs-best");
+    const restart = document.getElementById("rs-restart");
+
+    let waiting = true;
+    let ready = false;
+    let startTime = 0;
+    let timeout = null;
+
+    let best = localStorage.getItem("rs-best") || null;
+    if (best) bestOut.textContent = "Your best: " + best + " ms";
+
+    function startGame() {
+      box.textContent = "Wait for green…";
+      box.className = "rs-box rs-ready";
+      waiting = false;
+      ready = false;
+
+      const delay = Math.random() * 2000 + 800; // 0.8s–2.8s
+
+      timeout = setTimeout(() => {
+        box.className = "rs-box rs-click";
+        box.textContent = "TAP!";
+        ready = true;
+        startTime = performance.now();
+      }, delay);
+    }
+
+    function resetToWaiting() {
+      box.className = "rs-box rs-waiting";
+      box.textContent = "Tap to start";
+      waiting = true;
+      ready = false;
+      clearTimeout(timeout);
+    }
+
+    box.addEventListener("click", () => {
+      // Start
+      if (waiting) {
+        startGame();
+        return;
+      }
+
+      // Too early
+      if (!ready) {
+        scoreOut.textContent = "Too early!";
+        resetToWaiting();
+        return;
+      }
+
+      // Calculate reaction time
+      const end = performance.now();
+      const reaction = Math.floor(end - startTime);
+
+      scoreOut.textContent = `Reaction: ${reaction} ms`;
+
+      // Save best
+      if (!best || reaction < Number(best)) {
+        best = reaction;
+        localStorage.setItem("rs-best", best);
+        bestOut.textContent = "Your best: " + best + " ms";
+      }
+
+      resetToWaiting();
+    });
+
+    restart.addEventListener("click", resetToWaiting);
+  </script>
+
+</body>
+</html>
