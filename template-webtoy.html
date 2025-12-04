@@ -13,6 +13,7 @@
 </head>
 <body>
   <div class="page">
+    <!--
     <header class="topbar">
       <div class="brand">
         <div class="brand-pill"></div>
@@ -22,8 +23,23 @@
         <span class="tag">Web Toy</span>
       </div>
     </header>
+    -->
+
+    <div id="header"></div>
 
     <!-- Reszta kontentu tej strony -->
   </div>
+
+  <!-- Load page elements -------------------->
+  <script>
+  fetch("/header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    })
+    .catch(error => console.error("Header load error:", error));
+  </script>
+
+  
 </body>
 </html>
