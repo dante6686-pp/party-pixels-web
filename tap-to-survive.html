@@ -360,6 +360,8 @@
   </header>
   -->
 
+  <div id="header"></div>
+  
   <main class="page">
     <section class="header-row">
       <div>
@@ -604,5 +606,15 @@
   <!-- AUTH: supabase client + pp-auth (musi ustawić window.ppSupabase) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
+  
+  <script>
+  fetch("/header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    })
+    .catch(error => console.error("Header load error:", error));
+  </script>
+  
 </body>
 </html>
