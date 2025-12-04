@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cat Clicker Tactics – Party Pixels Web Toy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0d1117, #111827, #0a0f16);
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.8);
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.75rem;
+      opacity: 0.75;
+      margin-bottom: 16px;
+    }
+
+    /* Tactics */
+    .tactics {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tactic-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(31, 41, 55, 0.8);
+      border: 1px solid rgba(107, 114, 128, 0.6);
+      color: #e5e7eb;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.12s ease;
+    }
+
+    .tactic-btn:hover {
+      border-color: #818cf8;
+      background: rgba(51, 65, 85, 0.9);
+    }
+
+    .tactic-btn.active {
+      border-color: #6366f1;
+      background: rgba(67, 56, 202, 0.7);
+    }
+
+    /* Battle panel */
+    .battle {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.7);
+      margin-bottom: 12px;
+    }
+
+    .enemy-count {
+      text-align: right;
+      font-size: 0.75rem;
+      margin-bottom: 8px;
+      opacity: 0.75;
+    }
+
+    .battle-characters {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 4px;
+      font-size: 1.6rem;
+    }
+
+    .hp-bars {
+      margin-top: 8px;
+    }
+
+    .bar-label {
+      font-size: 0.7rem;
+      margin-bottom: 4px;
+      opacity: 0.75;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bar-shell {
+      height: 12px;
+      width: 100%;
+      background: rgba(31, 41, 55, 0.9);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      border: 1px solid rgba(55, 65, 81, 0.7);
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      width: 100%;
+      transition: width 0.12s linear;
+    }
+
+    .bar-fill.enemy {
+      background: linear-gradient(90deg, #f87171, #ef4444);
+    }
+
+    /* Log */
+    .log-box {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 12px;
+      height: 80px;
+      overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 0.8);
+      display: flex;
+      flex-direction: column;
+      padding: 6px 8px;
+      margin-bottom: 12px;
+    }
+
+    .log-line {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    /* Start / New Run */
+    .start-btn {
+      padding: 14px;
+      width: 100%;
+      border-radius: 14px;
+      background: linear-gradient(90deg, #4f46e5, #6366f1);
+      border: none;
+      color: white;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: 0.12s ease;
+    }
+
+    .start-btn:hover {
+      filter: brightness(1.1);
+    }
+
+    /* END SCREEN */
+    .end-screen {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      text-align: center;
+    }
+
+    .end-screen.visible {
+      display: block;
+    }
+
+    .footer {
+      font-size: 0.65rem;
+      text-align: center;
+      opacity: 0.6;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <h1>Cat Clicker Tactics</h1>
+      <div class="subtitle">Party Pixels Web Toy • Tactical Auto-Battle</div>
+
+      <!-- Tactics -->
+      <div class="tactics">
+        <div class="tactic-btn" id="tacAgg">Aggression</div>
+        <div class="tactic-btn" id="tacChaos">Chaos</div>
+        <div class="tactic-btn" id="tacDeescalate">De-escalation</div>
+      </div>
+
+      <!-- Start -->
+      <button class="start-btn" id="startBtn">Start Run</button>
+
+      <!-- Battle -->
+      <div class="battle" id="battlePanel">
+        <div class="enemy-count">Enemy <span id="enemyNumber">0</span> / 10</div>
+
+        <div class="battle-characters">
+          <div id="catIcon">😼</div>
+          <div id="enemyIcon">❓</div>
+        </div>
+
+        <div class="hp-bars">
+          <div class="bar-label">Cat HP: <span id="catHpLabel">100</span></div>
+          <div class="bar-shell"><div class="bar-fill" id="catHpBar"></div></div>
+
+          <div class="bar-label">Enemy HP: <span id="enemyHpLabel">100</span></div>
+          <div class="bar-shell"><div class="bar-fill enemy" id="enemyHpBar"></div></div>
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div class="log-box" id="logBox"></div>
+
+      <!-- End Screen -->
+      <div class="end-screen" id="endScreen">
+        <h2 id="endTitle">—</h2>
+        <p id="endDesc"></p>
+        <button class="start-btn" id="restartBtn">New Run</button>
+      </div>
+    </div>
+
+    <div class="footer">Prototype • v1.0</div>
+  </div>
+
+  <script src="cat.js"></script>
+</body>
+</html>
