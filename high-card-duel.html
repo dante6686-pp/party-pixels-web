@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Party Pixels – High Card Duel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="pp-main.css">
+  <style>
+    /* Tu tylko rzeczy specyficzne dla tej strony */
+
+    .duel-container {
+      max-width: 600px;
+      margin: 32px auto 56px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .duel-title {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    .duel-subtitle {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      margin-bottom: 22px;
+    }
+
+    .duel-scoreboard {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .duel-score {
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 255, 0.4);
+      min-width: 120px;
+    }
+
+    .duel-score span {
+      display: block;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+
+    .duel-score strong {
+      font-size: 1.4rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .duel-status {
+      margin: 10px 0 14px;
+      font-size: 0.95rem;
+      opacity: 0.9;
+      min-height: 2.4em;
+    }
+
+    .duel-cards {
+      margin: 10px 0 18px;
+      padding: 16px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top left, rgba(94, 234, 212, 0.18), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.18), transparent 55%),
+                  rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 255, 0.4);
+    }
+
+    .duel-card-label {
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 6px;
+    }
+
+    .duel-card-values {
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .duel-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 6px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      color: #f9f9ff;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s ease;
+    }
+
+    .duel-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.9);
+      opacity: 0.96;
+    }
+
+    .duel-button:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.9);
+      opacity: 0.9;
+    }
+
+    @media (max-width: 640px) {
+      .duel-container {
+        padding: 16px 12px 40px;
+        margin-top: 20px;
+      }
+
+      .duel-title {
+        font-size: 1.5rem;
+      }
+
+      .duel-scoreboard {
+        flex-direction: row;
+        gap: 10px;
+      }
+
+      .duel-score {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .duel-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    
+    <!-- Header Top Bar -->
+    <div id="header"></div>
+
+    <!-- Reszta kontentu tej strony -->
+    <div class="duel-container">
+      <h1 class="duel-title">High Card Duel</h1>
+      <p class="duel-subtitle">
+        Two players, one phone. Draw secret cards in turn. Highest card wins the round.
+      </p>
+
+      <div class="duel-scoreboard">
+        <div class="duel-score">
+          <span>Player 1</span>
+          <strong id="score-p1">0</strong>
+        </div>
+        <div class="duel-score">
+          <span>Player 2</span>
+          <strong id="score-p2">0</strong>
+        </div>
+      </div>
+
+      <div class="duel-status" id="duel-status">
+        Player 1: tap the button to draw your card.
+      </div>
+
+      <div class="duel-cards">
+        <div class="duel-card-label">Round info</div>
+        <div class="duel-card-values" id="duel-cards-text">
+          No cards drawn yet.
+        </div>
+      </div>
+
+      <button class="duel-button" id="duel-btn">
+        Player 1: draw card
+      </button>
+    </div>
+
+    <!-- PayPal TipJar -->
+    <div id="tipjar"></div>
+    
+  </div>
+
+  <!-- Load page elements -------------------->
+  <script>
+  fetch("/header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    })
+    .catch(error => console.error("Header load error:", error));
+  </script>
+
+  <!-- PayPal.me Link-->
+  <script src="/tipjar.js"></script>
+
+  <!-- GAME LOGIC -->
+  <script>
+    const btn = document.getElementById("duel-btn");
+    const statusEl = document.getElementById("duel-status");
+    const cardsText = document.getElementById("duel-cards-text");
+    const scoreP1El = document.getElementById("score-p1");
+    const scoreP2El = document.getElementById("score-p2");
+
+    let scoreP1 = 0;
+    let scoreP2 = 0;
+
+    let p1Card = null;
+    let p2Card = null;
+
+    // phases: "p1_draw", "p2_draw", "show_result"
+    let phase = "p1_draw";
+
+    function randomCard() {
+      // 1–13, można myśleć jak 1–10 + JQK
+      return Math.floor(Math.random() * 13) + 1;
+    }
+
+    function cardLabel(val) {
+      if (val === 11) return "J (11)";
+      if (val === 12) return "Q (12)";
+      if (val === 13) return "K (13)";
+      return String(val);
+    }
+
+    function updateScores() {
+      scoreP1El.textContent = scoreP1;
+      scoreP2El.textContent = scoreP2;
+    }
+
+    function startRound() {
+      phase = "p1_draw";
+      p1Card = null;
+      p2Card = null;
+      statusEl.textContent = "Player 1: tap the button to draw your card.";
+      cardsText.textContent = "No cards drawn yet.";
+      btn.textContent = "Player 1: draw card";
+    }
+
+    btn.addEventListener("click", () => {
+      if (phase === "p1_draw") {
+        // Player 1 draws
+        p1Card = randomCard();
+        phase = "p2_draw";
+        statusEl.textContent = "Player 1 card ready. Pass the phone to Player 2.";
+        cardsText.textContent = "Player 1 card is hidden. Player 2, tap to draw your card.";
+        btn.textContent = "Player 2: draw card";
+        return;
+      }
+
+      if (phase === "p2_draw") {
+        // Player 2 draws and we show result
+        p2Card = randomCard();
+        phase = "show_result";
+
+        const p1Label = cardLabel(p1Card);
+        const p2Label = cardLabel(p2Card);
+
+        let resultText = `Player 1 drew ${p1Label}. Player 2 drew ${p2Label}. `;
+        if (p1Card > p2Card) {
+          resultText += "Player 1 wins this round!";
+          scoreP1++;
+        } else if (p2Card > p1Card) {
+          resultText += "Player 2 wins this round!";
+          scoreP2++;
+        } else {
+          resultText += "It's a draw.";
+        }
+
+        updateScores();
+        statusEl.textContent = "Round result:";
+        cardsText.textContent = resultText;
+        btn.textContent = "Next round";
+        return;
+      }
+
+      if (phase === "show_result") {
+        // Next round
+        startRound();
+      }
+    });
+
+    // initial
+    updateScores();
+    startRound();
+  </script>
+  
+</body>
+</html>
