@@ -12,24 +12,40 @@
 
     .rs-container {
       max-width: 600px;
-      margin: 40px auto;
-      text-align: center;
+      margin: 30px auto;
       padding: 20px;
+      text-align: center;
     }
 
+    /* SCORE NA GÓRZE */
+    #rs-score {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    #rs-best {
+      font-size: 1rem;
+      opacity: 0.7;
+      margin-bottom: 24px;
+      color: #b8c0ff;
+    }
+
+    /* WIELKI PRZYCISK NA DOLE EKRANU */
     .rs-box {
       width: 100%;
-      height: 260px;
-      border-radius: 18px;
+      height: 320px;
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       font-weight: 600;
       cursor: pointer;
       user-select: none;
       transition: background 0.25s ease, color 0.25s ease;
-      margin-bottom: 20px;
+      margin-top: 30px;
     }
 
     .rs-waiting {
@@ -47,31 +63,20 @@
       color: #eaffea;
     }
 
-    .rs-score {
-      font-size: 1.2rem;
-      margin: 12px 0;
-      opacity: 0.9;
-    }
-
-    .rs-best {
-      font-size: 0.95rem;
-      opacity: 0.7;
-    }
-
-    .rs-btn {
-      display: inline-flex;
+    /* Restart */
+    #rs-restart {
+      margin-top: 20px;
       padding: 10px 22px;
       font-size: 1rem;
       border-radius: 10px;
+      border: none;
+      cursor: pointer;
       background: #6e63ff;
       color: white;
-      cursor: pointer;
-      border: none;
-      margin-top: 14px;
       transition: opacity 0.2s;
     }
 
-    .rs-btn:hover {
+    #rs-restart:hover {
       opacity: 0.8;
     }
 
@@ -79,26 +84,26 @@
 </head>
 <body>
   <div class="page">
-    
+
     <!-- Header -->
     <div id="header"></div>
 
     <!-- CONTENT -->
     <div class="rs-container">
 
-      <!-- GAME -->
+      <!-- SCORE u góry -->
+      <div id="rs-score">—</div>
+      <div id="rs-best">Your best: —</div>
+
+      <!-- PRZYCISK GRY NA DOLE -->
       <div id="rs-box" class="rs-box rs-waiting">
         Tap to start
       </div>
 
-      <div class="rs-score" id="rs-score">—</div>
-      <div class="rs-best" id="rs-best">Your best: —</div>
-
-      <button class="rs-btn" id="rs-restart">Restart</button>
+      <button id="rs-restart">Restart</button>
 
     </div>
 
-    <!-- TipJar -->
     <div id="tipjar"></div>
 
   </div>
@@ -135,7 +140,7 @@
       waiting = false;
       ready = false;
 
-      const delay = Math.random() * 2000 + 800; // 0.8s–2.8s
+      const delay = Math.random() * 2000 + 800;
 
       timeout = setTimeout(() => {
         box.className = "rs-box rs-click";
@@ -154,26 +159,21 @@
     }
 
     box.addEventListener("click", () => {
-      // Start
       if (waiting) {
         startGame();
         return;
       }
 
-      // Too early
       if (!ready) {
         scoreOut.textContent = "Too early!";
         resetToWaiting();
         return;
       }
 
-      // Calculate reaction time
       const end = performance.now();
       const reaction = Math.floor(end - startTime);
-
       scoreOut.textContent = `Reaction: ${reaction} ms`;
 
-      // Save best
       if (!best || reaction < Number(best)) {
         best = reaction;
         localStorage.setItem("rs-best", best);
