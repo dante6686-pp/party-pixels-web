@@ -2,297 +2,339 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Relationship Forecast</title>
+  <title>Party Pixels – Relationship Forecast</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- GLOBAL PARTY PIXELS STYLES -->
+  <link rel="stylesheet" href="pp-main.css">
+
+  <!-- STYLe SPECYFICZNE DLA TEJ WEB TOY -->
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1f2937, #020617);
-      color: #e5e7eb;
-      display: flex;
-      justify-content: center;
-      padding: 40px 12px;
-    }
-
-    /* ==== Custom slider styling (Relationship Forecast) ==== */
-
-/* Track (tło) */
-.card input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 6px;
-  background: linear-gradient(90deg, #818cf8, #ec4899);
-  border-radius: 999px;
-  outline: none;
-  cursor: pointer;
-}
-
-/* Chrome/Edge thumb (kółko) */
-.card input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #ffffff;
-  border-radius: 50%;
-  border: 3px solid #818cf8;
-  box-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
-  cursor: grab;
-  transition: 0.2s;
-}
-
-.card input[type="range"]::-webkit-slider-thumb:active {
-  cursor: grabbing;
-  transform: scale(1.1);
-}
-
-/* Firefox */
-.card input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  background: #ffffff;
-  border-radius: 50%;
-  border: 3px solid #818cf8;
-  box-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
-  cursor: grab;
-  transition: 0.2s;
-}
-
-.card input[type="range"]::-moz-range-thumb:active {
-  cursor: grabbing;
-  transform: scale(1.1);
-}
-
-/* Firefox track */
-.card input[type="range"]::-moz-range-track {
-  height: 6px;
-  background: linear-gradient(90deg, #818cf8, #ec4899);
-  border-radius: 999px;
-}
-    
-    .card {
-      width: 100%;
+    /* Wrapper pod tę konkretną zabawkę */
+    .rf-wrapper {
       max-width: 720px;
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.45);
-      padding: 24px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      margin: 0 auto 24px;
     }
-    h1 {
-      font-size: 1.7rem;
-      margin-bottom: 4px;
+
+    .rf-card {
+      width: 100%;
+      background: rgba(10, 12, 30, 0.96);
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65);
+      padding: 22px 18px 20px;
+      border: 1px solid rgba(72, 76, 140, 0.8);
     }
-    .subtitle {
-      font-size: 0.9rem;
-      color: #9ca3af;
-      margin-bottom: 20px;
+
+    .rf-title {
+      font-size: 20px;
+      margin: 0 0 4px;
     }
-    label {
+
+    .rf-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    .rf-card label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 11px;
       margin-bottom: 4px;
       color: #cbd5f5;
     }
-    input, select, textarea {
+
+    .rf-card input,
+    .rf-card select,
+    .rf-card textarea {
       width: 100%;
       padding: 8px 10px;
       border-radius: 10px;
-      border: 1px solid rgba(148,163,184,0.5);
-      background: rgba(15,23,42,0.8);
-      color: #e5e7eb;
-      font-size: 0.9rem;
+      border: 1px solid rgba(88, 92, 168, 0.9);
+      background: rgba(8, 10, 26, 0.96);
+      color: var(--text);
+      font-size: 13px;
       margin-bottom: 12px;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: 2px solid #6366f1;
-      border-color: transparent;
-    }
-    
-    /* Układ pól w Relationship Forecast */
-    .card .rf-row {
-      display: flex;
-      gap: 10px;
-    }
-    
-    .card .rf-row > div {
-      flex: 1;
-      min-width: 0;       /* ważne żeby input się nie rozpychał */
-    }
-    
-    /* Inputy nie mogą wychodzić poza kontener */
-    .card input,
-    .card select,
-    .card textarea {
       box-sizing: border-box;
       max-width: 100%;
     }
-    
-    /* Mobile – jeden pod drugim */
+
+    .rf-card input:focus,
+    .rf-card select:focus,
+    .rf-card textarea:focus {
+      outline: 2px solid var(--accent2);
+      border-color: transparent;
+    }
+
+    /* Układ pól (dwie kolumny na desktopie) */
+    .rf-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .rf-row > div {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Mobile – jedno pod drugim */
     @media (max-width: 600px) {
-      .card .rf-row {
+      .rf-row {
         flex-direction: column;
       }
     }
 
-    button {
+    /* Slider row */
+    .rf-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .rf-slider-row span {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .rf-card input[type="range"] {
+      flex: 1;
+    }
+
+    /* Custom slider styling (Relationship Forecast) */
+
+    .rf-card input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, #818cf8, #ec4899);
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .rf-card input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 50%;
+      border: 3px solid #818cf8;
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
+      cursor: grab;
+      transition: 0.2s;
+    }
+
+    .rf-card input[type="range"]::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.1);
+    }
+
+    .rf-card input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 50%;
+      border: 3px solid #818cf8;
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.8);
+      cursor: grab;
+      transition: 0.2s;
+    }
+
+    .rf-card input[type="range"]::-moz-range-track {
+      height: 6px;
+      background: linear-gradient(90deg, #818cf8, #ec4899);
+      border-radius: 999px;
+    }
+
+    /* Button */
+    .rf-btn {
       width: 100%;
       padding: 10px 14px;
       border-radius: 999px;
       border: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 0.95rem;
-      background: linear-gradient(135deg, #6366f1, #ec4899);
+      font-size: 13px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
       color: white;
       margin: 4px 0 14px;
       transition: transform 0.1s ease, box-shadow 0.1s ease;
-      box-shadow: 0 10px 25px rgba(79,70,229,0.7);
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.7);
     }
-    button:hover {
+
+    .rf-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 16px 30px rgba(79,70,229,0.9);
+      box-shadow: 0 16px 30px rgba(79, 70, 229, 0.9);
     }
-    button:active {
+
+    .rf-btn:active {
       transform: translateY(1px);
-      box-shadow: 0 6px 15px rgba(79,70,229,0.7);
+      box-shadow: 0 6px 15px rgba(79, 70, 229, 0.7);
     }
-    .slider-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .slider-row span {
-      font-size: 0.8rem;
-      color: #9ca3af;
-      white-space: nowrap;
-    }
-    input[type="range"] {
-      flex: 1;
-    }
-    .result {
+
+    /* Wynik */
+    .rf-result {
       margin-top: 10px;
       padding-top: 12px;
-      border-top: 1px dashed rgba(148,163,184,0.5);
-      font-size: 0.92rem;
+      border-top: 1px dashed rgba(148, 163, 184, 0.5);
+      font-size: 13px;
     }
-    .result-title {
-      font-size: 1.1rem;
+
+    .rf-result-title {
+      font-size: 16px;
       font-weight: 700;
       margin-bottom: 4px;
     }
-    .chips {
+
+    .rf-chips {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin-bottom: 8px;
     }
-    .chip {
+
+    .rf-chip {
       padding: 4px 10px;
       border-radius: 999px;
-      font-size: 0.78rem;
-      background: rgba(30,64,175,0.7);
-      border: 1px solid rgba(129,140,248,0.7);
+      font-size: 11px;
+      background: rgba(30, 64, 175, 0.7);
+      border: 1px solid rgba(129, 140, 248, 0.7);
     }
-    .stats {
+
+    .rf-stats {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 8px;
-      font-size: 0.8rem;
-      color: #9ca3af;
+      font-size: 11px;
+      color: var(--muted);
     }
-    .stat-item {
+
+    .rf-stat-item {
       flex: 1;
       min-width: 120px;
     }
-    .stat-label {
+
+    .rf-stat-label {
       text-transform: uppercase;
       letter-spacing: .08em;
-      font-size: 0.68rem;
+      font-size: 9px;
       color: #6b7280;
     }
-    .stat-value {
+
+    .rf-stat-value {
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 13px;
     }
-    .fade {
+
+    .rf-fade {
       animation: fadeIn 0.3s ease-out;
     }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    @media (max-width: 600px) {
-    .row {
-      flex-direction: column;
-      gap: 0; /* albo 8px jeśli chcesz odstęp */
-    }
-  
-    .row > div {
-      width: 100%;
-    }
-  }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Relationship Forecast 🔮</h1>
-    <p class="subtitle">
-      Pseudo-AI oracle for messy humans. Zero science, 100% vibes.
-    </p>
-
-    <div class="rf-row">
-      <div>
-        <label for="nameA">Person A</label>
-        <input id="nameA" placeholder="You / Partner 1" />
+  <div class="page">
+    <!-- TOPBAR w stylu Party Pixels -->
+    <header class="topbar">
+      <a href="/index.html" class="brand brand-link">
+        <div class="brand-pill"></div>
+        Party Pixels
+      </a>
+      <div class="topbar-right">
+        <span class="tag">Web Toy</span>
+        <span class="user-badge">Relationship Forecast</span>
       </div>
-      <div>
-        <label for="nameB">Person B</label>
-        <input id="nameB" placeholder="Crush / Partner 2" />
+    </header>
+
+    <!-- HERO / opis web toya -->
+    <section class="hero">
+      <div class="hero-kicker">Relationship toy</div>
+      <h1 class="hero-title">Relationship Forecast 🔮</h1>
+      <p class="hero-sub">
+        Pseudo-AI oracle for messy humans. Zero science, 100% vibes. 
+        <strong>Type your details, get a chaotic semi-honest verdict.</strong>
+      </p>
+    </section>
+
+    <!-- GŁÓWNA KARTA Z FORMULARZEM -->
+    <main class="rf-wrapper">
+      <div class="rf-card">
+        <h2 class="rf-title">Input the chaos</h2>
+        <p class="rf-subtitle">
+          We’ll pretend to analyse your love life with fake-serious energy.
+        </p>
+
+        <div class="rf-row">
+          <div>
+            <label for="nameA">Person A</label>
+            <input id="nameA" placeholder="You / Partner 1" />
+          </div>
+          <div>
+            <label for="nameB">Person B</label>
+            <input id="nameB" placeholder="Crush / Partner 2" />
+          </div>
+        </div>
+
+        <div class="rf-row">
+          <div>
+            <label for="relType">What are you (for real)?</label>
+            <select id="relType">
+              <option value="crush">Crush / talking stage</option>
+              <option value="dating">Dating</option>
+              <option value="fwb">Friends with benefits</option>
+              <option value="relationship" selected>In a relationship</option>
+              <option value="married">Married / living together</option>
+              <option value="situationship">Situationship 🤡</option>
+              <option value="exes">Exes that still text</option>
+            </select>
+          </div>
+          <div>
+            <label for="duration">For how long?</label>
+            <select id="duration">
+              <option value="new">0–3 months</option>
+              <option value="early">3–12 months</option>
+              <option value="mid">1–3 years</option>
+              <option value="long">3–7 years</option>
+              <option value="ancient">7+ years</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="rf-slider-row">
+          <span>Current vibe</span>
+          <input id="vibe" type="range" min="0" max="100" value="50" />
+          <span id="vibeLabel">Balanced chaos</span>
+        </div>
+
+        <label for="notes">Optional tea (red flags, drama, distance, pets, kids, etc.)</label>
+        <textarea id="notes" rows="2" placeholder="Write anything you want the fake AI to 'consider' 😉"></textarea>
+
+        <button id="generateBtn" class="rf-btn">Reveal my forecast</button>
+
+        <div id="result" class="rf-result"></div>
       </div>
-    </div>
+    </main>
 
-    <div class="rf-row">
-      <div>
-        <label for="relType">What are you (for real)?</label>
-        <select id="relType">
-          <option value="crush">Crush / talking stage</option>
-          <option value="dating">Dating</option>
-          <option value="fwb">Friends with benefits</option>
-          <option value="relationship" selected>In a relationship</option>
-          <option value="married">Married / living together</option>
-          <option value="situationship">Situationship 🤡</option>
-          <option value="exes">Exes that still text</option>
-        </select>
+    <!-- FOOTER jak reszta stron (możesz też mieć tu include) -->
+    <footer class="footer">
+      <div class="footer-brand">
+        Party Pixels · Web Toys Lab
       </div>
-      <div>
-        <label for="duration">For how long?</label>
-        <select id="duration">
-          <option value="new">0–3 months</option>
-          <option value="early">3–12 months</option>
-          <option value="mid">1–3 years</option>
-          <option value="long">3–7 years</option>
-          <option value="ancient">7+ years</option>
-        </select>
+      <div class="footer-links">
+        <span>Built fast, break often.</span>
       </div>
-    </div>
-
-    <div class="slider-row">
-      <span>Current vibe</span>
-      <input id="vibe" type="range" min="0" max="100" value="50" />
-      <span id="vibeLabel">Balanced chaos</span>
-    </div>
-
-    <label for="notes">Optional tea (red flags, drama, distance, pets, kids, etc.)</label>
-    <textarea id="notes" rows="2" placeholder="Write anything you want the fake AI to 'consider' 😉"></textarea>
-
-    <button id="generateBtn">Reveal my forecast</button>
-
-    <div id="result" class="result"></div>
+    </footer>
   </div>
 
+  <!-- TWÓJ SKRYPT LOGIKI (bez zmian, tylko lekko dostosowany do klas rf-*) -->
   <script>
     const vibeInput = document.getElementById("vibe");
     const vibeLabel = document.getElementById("vibeLabel");
@@ -324,10 +366,8 @@
       const vibe = Number(document.getElementById("vibe").value);
       const notes = (document.getElementById("notes").value || "").toLowerCase();
 
-      // --- Pseudo "score" (0–100) ---
       let base = 50;
 
-      // relationship type influence
       const relScoreMap = {
         crush: 40,
         dating: 55,
@@ -339,7 +379,6 @@
       };
       base = (base + (relScoreMap[relType] || 50)) / 2;
 
-      // duration influence
       const durScoreMap = {
         new: 45,
         early: 55,
@@ -349,13 +388,11 @@
       };
       base = (base + (durScoreMap[duration] || 50)) / 2;
 
-      // vibe: środek najlepszy, skrajności to problem/drama
       const mid = 50;
       const distFromMid = Math.abs(vibe - mid);
-      const vibeMod = Math.max(0, 20 - distFromMid * 0.8); // max +20
-      base += vibeMod - 5; // lekko zbalansuj
+      const vibeMod = Math.max(0, 20 - distFromMid * 0.8);
+      base += vibeMod - 5;
 
-      // “flag words” in notes
       const redWords = ["cheat", "cheated", "lying", "toxic", "gaslight", "gaslighting", "jealous", "hit", "abuse", "abusive", "block", "blocked"];
       const greenWords = ["therapy", "support", "communication", "communicate", "patient", "listens", "trust", "trusted", "safe", "honest", "honesty"];
 
@@ -366,15 +403,12 @@
         if (notes.includes(w)) base += 5;
       });
 
-      // clamp 0–100
       let score = Math.max(0, Math.min(100, Math.round(base)));
 
-      // derived stats
       const compatibility = Math.min(100, Math.max(0, score + (Math.random() * 10 - 5)));
       const drama = Math.min(100, Math.max(0, 100 - score + (Math.random() * 15 - 7)));
       const longevity = Math.min(100, Math.max(0, (score * 0.7) + (Math.random() * 20 - 10)));
 
-      // pick tone bucket
       let tone;
       if (score >= 75) tone = "gold";
       else if (score >= 55) tone = "green";
@@ -533,23 +567,23 @@
       if (extraTag) chipList.push(extraTag);
 
       resultEl.innerHTML = `
-        <div class="fade">
-          <div class="result-title">${title}</div>
-          <div class="chips">
-            ${chipList.map(t => `<span class="chip">${t}</span>`).join("")}
+        <div class="rf-fade">
+          <div class="rf-result-title">${title}</div>
+          <div class="rf-chips">
+            ${chipList.map(t => `<span class="rf-chip">${t}</span>`).join("")}
           </div>
-          <div class="stats">
-            <div class="stat-item">
-              <div class="stat-label">Compatibility</div>
-              <div class="stat-value">${Math.round(compatibility)}%</div>
+          <div class="rf-stats">
+            <div class="rf-stat-item">
+              <div class="rf-stat-label">Compatibility</div>
+              <div class="rf-stat-value">${Math.round(compatibility)}%</div>
             </div>
-            <div class="stat-item">
-              <div class="stat-label">Drama level</div>
-              <div class="stat-value">${Math.round(drama)}%</div>
+            <div class="rf-stat-item">
+              <div class="rf-stat-label">Drama level</div>
+              <div class="rf-stat-value">${Math.round(drama)}%</div>
             </div>
-            <div class="stat-item">
-              <div class="stat-label">Longevity odds</div>
-              <div class="stat-value">${Math.round(longevity)}%</div>
+            <div class="rf-stat-item">
+              <div class="rf-stat-label">Longevity odds</div>
+              <div class="rf-stat-value">${Math.round(longevity)}%</div>
             </div>
           </div>
           <p>${opening}</p>
@@ -564,5 +598,8 @@
 
     btn.addEventListener("click", generateForecast);
   </script>
+
+  <!-- Jeśli używasz globalnego tipjara: -->
+  <!-- <script src="tipjar.js"></script> -->
 </body>
 </html>
