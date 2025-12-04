@@ -58,6 +58,13 @@
       pointer-events: none;
     }
 
+    .brand-link {
+  text-decoration: none;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
     .page {
       max-width: 960px;
