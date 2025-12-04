@@ -1,0 +1,50 @@
+<!-- WEB TOY CARD TEMPLATE -->
+<article class="toy-card">
+  
+  <!-- GÓRNA LINIA: TYP + STATUS -->
+  <div class="toy-label-row">
+
+    <!-- Typ Web Toy:
+         - "Game"
+         - "Generator"
+         - "Tool"
+         - "Toy"
+         - "Mini App"
+         - cokolwiek chcesz -->
+    <span class="toy-type-pill">[TYPE]</span>
+
+    <!-- Status:
+         - .toy-status        = LIVE (zielony)
+         - .toy-status-soon   = SOON (żółty)
+         - możesz dodać kolejne, np. disabled, archived, itd. -->
+    <span class="toy-status [OPTIONAL-EXTRA-STATUS-CLASS]">[STATUS]</span>
+  </div>
+
+  <!-- Tytuł Web Toy -->
+  <h3 class="toy-title">[TITLE]</h3>
+
+  <!-- Opis Web Toy (krótki, 1–3 zdania) -->
+  <p class="toy-desc">
+    [DESCRIPTION]
+  </p>
+
+  <!-- DÓŁ KARTY: TAGI + LINK -->
+  <div class="toy-footer">
+
+    <!-- Tagi (dowolna liczba) -->
+    <div class="toy-tags">
+      <span class="toy-tag">[TAG 1]</span>
+      <span class="toy-tag">[TAG 2]</span>
+      <!-- <span class="toy-tag">[TAG 3]</span> -->
+    </div>
+
+    <!-- Link do Web Toy:
+         - Normalnie: toy-link
+         - Wersja niedostępna: toy-link disabled -->
+    <a class="toy-link [OPTIONAL: disabled]" href="[PAGE LINK].html">
+      <span>Open toy →</span>
+    </a>
+
+  </div>
+
+</article>
