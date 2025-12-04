@@ -11,6 +11,125 @@
   <!-- Wspólny auth helper -->
   <script src="pp-auth.js"></script>
   <link rel="stylesheet" href="pp-main.css">
+
+  <style>
+    .leaderboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #b4bdf4;
+    }
+
+    .leaderboard-header small {
+      font-size: 0.8rem;
+      color: #c8d0ff;
+    }
+
+    table.leaderboard {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #191731, #101322);
+    }
+
+    .leaderboard thead {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(10px);
+    }
+
+    .leaderboard th,
+    .leaderboard td {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+
+    .leaderboard th {
+      text-align: left;
+      color: #98a2ff;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .leaderboard th:nth-child(1),
+    .leaderboard td:nth-child(1) {
+      width: 40px;
+      text-align: center;
+    }
+
+    .leaderboard th:nth-child(3),
+    .leaderboard td:nth-child(3) {
+      text-align: right;
+    }
+
+    .leaderboard th:nth-child(4),
+    .leaderboard td:nth-child(4) {
+      text-align: right;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: radial-gradient(circle at left, rgba(123, 97, 255, 0.18), transparent);
+    }
+
+    .rank-cell {
+      font-weight: 600;
+      color: #e5e7ff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-cell {
+      font-variant-numeric: tabular-nums;
+      color: #fff2b7;
+    }
+
+    .when-cell {
+      color: #a6b0e2;
+      font-size: 0.8rem;
+    }
+
+    .you-row {
+      background: linear-gradient(90deg, rgba(0, 255, 149, 0.16), transparent);
+      box-shadow: inset 2px 0 0 #00ff9d;
+    }
+
+    .you-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 8px;
+      margin-left: 6px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      background: linear-gradient(90deg, #10b981, #22c55e);
+      color: #04110a;
+      box-shadow: 0 0 0 1px rgba(3, 255, 150, 0.4);
+    }
+
+    .status-line {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #aeb5ff;
+    }
+
+    .status-line.error {
+      color: #fca5a5;
+    }
+  </style>
+  
 </head>
 <body>
   <!-- Top bar z Party Pixels – zakładam, że masz go wstawionego już na innych stronach -->
