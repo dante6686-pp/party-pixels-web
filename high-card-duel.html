@@ -139,9 +139,27 @@
         width: 100%;
       }
     }
+     /* Tło strony oparte na splash screenie tej zabawki */
+  body.toy-bg-reaction {
+    /* obrazek splasha */
+    background:
+      radial-gradient(circle at top, rgba(5, 7, 18, 0.8), rgba(2, 3, 10, 0.98)),
+      url("media/gamethumbs/web-toy-splash.jpg") center / cover fixed no-repeat;
+    color: var(--text);
+  }
+
+  /* Opcjonalnie: panel środka lekko odcięty od tła 
+  .page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px 14px 40px;
+    background: rgba(5, 7, 18, 0.92);
+    border-radius: 22px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75);
+  }*/
   </style>
 </head>
-<body>
+<body class="toy-bg-highcardduel">
   <div class="page">
     
     <!-- Header Top Bar -->
