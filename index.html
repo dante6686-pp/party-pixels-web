@@ -9,19 +9,8 @@
 <body>
   <div class="page">
 
-    <!--
-    <header class="topbar">
-  <div class="brand">
-    <div class="brand-pill"></div>
-    Party Pixels
-  </div>
-
-  <div class="topbar-right">
-    <span class="user-badge" data-pp-user-badge>Not logged in</span>
-    <a class="account-link" href="/account.html" data-pp-account-link>Account</a>
-  </div>
-    </header>
-    -->
+    <!-- Header Top Bar -->
+    <div id="header"></div>
     
     <!-- BANNER -->
 <div style="text-align:center; margin-bottom:25px;">
@@ -317,8 +306,19 @@
     </footer>
   </div>
 
-  <script src="/tipjar.js"></script>
+<script src="/tipjar.js"></script>
 
+<!-- Load page elements -->
+<script>
+  fetch("/header.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("header").innerHTML = data;
+    })
+    .catch(error => console.error("Header load error:", error));
+</script>
+
+<!-- User authentication/login -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/pp-auth.js"></script>
   
