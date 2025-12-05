@@ -9,6 +9,23 @@ const ppSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 // UPEWNIENIE: eksportujemy DOBRĄ zmienną na window
 window.ppSupabase = ppSupabase;
 
+async function ppGetProfile(userId) {
+  if (!userId) return null;
+
+  const { data, error } = await ppSupabase
+    .from("profiles")
+    .select("display_name, avatar_url")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Profile fetch error:", error);
+    return null;
+  }
+
+  return data;
+}
+
 // ─────────────────────────────────────────────
 // Linki "Account" – dodanie redirect param
 // ─────────────────────────────────────────────
@@ -30,17 +47,63 @@ function ppSetupAccountLinks() {
 // ─────────────────────────────────────────────
 async function ppUpdateUserBadges() {
   const badges = document.querySelectorAll("[data-pp-user-badge]");
-  if (!badges.length) return;
+  const avatarEls = document.querySelectorAll("[data-pp-user-avatar]");
+
+  if (!badges.length && !avatarEls.length) return;
 
   const { data } = await ppSupabase.auth.getUser();
   const user = data?.user;
 
+  if (!user) {
+    // Niezalogowany
+    badges.forEach((el) => (el.textContent = "Not logged in"));
+    avatarEls.forEach((img) => {
+      img.style.display = "none";
+      img.removeAttribute("src");
+      img.removeAttribute("alt");
+    });
+    return;
+  }
+
+  const profile = await ppGetProfile(user.id);
+
+  const nameToShow =
+    profile?.display_name ||
+    user.email?.split("@")[0] ||
+    "User";
+
+  const avatarUrl = profile?.avatar_url || "";
+
+  // Tekst w top barze
   badges.forEach((el) => {
-    if (user && user.email) {
-      el.textContent = `Logged in as ${user.email}`;
+    el.textContent = nameToShow;
+  });
+
+  // Avatar w top barze
+  avatarEls.forEach((img) => {
+    if (avatarUrl) {
+      img.style.display = "inline-block";
+      img.src = avatarUrl;
+      img.alt = nameToShow;
     } else {
-      el.textContent = "Not logged in";
+      // brak avatara → chowamy obrazek
+      img.style.display = "none";
+      img.removeAttribute("src");
+      img.removeAttribute("alt");
     }
+  });
+}
+
+  // Pobieramy profil
+  const profile = await ppGetProfile(user.id);
+
+  const nameToShow =
+    profile?.display_name ||
+    user.email?.split("@")[0] ||
+    "User";
+
+  badges.forEach((el) => {
+    el.textContent = nameToShow;
   });
 }
 
