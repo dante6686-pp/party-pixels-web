@@ -280,16 +280,37 @@
       </div>
 
       <div id="loggedInView" style="display:none;">
-        <div class="account-state">
-          Logged in as:<br>
-          <span class="account-email" id="accountEmail"></span>
-          <div class="pill">
-            <span>Premium:</span>
-            <span id="premiumState">not yet</span>
-          </div>
-        </div>
-        <button class="btn" id="logoutButton">Log out</button>
-        <div class="status" id="statusMessageLogged"></div>
+  <h2>Your account</h2>
+  <p>Logged in as <strong><span id="accountEmail"></span></strong></p>
+  <p>Premium: <span id="premiumState">not yet</span></p>
+
+  <hr class="section-separator">
+
+  <h3>Profile</h3>
+  <p>This is how you’ll appear in highscores and comments.</p>
+
+  <div class="form-row">
+    <label for="profileDisplayName">Display name</label>
+    <input id="profileDisplayName" type="text" maxlength="40" placeholder="Nickname">
+  </div>
+
+  <div class="form-row">
+    <label for="profileBio">Bio</label>
+    <textarea id="profileBio" rows="3" maxlength="200" placeholder="Say something about yourself (optional)"></textarea>
+  </div>
+
+  <button id="profileSaveButton" class="big-button">Save profile</button>
+  <p id="profileStatus" class="status-message"></p>
+
+  <p style="margin-top:1rem;">
+    Public profile link:
+    <a id="profilePublicLink" href="#" target="_blank">Open profile</a>
+  </p>
+
+  <hr class="section-separator">
+
+  <button id="logoutButton" class="secondary-button">Log out</button>
+  <p id="statusMessageLogged" class="status-message"></p>
       </div>
     </section>
 
