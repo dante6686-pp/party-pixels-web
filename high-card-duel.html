@@ -9,15 +9,16 @@
     /* Tu tylko rzeczy specyficzne dla tej strony */
 
     
+  /* Tło tylko dla tej gry */
   body.toy-bg-reaction {
-  background: rgba(0, 0, 0, 0.55) url("media/gamethumbs/web-toy-splash.jpg")
-              center / cover fixed no-repeat;
-  background-blend-mode: multiply;
+    background: url("media/gamethumbs/web-toy-splash.jpg")
+                center / cover fixed no-repeat #000;
+    /* żadnych blendów, żadnych gradientów */
+  }
 
-
-    /* Przyciemnienie 
-    background-color: rgba(0, 0, 0, 0.55);
-    background-blend-mode: multiply;*/
+  /* Wyłącz globalne splash tło z body::before na tej stronie */
+  body.toy-bg-reaction::before {
+    content: none;
   }
 
     .duel-container {
