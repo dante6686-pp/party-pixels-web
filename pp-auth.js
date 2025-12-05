@@ -6,6 +6,43 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const ppSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 window.ppSupabase = ppSupabase;
 
+async function ppEnsureProfileForUser(user) {
+  if (!user) return;
+
+  try {
+    // Czy profil już istnieje?
+    const { data, error } = await ppSupabase
+      .from("profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error && error.code !== "PGRST116") {
+      console.error("Error checking profile:", error);
+      return;
+    }
+
+    if (!data) {
+      const email = user.email || "";
+      const displayName = email ? email.split("@")[0] : "Player";
+
+      const { error: insertError } = await ppSupabase.from("profiles").insert([
+        {
+          user_id: user.id,
+          email,
+          display_name: displayName,
+        },
+      ]);
+
+      if (insertError) {
+        console.error("Error creating profile:", insertError);
+      }
+    }
+  } catch (err) {
+    console.error("Unexpected error in ppEnsureProfileForUser:", err);
+  }
+}
+
 function ppSetupAccountLinks() {
   const links = document.querySelectorAll("[data-pp-account-link]");
   if (!links.length) return;
@@ -86,18 +123,42 @@ function ppSetupAccountPage() {
   }
 
   async function refreshUser() {
-    const { data } = await ppSupabase.auth.getUser();
-    const user = data?.user || null;
+  const { data } = await ppSupabase.auth.getUser();
+  const user = data?.user || null;
 
-    if (user) {
-      if (loggedOutView) loggedOutView.style.display = "none";
-      if (loggedInView) loggedInView.style.display = "block";
-      if (accountEmail) accountEmail.textContent = user.email || "(no email)";
-      if (premiumState) premiumState.textContent = "not yet"; // tu później podłączymy premium
-    } else {
-      if (loggedOutView) loggedOutView.style.display = "block";
-      if (loggedInView) loggedInView.style.display = "none";
+  if (user) {
+    // Upewnij się, że profil istnieje
+    await ppEnsureProfileForUser(user);
+
+    if (loggedOutView) loggedOutView.style.display = "none";
+    if (loggedInView) loggedInView.style.display = "block";
+    if (accountEmail) accountEmail.textContent = user.email || "(no email)";
+    if (premiumState) premiumState.textContent = "not yet";
+
+    // pobierz profil do formularza
+    const { data: profileData } = await ppSupabase
+      .from("profiles")
+      .select("display_name, bio")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const displayNameInput = document.getElementById("profileDisplayName");
+    const bioInput = document.getElementById("profileBio");
+    const profileLink = document.getElementById("profilePublicLink");
+
+    if (displayNameInput && profileData?.display_name) {
+      displayNameInput.value = profileData.display_name;
     }
+    if (bioInput && profileData?.bio) {
+      bioInput.value = profileData.bio;
+    }
+    if (profileLink) {
+      profileLink.href = `/profile.html?u=${encodeURIComponent(user.id)}`;
+    }
+  } else {
+    if (loggedOutView) loggedOutView.style.display = "block";
+    if (loggedInView) loggedInView.style.display = "none";
+  }
   }
 
   if (tabLogin && tabSignup && formLogin && formSignup) {
@@ -174,6 +235,59 @@ function ppSetupAccountPage() {
       await refreshUser();
     });
   }
+
+  //* niepewny jestem czy tutaj w dobre miejsce wkleiłem*//
+  
+  const profileSaveButton = document.getElementById("profileSaveButton");
+  const profileStatus = document.getElementById("profileStatus");
+
+  if (profileSaveButton) {
+    profileSaveButton.addEventListener("click", async () => {
+      if (!profileStatus) return;
+
+      profileStatus.textContent = "Saving profile…";
+      profileStatus.classList.remove("status-error", "status-ok");
+
+      const { data } = await ppSupabase.auth.getUser();
+      const user = data?.user || null;
+      if (!user) {
+        profileStatus.textContent = "You must be logged in.";
+        profileStatus.classList.add("status-error");
+        return;
+      }
+
+      const displayNameInput = document.getElementById("profileDisplayName");
+      const bioInput = document.getElementById("profileBio");
+
+      const display_name = displayNameInput.value.trim();
+      const bio = bioInput.value.trim();
+
+      try {
+        const { error } = await ppSupabase
+          .from("profiles")
+          .update({
+            display_name,
+            bio,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("user_id", user.id);
+
+        if (error) {
+          console.error("Error updating profile:", error);
+          profileStatus.textContent = "Could not save profile.";
+          profileStatus.classList.add("status-error");
+        } else {
+          profileStatus.textContent = "Profile saved.";
+          profileStatus.classList.add("status-ok");
+        }
+      } catch (err) {
+        console.error("Unexpected error updating profile:", err);
+        profileStatus.textContent = "Unexpected error.";
+        profileStatus.classList.add("status-error");
+      }
+    });
+  }
+  //*koniec tego niepewnego 
 
   refreshUser();
 }
