@@ -175,43 +175,35 @@ function ppSetupAccountPage() {
       tabLogin.classList.remove("active");
       formSignup.style.display = "block";
       formLogin.style.display = "none";
-      setStatif (loginButton) {
-  loginButton.addEventListener("click", async () => {
-    if (!loginEmail.value || !loginPassword.value) {
-      setStatus("Enter email & password.");
-      return;
-    }
-
-    setStatus("Working…");
-
-    const email = loginEmail.value.trim();
-    const password = loginPassword.value.trim();
-    const redirectBack = document.referrer || "/";
-
-    const { data, error } = await ppSupabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setStatus(error.message || "Login failed.", "error");
-    } else {
       setStatus("");
-      await refreshUser();
-
-      setStatusLogged("Logged in. Redirecting…", "ok");
-
-      setTimeout(() => {
-        // WRACAMY NA POPRZEDNIĄ STRONĘ
-        window.location.href = redirectBack;
-      }, 800);
-    }
-  });
-      }us("");
     });
   }
 
-  
+  if (loginButton) {
+    loginButton.addEventListener("click", async () => {
+      setStatus("Logging in…");
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
+
+      if (!email || !password) {
+        setStatus("Fill email and password.", "error");
+        return;
+      }
+
+      const { error } = await ppSupabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        setStatus(error.message || "Could not log in.", "error");
+      } else {
+        setStatus("");
+        await refreshUser();
+        setStatusLogged("Logged in. Redirecting…", "ok");
+        setTimeout(() => {
+          window.location.href = redirectTarget;
+        }, 2000);
+      }
+    });
+  }
 
   if (signupButton) {
     signupButton.addEventListener("click", async () => {
