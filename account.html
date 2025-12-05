@@ -237,13 +237,8 @@
 </head>
 <body>
   <div class="page">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-pill"></div>
-        <span>Party&nbsp;Pixels</span>
-      </div>
-      <div class="tag">Account</div>
-    </header>
+    <!-- Header Top Bar -->
+    <div id="header"></div>
 
     <section>
       <h1>Your Party Pixels account</h1>
@@ -303,6 +298,21 @@
       <div>Later: Stripe + real premium flag.</div>
     </footer>
   </div>
+
+  <!-- Load page elements -->
+<script>
+  function loadPart(id, file) {
+    fetch(file)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById(id).innerHTML = html;
+      })
+      .catch(err => console.error(`Load error in ${file}:`, err));
+  }
+
+  loadPart("header", "/header.html");
+  //loadPart("footer", "/footer.html");
+</script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
