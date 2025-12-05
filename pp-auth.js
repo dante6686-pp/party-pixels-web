@@ -99,16 +99,19 @@ async function ppUpdateUserBadges() {
   });
 
   avatarEls.forEach((img) => {
-    if (avatarUrl) {
-      img.style.display = "inline-block";
-      img.src = avatarUrl;
-      img.alt = nameToShow;
-    } else {
-      img.style.display = "none";
-      img.removeAttribute("src");
-      img.removeAttribute("alt");
-    }
-  });
+  // Avatar bubble ma być ZAWSZE widoczny,
+  // nawet jak nie ma URL – wtedy działa jako placeholder.
+  img.style.display = "inline-block";
+
+  if (avatarUrl) {
+    img.src = avatarUrl;
+    img.alt = nameToShow;
+  } else {
+    // brak obrazka – czyścimy src, ale zostawiamy element.
+    img.removeAttribute("src");
+    img.alt = "";
+  }
+});
 }
 
 // ─────────────────────────────────────────────
