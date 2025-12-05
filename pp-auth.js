@@ -1,12 +1,3 @@
-function initAuthUI() {
-  const badgeEl = document.querySelector("[data-pp-user-badge]");
-  const accountLinkEl = document.querySelector("[data-pp-account-link]");
-
-  if (!badgeEl || !accountLinkEl) {
-    // header jeszcze nie dociągnięty – spróbuj za chwilę
-    setTimeout(initAuthUI, 100);
-    return;
-  }
 // Party Pixels – wspólny auth helper dla wszystkich stron
 
 const SUPABASE_URL = "https://dyfrzwxhycqnqntvkuxy.supabase.co";
@@ -193,7 +184,3 @@ document.addEventListener("DOMContentLoaded", () => {
   ppUpdateUserBadges();
   ppSetupAccountPage();
 });
-}
-
-// start po załadowaniu strony
-document.addEventListener("DOMContentLoaded", initAuthUI);
