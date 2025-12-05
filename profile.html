@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Party Pixels – User profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="pp-main.css">
+  
+</head>
+<body>
+  <div class="page">
+    <!-- Top bar -->
+    <div id="header"></div>
+
+    <main class="profile-layout">
+      <button onclick="history.back()" class="link-back">&larr; Back</button>
+
+      <section class="profile-header">
+        <div class="profile-name" id="profileName">Loading profile…</div>
+        <div class="profile-meta" id="profileMeta"></div>
+        <div class="profile-bio" id="profileBio"></div>
+      </section>
+
+      <section class="profile-card" id="profileStats" style="display:none;">
+        <div class="profile-section-title">Game stats</div>
+        <div class="profile-stat-row" id="statTTS">
+          <div class="profile-stat-label">Tap to Survive – best run</div>
+          <div class="profile-stat-value" id="statTTSValue">–</div>
+        </div>
+      </section>
+
+      <p class="profile-error" id="profileError"></p>
+    </main>
+
+    <!-- Tipjar -->
+    <div id="tipjar"></div>
+  </div>
+
+  <!-- Header loader -->
+  <script>
+    fetch("/header.html")
+      .then(r => r.text())
+      .then(html => { document.getElementById("header").innerHTML = html; })
+      .catch(err => console.error("Header load error:", err));
+  </script>
+
+  <!-- Supabase + shared auth helpers -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+  <script src="/tipjar.js"></script>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get("u");
+
+    const nameEl = document.getElementById("profileName");
+    const metaEl = document.getElementById("profileMeta");
+    const bioEl = document.getElementById("profileBio");
+    const errorEl = document.getElementById("profileError");
+    const statsBox = document.getElementById("profileStats");
+    const statTTSValue = document.getElementById("statTTSValue");
+
+    if (!userId) {
+      nameEl.textContent = "Profile not found.";
+      metaEl.textContent = "";
+    } else {
+      loadProfile(userId);
+      loadStats(userId);
+    }
+
+    async function loadProfile(uid) {
+      try {
+        const { data, error } = await ppSupabase
+          .from("profiles")
+          .select("display_name, bio, created_at")
+          .eq("user_id", uid)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Error loading profile:", error);
+          nameEl.textContent = "Profile not available.";
+          errorEl.textContent = "Error loading profile.";
+          return;
+        }
+
+        if (!data) {
+          nameEl.textContent = "Profile not found.";
+          return;
+        }
+
+        nameEl.textContent = data.display_name || "Player";
+        const created = data.created_at ? new Date(data.created_at) : null;
+        if (created) {
+          const dateText = created.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+          metaEl.textContent = `Member since ${dateText}`;
+        }
+
+        if (data.bio) {
+          bioEl.textContent = data.bio;
+        }
+      } catch (err) {
+        console.error("Unexpected error loading profile:", err);
+        errorEl.textContent = "Unexpected error.";
+      }
+    }
+
+    // przykładowa statystyka – Tap to Survive best run
+    async function loadStats(uid) {
+      try {
+        const { data, error } = await ppSupabase
+          .from("tts_scores")
+          .select("score, created_at")
+          .eq("user_id", uid)
+          .order("score", { ascending: false })
+          .limit(1);
+
+        if (error) {
+          console.error("Error loading stats:", error);
+          return;
+        }
+
+        if (data && data.length > 0) {
+          const best = data[0];
+          const scoreText = `${best.score.toFixed(1)} s`;
+          statTTSValue.textContent = scoreText;
+          statsBox.style.display = "block";
+        }
+      } catch (err) {
+        console.error("Unexpected error loading stats:", err);
+      }
+    }
+  </script>
+</body>
+</html>
