@@ -9,16 +9,15 @@
     /* Tu tylko rzeczy specyficzne dla tej strony */
 
     body.toy-bg-reaction {
-    background-image: url("media/gamethumbs/web-toy-splash.jpg");
-    background-size: cover;        /* wypełnia ekran */
-    background-position: center;   /* środek obrazka */
-    background-repeat: no-repeat;  /* bez powtarzania */
-    background-attachment: fixed;  /* opcjonalnie: parallaxowy feeling */
-    background-color: #000;        /* fallback jakby obrazek się nie wczytał */
+  body.toy-bg-reaction {
+  background: rgba(0, 0, 0, 0.55) url("media/gamethumbs/web-toy-splash.jpg")
+              center / cover fixed no-repeat;
+  background-blend-mode: multiply;
 
-    /* Przyciemnienie */
+
+    /* Przyciemnienie 
     background-color: rgba(0, 0, 0, 0.55);
-    background-blend-mode: multiply;
+    background-blend-mode: multiply;*/
   }
 
     .duel-container {
