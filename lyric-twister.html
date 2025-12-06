@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lyric Twister – Party Pixels Web Toy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-soft: #090d20;
+      --accent: #ff71ce;
+      --accent-2: #01cdfe;
+      --accent-3: #b967ff;
+      --accent-soft: rgba(255, 113, 206, 0.13);
+      --text-main: #f9f9ff;
+      --text-soft: #c3c6ff;
+      --border-soft: rgba(255, 255, 255, 0.1);
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.55);
+      --radius-lg: 18px;
+      --radius-xl: 26px;
+      --transition-fast: 0.18s ease-out;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+        Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-main);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(255, 113, 206, 0.18) 0, transparent 45%),
+        radial-gradient(circle at 100% 0%, rgba(1, 205, 254, 0.16) 0, transparent 48%),
+        radial-gradient(circle at 50% 120%, rgba(185, 103, 255, 0.18) 0, transparent 55%),
+        var(--bg);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 900px;
+      background: linear-gradient(145deg, rgba(6, 8, 38, 0.97), rgba(8, 9, 25, 0.98));
+      border-radius: 26px;
+      padding: 22px 22px 18px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-soft);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .app-shell::before,
+    .app-shell::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      opacity: 0.15;
+      background-image:
+        radial-gradient(circle at 10% 20%, var(--accent) 0, transparent 55%),
+        radial-gradient(circle at 90% 10%, var(--accent-2) 0, transparent 55%),
+        radial-gradient(circle at 0% 90%, var(--accent-3) 0, transparent 55%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    .app-shell::after {
+      opacity: 0.22;
+      filter: blur(10px);
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-pill {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 20%, #fff 0, #ffe4ff 20%, #ff71ce 52%, #7b2cff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-pill::after {
+      content: "PP";
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: #15051c;
+      text-shadow: 0 1px 4px rgba(255, 255, 255, 0.45);
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .title-main {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .title-main span.highlight {
+      background: linear-gradient(120deg, #ff71ce, #01cdfe, #b967ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .title-main span.tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-soft);
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .title-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+      max-width: 460px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.3fr);
+      gap: 18px;
+      align-items: stretch;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 720px) {
+      .app-shell {
+        padding: 18px 14px 14px;
+        border-radius: 20px;
+      }
+
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .title-main {
+        font-size: 19px;
+      }
+
+      .title-sub {
+        font-size: 11px;
+      }
+    }
+
+    .panel {
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.05) 0, transparent 45%),
+        rgba(4, 7, 30, 0.92);
+      border: 1px solid var(--border-soft);
+      padding: 14px 14px 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(
+        120deg,
+        rgba(255, 113, 206, 0.2),
+        rgba(1, 205, 254, 0.05),
+        rgba(185, 103, 255, 0.2)
+      );
+      mix-blend-mode: soft-light;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+    }
+
+    .panel:hover::before {
+      opacity: 0.6;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    .badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px dashed rgba(255, 255, 255, 0.28);
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    .field-label span.dot {
+      color: var(--accent-2);
+      margin-left: 4px;
+    }
+
+    .input,
+    .select {
+      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.04) 0, transparent 55%),
+        rgba(8, 10, 38, 0.86);
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+        transform var(--transition-fast), background 0.12s ease-out;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .input::placeholder {
+      color: rgba(195, 198, 255, 0.5);
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: rgba(255, 113, 206, 0.8);
+      box-shadow: 0 0 0 1px rgba(255, 113, 206, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .row-2 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .small-note {
+      font-size: 10px;
+      color: var(--text-soft);
+      opacity: 0.8;
+      margin-top: 2px;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn-main {
+      flex: 1;
+      border-radius: 999px;
+      padding: 9px 14px;
+      border: none;
+      background-image: linear-gradient(135deg, #ff71ce, #ffb8ff, #01cdfe);
+      color: #12071b;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 11px;
+      cursor: pointer;
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.5);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, filter 0.12s ease-out;
+    }
+
+    .btn-main span.emoji {
+      font-size: 14px;
+    }
+
+    .btn-main:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7);
+      filter: brightness(0.95);
+    }
+
+    .btn-secondary {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px dashed rgba(255, 255, 255, 0.3);
+      background-color: rgba(1, 205, 254, 0.08);
+      color: var(--text-soft);
+      cursor: pointer;
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      transition: background var(--transition-fast), border-color var(--transition-fast),
+        transform var(--transition-fast), color var(--transition-fast);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(1, 205, 254, 0.14);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-1px);
+      color: #fdfdff;
+    }
+
+    .btn-secondary span.emoji {
+      font-size: 13px;
+    }
+
+    .result-panel {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .result-inner {
+      flex: 1;
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.08) 0, transparent 45%),
+        radial-gradient(circle at 120% 120%, rgba(1, 205, 254, 0.14) 0, transparent 55%),
+        rgba(4, 6, 28, 0.96);
+      border: 1px dashed rgba(255, 255, 255, 0.22);
+      padding: 12px 13px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -8deg,
+        rgba(255, 255, 255, 0.04),
+        rgba(255, 255, 255, 0.04) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      opacity: 0.25;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .song-label {
+      font-size: 11px;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.92;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill-song {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(255, 113, 206, 0.16);
+      border: 1px solid rgba(255, 113, 206, 0.6);
+      color: #ffe6ff;
+      max-width: 100%;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .pill-song span.title {
+      font-weight: 600;
+    }
+
+    .pill-song span.artist {
+      opacity: 0.8;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chip {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background-color: rgba(0, 0, 0, 0.26);
+      color: rgba(238, 239, 255, 0.88);
+    }
+
+    .lyrics-block {
+      position: relative;
+      z-index: 1;
+      margin-top: 4px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background-color: rgba(3, 6, 35, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow:
+        0 0 0 1px rgba(255, 113, 206, 0.09),
+        0 16px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .lyrics-lines {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-line;
+      color: #fdfdff;
+    }
+
+    .placeholder {
+      font-size: 12px;
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      gap: 8px;
+      font-size: 10px;
+      color: var(--text-soft);
+      opacity: 0.9;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 10%, #fff 0, #ffe5ff 35%, #ff71ce 100%);
+      box-shadow: 0 0 0 0 rgba(255, 113, 206, 0.6);
+      animation: pulse 1.4s infinite;
+    }
+
+    .status-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-emoji {
+      font-size: 12px;
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--text-soft);
+      opacity: 0.75;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .footer span {
+      white-space: nowrap;
+    }
+
+    .footer a {
+      color: var(--accent-2);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 113, 206, 0.6);
+      }
+      60% {
+        transform: scale(1.16);
+        box-shadow: 0 0 0 8px rgba(255, 113, 206, 0);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 113, 206, 0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="logo-pill"></div>
+      <div class="title-block">
+        <div class="title-main">
+          <span class="highlight">Lyric&nbsp;Twister</span>
+          <span class="tag">Party Pixels Web Toy</span>
+        </div>
+        <div class="title-sub">
+          Type any song title and let the fake-AI goblin turn it into a cursed parody lyric.
+          No real lyrics, just chaotic vibes.
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- LEFT: FORM -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Input</div>
+          <div class="badge">No real lyrics – parody only</div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label class="field-label" for="songTitle">
+              Song title<span class="dot">*</span>
+            </label>
+            <input
+              id="songTitle"
+              class="input"
+              type="text"
+              placeholder="e.g. Blinding Lights, Jesteś szalona, Toxic"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="artist">Artist (optional)</label>
+            <input
+              id="artist"
+              class="input"
+              type="text"
+              placeholder="e.g. The Weeknd, Ich Troje, Britney Spears"
+            />
+            <div class="small-note">
+              Used only to spice up the result, not to fetch any real lyrics.
+            </div>
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label class="field-label" for="mood">Vibe</label>
+              <select id="mood" class="select">
+                <option value="happy">Happy chaos</option>
+                <option value="sad">Sad & dramatic</option>
+                <option value="horny">Horny & unhinged</option>
+                <option value="emo">Emo internet core</option>
+                <option value="chaotic">Total shitshow</option>
+                <option value="wholesome">Wholesome but weird</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="style">Parody style</label>
+              <select id="style" class="select">
+                <option value="drunk">Drunk karaoke</option>
+                <option value="angry-ex">Angry ex monologue</option>
+                <option value="burnout-boss">Burnt-out office worker</option>
+                <option value="doomscroll">Doomscrolling addict</option>
+                <option value="gamer">Gamer rage</option>
+                <option value="club">Club bathroom confession</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button id="generateBtn" class="btn-main">
+            <span class="emoji">🎤</span>
+            <span>Generate Parody</span>
+          </button>
+          <button id="randomizeBtn" class="btn-secondary" type="button">
+            <span class="emoji">🎲</span>
+            Random vibe
+          </button>
+        </div>
+      </section>
+
+      <!-- RIGHT: RESULT -->
+      <section class="panel result-panel">
+        <div class="panel-header">
+          <div class="panel-title">Output</div>
+          <div class="badge">Fake-AI goblin online</div>
+        </div>
+
+        <div class="result-inner">
+          <div class="song-label">
+            <div class="status-dot"></div>
+            <span id="songTag" class="pill-song" style="display:none;">
+              <span class="title"></span>
+              <span class="artist"></span>
+            </span>
+            <span id="songPlaceholder">Waiting for a song to bully…</span>
+          </div>
+
+          <div id="chipRow" class="chip-row" style="display:none;">
+            <span class="chip" id="chipMood"></span>
+            <span class="chip" id="chipStyle"></span>
+            <span class="chip">Parody mode</span>
+          </div>
+
+          <div class="lyrics-block">
+            <div id="lyrics" class="lyrics-lines placeholder">
+              Type your favourite song on the left, pick a vibe, hit
+              <strong>Generate Parody</strong> and watch the lyrics spiral into nonsense.
+            </div>
+          </div>
+
+          <div class="status-row">
+            <div class="status-text">
+              <span class="status-emoji" id="statusEmoji">🧠</span>
+              <span id="statusText">Model: Goblin-v0.1 – unlicensed and overconfident.</span>
+            </div>
+            <div>
+              <span>0% accuracy · 100% attitude</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <span>Party Pixels · Lyric Twister</span>
+          <span>All parodies are random. Don’t sue the goblin.</span>
+        </footer>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // --- tiny helper utils --------------------------------------------------
+    function randomItem(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function titleCase(str) {
+      return str
+        .trim()
+        .split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(" ");
+    }
+
+    // --- "model" data -------------------------------------------------------
+    const moodDescriptors = {
+      happy: [
+        "hyperactive sunshine",
+        "clown energy",
+        "too many energy drinks",
+        "dopamine overdose",
+      ],
+      sad: [
+        "cinematic breakdown",
+        "crying in the shower",
+        "spotify at 3am",
+        "main character depression arc",
+      ],
+      horny: [
+        "NSFW brain fog",
+        "unholy thirst",
+        "too many Instagram reels",
+        "forbidden thoughts deluxe",
+      ],
+      emo: [
+        "2007 eyeliner core",
+        "overthinking championship",
+        "notes app poetry",
+        "DO NOT DISTURB mode",
+      ],
+      chaotic: [
+        "unhinged goblin mode",
+        "brain blue screen",
+        "99+ unread messages vibes",
+        "planet is on fire energy",
+      ],
+      wholesome: [
+        "hug-and-cry combo",
+        "soft chaos",
+        "found family energy",
+        "therapist-approved nonsense",
+      ],
+    };
+
+    const styleDescriptors = {
+      drunk: [
+        "karaoke after 7 shots",
+        "microphone screaming contest",
+        "friend who can’t stay on beat",
+      ],
+      "angry-ex": [
+        "post-breakup essay in 4 lines",
+        "revenge playlist energy",
+        "blocked but still watching your stories",
+      ]
