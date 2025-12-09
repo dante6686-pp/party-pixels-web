@@ -64,6 +64,24 @@
         <h2>Web Toys</h2>
         <span>Pick a toy and dive in.</span>
       </div>
+<!-- sort filter -->
+      <div class="toy-controls">
+  <div class="toy-filter-group">
+    <button class="toy-filter-btn is-active" data-filter="all">All</button>
+    <button class="toy-filter-btn" data-filter="game">Games</button>
+    <button class="toy-filter-btn" data-filter="generator">Generators</button>
+  </div>
+
+  <div class="toy-sort-group">
+    <label for="toy-sort" class="toy-sort-label">Sort by</label>
+    <select id="toy-sort" class="toy-sort-select">
+      <option value="alpha">Title (A–Z)</option>
+      <option value="date">Date added (newest)</option>
+    </select>
+  </div>
+</div>
+
+<div class="grid" id="toy-grid"></div>
 
       <div class="grid">
 
