@@ -1,0 +1,35 @@
+[
+  {
+    "id": "relationship-forecast-2",
+    "title": "Relationship Forecast 2",
+    "type": "Generator",
+    "status": "live",
+    "desc": "Provide two names. Receive a brutally honest, TikTok-level relationship verdict.",
+    "tags": ["AI text", "love toy"],
+    "href": "/relationship-forecast-2.html",
+    "thumb": "/previews/relationship-forecast-2.jpg",
+    "added": "2025-12-08"
+  },
+  {
+    "id": "reaction-speed-test",
+    "title": "Reaction Speed Test",
+    "type": "Game",
+    "status": "live",
+    "desc": "Tap as fast as possible when the screen flashes.",
+    "tags": ["reflex", "challenge"],
+    "href": "/reaction-speed-test.html",
+    "thumb": "/previews/reaction-speed-test.jpg",
+    "added": "2025-12-09"
+  },
+  {
+    "id": "angry-fruit",
+    "title": "Angry Fruit",
+    "type": "Game",
+    "status": "soon",
+    "desc": "Colorful arcade chaos with emotionally unstable fruit.",
+    "tags": ["arcade", "party pixels"],
+    "href": "",
+    "thumb": "/previews/angry-fruit.jpg",
+    "added": "2025-12-05"
+  }
+]
