@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Party Pixels – Web Toys Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="pp-main.css">
+</head>
+<body>
+  <div class="page">
+
+    <!-- Header Top Bar -->
+    <div id="header"></div>
+    
+    <!-- TOPBAR
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-pill"></div>
+        <span>Party&nbsp;Pixels</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+    <span class="user-badge" data-pp-user-badge>Not logged in</span>
+    <a class="toy-link" href="/account.html" data-pp-account-link>Account</a>
+      </div>
+    </header>
+    -->
+
+    
+    <!-- BANNER -->
+<div style="text-align:center; margin-bottom:25px;">
+  <img src="PPWT-banner-4.jpg" 
+       alt="Web Toys Banner"
+       style="max-width:100%; border-radius:18px; box-shadow:0 0 20px rgba(0,0,0,0.4);">
+</div>
+
+<section class="hero">
+    
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-kicker">tiny experiments · browser only · no install</div>
+      <h1 class="hero-title">Playground of weird little web toys.</h1>
+      <p class="hero-sub">
+        A collection of tiny interactive pages: generators, mini-games and visual toys.
+        Built fast, broken often, updated whenever the mood hits.
+      </p>
+
+      <div class="hero-strip">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Live in your browser
+        </div>
+        <div class="badge">
+          🧪 New toys appear without warning
+        </div>
+        <div class="badge">
+          🎮 Made for clicks, taps & curiosity
+        </div>
+      </div>
+    </section>
+
+    <!-- TOYS GRID -->
+    <section>
+      <div class="section-title-row">
+        <h2>Web Toys</h2>
+        <span>Pick a toy and dive in.</span>
+      </div>
+<!-- sort filter -->
+      <div class="toy-controls">
+  <div class="toy-filter-group">
+    <label for="toy-sort" class="toy-sort-label">Filter by</label>
+    <button class="toy-filter-btn is-active" data-filter="all">All</button>
+    <button class="toy-filter-btn" data-filter="game">Games</button>
+    <button class="toy-filter-btn" data-filter="generator">Generators</button>
+  </div>
+
+  <div class="toy-sort-group">
+    <label for="toy-sort" class="toy-sort-label">Sort by</label>
+    <select id="toy-sort" class="toy-sort-select">
+      <option value="alpha">Title (A–Z)</option>
+      <option value="date">Date added (newest)</option>
+    </select>
+  </div>
+</div>
+
+<div class="grid" id="toy-grid"></div>
+
+      <div class="grid">
+
+        <!-- lyrics twister -->
+<article class="toy-card">
+
+        <!-- PREVIEW THUMB -->
+  <a href="lyric-twister.html" class="brand brand-link">
+  <div class="toy-thumb" style="background-image: url('liryc-twister-splash.jpg');"></div>
+  </a>
+
+  
+  <!-- GÓRNA LINIA: TYP + STATUS -->
+  <div class="toy-label-row">
+    <span class="toy-type-pill">Game</span>
+    <span class="toy-status-soon">soon</span>
+  </div>
+
+  <!-- Tytuł Web Toy -->
+  <h3 class="toy-title">Lyrics twister</h3>
+
+  <!-- Opis Web Toy (krótki, 1–3 zdania) -->
+  <p class="toy-desc">
+    Two players, one phone. Each draws a secret card in turn — highest number wins the round. Perfect quick duel for bored degenerates.
+  </p>
+
+  <!-- DÓŁ KARTY: TAGI + LINK -->
+  <div class="toy-footer">
+
+    <!-- Tagi -->
+    <div class="toy-tags">
+      <span class="toy-tag">2 players</span>
+      <span class="toy-tag">party duel</span>
+    </div>
+
+    <!-- Link do Web Toy -->
+    <a class="toy-link" href="lyric-twister.html">
+      <span>Open toy →</span>
+    </a>
+
+  </div>
+
+      </article>
+        
+
+        <!-- High Card Duel -->
+<article class="toy-card">
+
+  <!-- PREVIEW THUMB -->
+  <a href="high-card-duel.html" class="brand brand-link">
+  <div class="toy-thumb" style="background-image: url('media/gamethumbs/web-toy-splash.jpg');"></div>
+  </a>
+
+  
+  <!-- GÓRNA LINIA: TYP + STATUS -->
+  <div class="toy-label-row">
+    <span class="toy-type-pill">Game</span>
+    <span class="toy-status">LIVE</span>
+  </div>
+
+  <!-- Tytuł Web Toy -->
+  <h3 class="toy-title">High Card Duel</h3>
+
+  <!-- Opis Web Toy (krótki, 1–3 zdania) -->
+  <p class="toy-desc">
+    Two players, one phone. Each draws a secret card in turn — highest number wins the round. Perfect quick duel for bored degenerates.
+  </p>
+
+  <!-- DÓŁ KARTY: TAGI + LINK -->
+  <div class="toy-footer">
+
+    <!-- Tagi -->
+    <div class="toy-tags">
+      <span class="toy-tag">2 players</span>
+      <span class="toy-tag">party duel</span>
+    </div>
+
+    <!-- Link do Web Toy -->
+    <a class="toy-link" href="high-card-duel.html">
+      <span>Open toy →</span>
+    </a>
+
+  </div>
+
+</article>
+
+
+        <!-- REACTION SPEED TEST -->
+<article class="toy-card">
+
+  <!-- PREVIEW THUMB -->
+  <a href="/reaction-speed-test.html" class="brand brand-link">
+  <div class="toy-thumb" style="background-image: url('media/web-toy-card-default-thumb.jpg');"></div>
+  </a>
+
+  <div class="toy-label-row">
+    <span class="toy-type-pill">Game</span>
+    <span class="toy-status">Live</span>
+  </div>
+
+  <h3 class="toy-title">Reaction Speed Test</h3>
+
+  <p class="toy-desc">
+    A tiny reflex challenge: tap as fast as you can when the screen flashes.
+  </p>
+
+  <div class="toy-footer">
+    <div class="toy-tags">
+      <span class="toy-tag">reflex</span>
+      <span class="toy-tag">challenge</span>
+    </div>
+    <a class="toy-link" href="/reaction-speed-test.html">
+      <span>Open toy →</span>
+    </a>
+  </div>
+
+</article>
+
+
+
+        <!-- RELATIONSHIP FORECAST 2-->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Generator</span>
+            <span class="toy-status">Live</span>
+          </div>
+          <h3 class="toy-title">Relationship Forecast 2</h3>
+          <p class="toy-desc">
+            Provide two names. Receive a brutally honest, TikTok-level relationship verdict you didn’t ask for but definitely needed.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">AI text</span>
+              <span class="toy-tag">love toy</span>
+            </div>
+            <a class="toy-link" href="/relationship-forecast-2.html">
+              <span>Open toy →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 2: TAP TO SURVIVE 2(placeholder) -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Mini game</span>
+            <span class="toy-status">Live</span>
+          </div>
+          <h3 class="toy-title">Tap to Survive 2</h3>
+          <p class="toy-desc">
+            One finger, one tiny character, one draining life bar.
+            Tap to keep them alive as the chaos ramps up.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">mobile-friendly</span>
+              <span class="toy-tag">arcade</span>
+            </div>
+            <a class="toy-link" href="/tap-to-survive-2.html">
+              <span>Open toy →</span>
+            </a>
+          </div>
+        </article>
+
+<!-- Tap to Survive – UE4 Game -->
+<article class="toy-card">
+  <div class="toy-label-row">
+    <span class="toy-type-pill">Game</span>
+    <span class="toy-status">In dev</span>
+  </div>
+  <h3 class="toy-title">Tap to Survive (UE4)</h3>
+  <p class="toy-desc">
+    Full Unreal Engine game with the same panic-tap survival core, designed for PC and Android builds.
+  </p>
+  <div class="toy-footer">
+    <span class="toy-tag">UE4</span>
+    <a class="toy-link" href="/tap-to-survive-ue4.html">Open →</a>
+  </div>
+</article>
+        
+        <!-- 1: FACE REMIX -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Generator</span>
+            <span class="toy-status">Live</span>
+          </div>
+          <h3 class="toy-title">Character Booth</h3>
+          <p class="toy-desc">
+            Upload a selfie, choose a vibe – princess, cyberpunk, anime hero – and let the pixels
+            turn you into a stylized character.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">selfie → character</span>
+              <span class="toy-tag">AI ready</span>
+            </div>
+        
+            <a class="toy-link" href="/face-remix.html">
+              <span>Open toy →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 7: RELATIONSHIP FORECAST -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Generator</span>
+            <span class="toy-status">Live</span>
+          </div>
+          <h3 class="toy-title">Relationship Forecast</h3>
+          <p class="toy-desc">
+            Type your names, pick the vibe and get a fake-serious love forecast:
+            half roast, half horoscope, 100% entertainment.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">AI text</span>
+              <span class="toy-tag">love toy</span>
+            </div>
+            <a class="toy-link" href="/relationship-forecast.html">
+              <span>Open toy →</span>
+            </a>
+          </div>
+        </article>
+
+        <!--  X: AM I ANNOYING YOU -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Generator</span>
+            <span class="toy-status">Live</span>
+          </div>
+          <h3 class="toy-title">Am I Annoying You?</h3>
+          <p class="toy-desc">
+            A chaotic couples-toy: type two names and get an Annoyance Score™
+            with a playful roast. Works for partners, besties, situationships
+            and anyone who tests your patience.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">AI text</span>
+              <span class="toy-tag">roast</span>
+              <span class="toy-tag">couples</span>
+            </div>
+            <a class="toy-link" href="/annoying-you.html">
+              <span>Open toy →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 2: TAP TO SURVIVE (placeholder) -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Mini game</span>
+            <span class="toy-status">Live</span>
+          </div>
+          <h3 class="toy-title">Tap to Survive</h3>
+          <p class="toy-desc">
+            One finger, one tiny character, one draining life bar.
+            Tap to keep them alive as the chaos ramps up.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">mobile-friendly</span>
+              <span class="toy-tag">arcade</span>
+            </div>
+            <a class="toy-link" href="/tap-to-survive.html">
+              <span>Open toy →</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 3: Noise Canvas (placeholder) -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Visual toy</span>
+            <span class="toy-status toy-status-soon">Soon</span>
+          </div>
+          <h3 class="toy-title">Noise Canvas</h3>
+          <p class="toy-desc">
+            Click or tap to mutate a field of pixel noise. Glitches, pulses
+            and generative chaos in your browser.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">glitch</span>
+              <span class="toy-tag">satisfying</span>
+            </div>
+            <a class="toy-link disabled" href="#">
+              <span>In progress</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 4: Mood Spinner (placeholder) -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Generator</span>
+            <span class="toy-status toy-status-soon">Soon</span>
+          </div>
+          <h3 class="toy-title">Mood Spinner</h3>
+          <p class="toy-desc">
+            Spin a wheel of random prompts, aesthetics and vibes for your next drawing,
+            track or game idea.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">idea prompts</span>
+              <span class="toy-tag">creative</span>
+            </div>
+            <a class="toy-link disabled" href="#">
+              <span>In progress</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 5: Pixel Echo (placeholder) -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Mini game</span>
+            <span class="toy-status toy-status-soon">Soon</span>
+          </div>
+          <h3 class="toy-title">Pixel Echo</h3>
+          <p class="toy-desc">
+            Memory toy: watch a pattern of blinking pixels, then try to tap it back in order.
+            Gets harder the longer you last.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">memory</span>
+              <span class="toy-tag">challenge</span>
+            </div>
+            <a class="toy-link disabled" href="#">
+              <span>In progress</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- 6: Web Toy Slot (empty placeholder) -->
+        <article class="toy-card">
+          <div class="toy-label-row">
+            <span class="toy-type-pill">Slot</span>
+            <span class="toy-status toy-status-soon">Soon</span>
+          </div>
+          <h3 class="toy-title">Next Party Toy</h3>
+          <p class="toy-desc">
+            Reserved slot for the next experiment. Could be your favorite one —
+            something small, weird and dangerously addictive.
+          </p>
+          <div class="toy-footer">
+            <div class="toy-tags">
+              <span class="toy-tag">coming next</span>
+            </div>
+            <a class="toy-link disabled" href="#">
+              <span>Not yet</span>
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  <!-- Footer -->
+  <div id="footer"></div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/pp-auth.js"></script>
+    
+<!-- Load page elements -->
+<script>
+  function loadPart(id, file) {
+    fetch(file)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById(id).innerHTML = html;
+      })
+      .catch(err => console.error(`Load error in ${file}:`, err));
+  }
+
+  loadPart("header", "/header.html");
+  loadPart("footer", "/footer.html");
+</script>
+
+<!-- PayPal.me Link-->
+<script src="/tipjar.js"></script>
+
+<!-- User authentication/login -->
+
+  
+</body>
+</html>
