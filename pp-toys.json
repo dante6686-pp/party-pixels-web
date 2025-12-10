@@ -31,5 +31,16 @@
     "href": "/angry-fruit. html",
     "thumb": "/media/af-.png",
     "added": "2025-12-05"
+  },
+  {
+    "id": "tts2",
+    "title": "Tap To Survive 2",
+    "type": "Game",
+    "status": "live",
+    "desc": "One finger, one tiny character, one draining life bar. Tap to keep them alive as the chaos ramps up.",
+    "tags": ["arcade", "party pixels"],
+    "href": "/tap-to-survive-2. html",
+    "thumb": "/media/tts2-splash.jpg",
+    "added": "2025-12-10"
   }
 ]
