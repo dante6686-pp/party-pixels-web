@@ -245,18 +245,20 @@
 
 
     .toy-card {
-      position: relative;
-      border-radius: 18px;
-      padding: 12px 11px 12px;
-      background:
-   .toy-controls {
+  position: relative;
+  border-radius: 18px;
+  padding: 12px 11px 12px;
+  background:
+    radial-gradient(circle at top, rgba(255, 92, 255, 0.15), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.25), transparent 65%),
+    linear-gradient(145deg, rgba(10, 14, 35, 0.96), rgba(4, 5, 14, 0.98));
+  border: 1px solid var(--border);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin: 10px 0 16px;
-  flex-wrap: wrap;
-}
+  flex-direction: column;
+  gap: 8px;
+  min-height: 130px;
+    }
 
 .toy-filter-group {
   display: flex;
