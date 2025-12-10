@@ -42,6 +42,7 @@
       const article = document.createElement("article");
       article.className = "toy-card";
 
+      // STATUS
       let statusClass = "toy-status";
       let statusLabel = "Live";
 
@@ -53,21 +54,27 @@
         statusLabel = "In dev";
       }
 
+      // LINK
       const hasLink = !!toy.href;
       const linkClass = hasLink ? "toy-link" : "toy-link disabled";
       const href = hasLink ? toy.href : "#";
 
-      const thumbStyle = toy.thumb
-        ? `style="background-image: url('${toy.thumb}');"`
-        : "";
-
+      // TAGS
       const tagsHtml = (toy.tags || [])
         .map(t => `<span class="toy-tag">${t}</span>`)
         .join("");
 
-      article.innerHTML = `
-        ${toy.thumb ? `<div class="toy-thumb" ${thumbStyle}></div>` : ""}
+      // BUDUJEMY HTML KARTY – gradient siedzi w CSS .toy-card
+      let html = "";
 
+      // THUMB (opcjonalny)
+      if (toy.thumb) {
+        html += `
+          <div class="toy-thumb" style="background-image: url('${toy.thumb}');"></div>
+        `;
+      }
+
+      html += `
         <div class="toy-label-row">
           <span class="toy-type-pill">${toy.type || "Toy"}</span>
           <span class="${statusClass}">${statusLabel}</span>
@@ -89,6 +96,7 @@
         </div>
       `;
 
+      article.innerHTML = html;
       frag.appendChild(article);
     });
 
@@ -119,7 +127,6 @@
         const value = btn.getAttribute("data-filter");
         currentFilter = value || "all";
 
-        // active state
         filterButtons.forEach(b => b.classList.remove("is-active"));
         btn.classList.add("is-active");
 
