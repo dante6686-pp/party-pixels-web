@@ -75,8 +75,12 @@
 
   <!-- Footer -->
   <div id="footer"></div>
-    
-<!-- Load page elements -->
+
+  <!-- User authentication/login -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+
+  <!-- Load page elements -->
 <script>
   function loadPart(id, file) {
     fetch(file)
@@ -93,10 +97,6 @@
 
 <!-- PayPal.me Link-->
 <script src="/tipjar.js"></script>
-
-<!-- User authentication/login -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js"></script>
         
 <!-- rendering web toy cars from json -->
 <script src="/pp-toys-render.js"></script>
