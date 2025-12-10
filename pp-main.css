@@ -3,6 +3,11 @@
   width: 100%;
 }
 
+.pp-spacer-lg {
+  height: 26px;
+  width: 100%;
+}
+
 .user-badge {
   font-size: 11px;
   padding: 4px 10px;
