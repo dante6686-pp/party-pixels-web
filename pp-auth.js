@@ -40,13 +40,13 @@ async function ppUpdateUserButton() {
       avatarEl.style.display = "inline-flex";
 
       // przycisk prowadzi do profilu / konta
-      btn.href = "/account.html";
+      btn.href = "/profile.html";
     } else {
       // --- BRAK SESJI: niezalogowany ---
       labelEl.textContent = "Login";
       avatarEl.style.display = "none";   // chowamy kółeczko
       avatarEl.textContent = "";
-      btn.href = "/login.html";
+      btn.href = "/account.html";
     }
   } catch (err) {
     console.error("ppUpdateUserButton error:", err);
