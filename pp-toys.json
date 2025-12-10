@@ -7,7 +7,7 @@
     "desc": "Provide two names. Receive a brutally honest, TikTok-level relationship verdict.",
     "tags": ["AI text", "love toy"],
     "href": "/relationship-forecast-2.html",
-    "thumb": "/previews/relationship-forecast-2.jpg",
+    "thumb": "/media/rf2-splash.jpg",
     "added": "2025-12-08"
   },
   {
@@ -18,7 +18,7 @@
     "desc": "Tap as fast as possible when the screen flashes.",
     "tags": ["reflex", "challenge"],
     "href": "/reaction-speed-test.html",
-    "thumb": "/previews/reaction-speed-test.jpg",
+    "thumb": "/media/st-splash.jpg",
     "added": "2025-12-09"
   },
   {
@@ -28,8 +28,8 @@
     "status": "soon",
     "desc": "Colorful arcade chaos with emotionally unstable fruit.",
     "tags": ["arcade", "party pixels"],
-    "href": "",
-    "thumb": "/previews/angry-fruit.jpg",
+    "href": "/angry-fruit. html",
+    "thumb": "/media/af.png",
     "added": "2025-12-05"
   }
 ]
