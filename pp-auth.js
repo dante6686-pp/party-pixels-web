@@ -3,117 +3,64 @@
 const SUPABASE_URL = "https://dyfrzwxhycqnqntvkuxy.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d3hoeWNxbnFudHZrdXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1ODM5MjgsImV4cCI6MjA4MDE1OTkyOH0.n4jP0q7YZY-jQaSnHUkKWyI9wM02iHXnRXS31AATnY0";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Tworzymy klienta Supabase
-const ppSupabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+// ─── 2. Funkcja do inicjalizacji przycisku w headerze ───
+async function ppUpdateUserButton() {
+  const btn   = document.querySelector("[data-pp-user-button]");
+  const avatarEl = document.querySelector("[data-pp-user-avatar]");
+  const labelEl  = document.querySelector("[data-pp-user-label]");
 
-// Upewniamy się, że mamy go na window
-window.ppSupabase = ppSupabase;
-
-// ─────────────────────────────────────────────
-// HELPER: pobranie profilu użytkownika
-// ─────────────────────────────────────────────
-async function ppGetProfile(userId) {
-  if (!userId) return null;
-
-  try {
-    const { data, error } = await ppSupabase
-      .from("profiles")
-      .select("display_name, avatar_url")
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (error) {
-      console.error("Profile fetch error:", error);
-      return null;
-    }
-
-    return data;
-  } catch (err) {
-    console.error("Profile fetch unexpected error:", err);
-    return null;
-  }
-}
-
-// ─────────────────────────────────────────────
-// Linki "Account" – dodanie redirect param
-// ─────────────────────────────────────────────
-function ppSetupAccountLinks() {
-  const links = document.querySelectorAll("[data-pp-account-link]");
-  if (!links.length) return;
-
-  const redirectPath = encodeURIComponent(
-    window.location.pathname + window.location.search
-  );
-
-  links.forEach((link) => {
-    link.href = `/account.html?redirect=${redirectPath}`;
-  });
-}
-
-// ─────────────────────────────────────────────
-// User badge + avatar w topbarze
-// ─────────────────────────────────────────────
-async function ppUpdateUserBadges() {
-  const badges = document.querySelectorAll("[data-pp-user-badge]");
-  const avatarEls = document.querySelectorAll("[data-pp-user-avatar]");
-
-  if (!badges.length && !avatarEls.length) return;
-
-  let user = null;
-
-  try {
-    const { data } = await ppSupabase.auth.getUser();
-    user = data?.user || null;
-  } catch (err) {
-    console.error("auth.getUser error:", err);
-  }
-
-  if (!user) {
-    // niezalogowany
-    badges.forEach((el) => {
-      el.textContent = "Not logged in";
-    });
-    avatarEls.forEach((img) => {
-      img.style.display = "none";
-      img.removeAttribute("src");
-      img.removeAttribute("alt");
-    });
+  if (!btn || !avatarEl || !labelEl) {
+    // header mógł się jeszcze nie wczytać (bo loadPart/fetch) – spróbuj za chwilę
+    setTimeout(ppUpdateUserButton, 100);
     return;
   }
 
-  const profile = await ppGetProfile(user.id);
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
 
-  const nameToShow =
-    (profile && profile.display_name) ||
-    (user.email ? user.email.split("@")[0] : null) ||
-    "User";
+    if (session && session.user) {
+      // --- USER ZALOGOWANY ---
 
-  const avatarUrl = profile && profile.avatar_url ? profile.avatar_url : "";
+      // wyciągamy sensowną nazwę
+      const email = session.user.email || "";
+      const metaName =
+        (session.user.user_metadata && session.user.user_metadata.display_name) ||
+        (session.user.user_metadata && session.user.user_metadata.username);
 
-  badges.forEach((el) => {
-    el.textContent = nameToShow;
-  });
+      const name = metaName || (email ? email.split("@")[0] : "User");
 
-  avatarEls.forEach((img) => {
-  // Avatar bubble ma być ZAWSZE widoczny,
-  // nawet jak nie ma URL – wtedy działa jako placeholder.
-  img.style.display = "inline-block";
+      // ustawiamy label
+      labelEl.textContent = name;
 
-  if (avatarUrl) {
-    img.src = avatarUrl;
-    img.alt = nameToShow;
-  } else {
-    // brak obrazka – czyścimy src, ale zostawiamy element.
-    img.removeAttribute("src");
-    img.alt = "";
+      // avatar – pierwsza literka nicka
+      const initial = name.trim().charAt(0).toUpperCase() || "?";
+      avatarEl.textContent = initial;
+      avatarEl.style.display = "inline-flex";
+
+      // przycisk prowadzi do profilu / konta
+      btn.href = "/account.html";
+    } else {
+      // --- BRAK SESJI: niezalogowany ---
+      labelEl.textContent = "Login";
+      avatarEl.style.display = "none";   // chowamy kółeczko
+      avatarEl.textContent = "";
+      btn.href = "/login.html";
+    }
+  } catch (err) {
+    console.error("ppUpdateUserButton error:", err);
   }
-});
 }
 
+// ─── 3. Uruchomienie po załadowaniu strony ───
+document.addEventListener("DOMContentLoaded", () => {
+  ppUpdateUserButton();
+
+  // jeśli header jest includowany fetch'em i może się doczytać później,
+  // ppUpdateUserButton i tak będzie próbował co 100ms aż znajdzie elementy
+});
+  
 // ─────────────────────────────────────────────
 // Logowanie / rejestracja / logout – account.html
 // ─────────────────────────────────────────────
