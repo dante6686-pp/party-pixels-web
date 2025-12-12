@@ -1,8 +1,8 @@
 // pp-auth.js
 
 // 1. Supabase client – UZUPEŁNIJ SWOIMI DANYMI
-const SUPABASE_URL = "TU_WKLEJ_SWÓJ_SUPABASE_URL";
-const SUPABASE_KEY = "TU_WKLEJ_SWÓJ_PUBLIC_ANON_KEY";
+const SUPABASE_URL = "https://dyfrzwxhycqnqntvkuxy.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d3hoeWNxbnFudHZrdXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1ODM5MjgsImV4cCI6MjA4MDE1OTkyOH0.n4jP0q7YZY-jQaSnHUkKWyI9wM02iHXnRXS31AATnY0";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 2. Header user button (Login / nick + avatar)
