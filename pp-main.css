@@ -178,6 +178,7 @@
 /* Label (Login / nick) */
 .pp-user-label {
   font-size: 12px;
+  display: inline-flex;
 }
 
     .brand {
