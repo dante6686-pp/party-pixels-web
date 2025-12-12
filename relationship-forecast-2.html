@@ -10,6 +10,19 @@
 
   <!-- STYLe SPECYFICZNE DLA TEJ WEB TOY -->
   <style>
+    /* Tło tylko dla tej gry */
+  body.toy-bg-reaction {
+    background: url("media/rf2-splash.jpg")
+                center / cover fixed no-repeat #000;
+    /* żadnych blendów, żadnych gradientów */
+    background-color: rgba(0, 0, 0, 0.55); /* przyciemnienie */
+  background-blend-mode: multiply;       /* miesza tło z czernią */
+  }
+
+  /* Wyłącz globalne splash tło z body::before na tej stronie */
+  body.toy-bg-reaction::before {
+    content: none;
+  }
     /* Wrapper pod tę konkretną zabawkę */
     .rf-wrapper {
       max-width: 720px;
