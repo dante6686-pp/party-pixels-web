@@ -1,176 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Party Pixels – User profile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!--<link rel="stylesheet" href="pp-profile.css">-->
-  <link rel="stylesheet" href="pp-main.css">
-  <style>
-    .profile-layout {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 3rem;
-    }
-    .profile-header {
-      margin-bottom: 2rem;
-    }
-    .profile-name {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-    .profile-meta {
-      opacity: 0.8;
-      font-size: 0.9rem;
-    }
-    .profile-bio {
-      margin-top: 1.5rem;
-      white-space: pre-wrap;
-    }
-    .profile-card {
-      margin-top: 2rem;
-      padding: 1.5rem;
-      border-radius: 16px;
-      background: radial-gradient(circle at top left, rgba(255,255,255,0.06), transparent),
-                  rgba(7, 11, 32, 0.9);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.4);
-    }
-    .profile-section-title {
-      font-size: 1rem;
-      opacity: 0.9;
-      margin-bottom: 0.75rem;
-    }
-    .profile-stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.4rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-size: 0.95rem;
-    }
-    .profile-stat-row:last-child {
-      border-bottom: none;
-    }
-    .profile-stat-label {
-      opacity: 0.8;
-    }
-    .profile-stat-value {
-      font-weight: 600;
-    }
-    .profile-error {
-      margin-top: 1.5rem;
-      color: #ff7a7a;
-    }
-  </style>
-  
+  <meta charset="UTF-8" />
+  <title>Party Pixels · Account</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/pp-main.css" />
 </head>
 <body>
   <div class="page">
-    <!-- Top bar -->
     <div id="header"></div>
 
-    <main class="profile-layout">
-      <button onclick="history.back()" class="link-back">&larr; Back</button>
+    <main class="pp-profile">
+      <a href="/index.html" class="pp-back-link">← Back</a>
 
-      <section class="profile-header">
-        <div class="profile-name" id="profileName">Loading profile…</div>
-        <div class="profile-meta" id="profileMeta"></div>
-        <div class="profile-bio" id="profileBio"></div>
-      </section>
-
-      <section class="profile-card" id="profileStats" style="display:none;">
-        <div class="profile-section-title">Game stats</div>
-        <div class="profile-stat-row" id="statTTS">
-          <div class="profile-stat-label">Tap to Survive – best run</div>
-          <div class="profile-stat-value" id="statTTSValue">–</div>
+      <section class="pp-profile-hero">
+        <div class="pp-profile-title-row">
+          <div class="pp-profile-avatar" id="ppProfileAvatar">?</div>
+          <div>
+            <h1 class="pp-profile-title" id="ppProfileName">Loading…</h1>
+            <div class="pp-profile-meta" id="ppProfileMeta"></div>
+          </div>
         </div>
+
+        <p class="pp-profile-bio" id="ppProfileBio"></p>
+
+        <div class="pp-profile-actions">
+          <button class="pp-btn pp-btn-ghost" id="ppCopyUserId">Copy user id</button>
+          <button class="pp-btn pp-btn-danger" data-pp-logout>Log out</button>
+        </div>
+
+        <p class="pp-profile-error" id="ppProfileError" style="display:none;"></p>
       </section>
 
-      <p class="profile-error" id="profileError"></p>
+      <section class="pp-card" id="ppStatsCard" style="display:none;">
+        <div class="pp-card-title">Game stats</div>
+
+        <div class="pp-stat-row">
+          <div class="pp-stat-label">Tap to Survive – best run</div>
+          <div class="pp-stat-value" id="ppStatTTS">–</div>
+        </div>
+
+        <!-- możesz dopinać kolejne staty tu -->
+      </section>
     </main>
 
-    <!-- Tipjar -->
-    <div id="tipjar"></div>
+    <div id="footer"></div>
   </div>
 
-  <!-- Header loader -->
+  <!-- PARTS loader -->
   <script>
-    fetch("/header.html")
-      .then(r => r.text())
-      .then(html => { document.getElementById("header").innerHTML = html; })
-      .catch(err => console.error("Header load error:", err));
+    function loadPart(id, file, cb) {
+      fetch(file)
+        .then(r => r.text())
+        .then(html => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = html;
+          if (typeof cb === "function") cb();
+        })
+        .catch(err => console.error("Load error:", file, err));
+    }
+
+    loadPart("header", "/header.html", () => {
+      if (window.ppUpdateUserButton) window.ppUpdateUserButton();
+    });
+    loadPart("footer", "/footer.html");
   </script>
 
-  <!-- Supabase + shared auth helpers -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <!-- Supabase + auth + tipjar -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
   <script src="/tipjar.js"></script>
 
+  <!-- Account logic -->
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get("u");
+    const nameEl = document.getElementById("ppProfileName");
+    const metaEl = document.getElementById("ppProfileMeta");
+    const bioEl  = document.getElementById("ppProfileBio");
+    const errEl  = document.getElementById("ppProfileError");
+    const avatarEl = document.getElementById("ppProfileAvatar");
 
-    const nameEl = document.getElementById("profileName");
-    const metaEl = document.getElementById("profileMeta");
-    const bioEl = document.getElementById("profileBio");
-    const errorEl = document.getElementById("profileError");
-    const statsBox = document.getElementById("profileStats");
-    const statTTSValue = document.getElementById("statTTSValue");
+    const statsCard = document.getElementById("ppStatsCard");
+    const statTTS   = document.getElementById("ppStatTTS");
+    const copyBtn   = document.getElementById("ppCopyUserId");
 
-    if (!userId) {
-      nameEl.textContent = "Profile not found.";
-      metaEl.textContent = "";
-    } else {
-      loadProfile(userId);
-      loadStats(userId);
+    // bierzemy klienta z pp-auth.js
+    const sb = window.ppSupabaseClient || window.ppSupabase;
+    if (!sb) {
+      console.error("No Supabase client found. Expose it from pp-auth.js as window.ppSupabaseClient or window.ppSupabase.");
     }
 
-    async function loadProfile(uid) {
+    function showError(msg) {
+      errEl.textContent = msg;
+      errEl.style.display = "block";
+    }
+
+    function hideError() {
+      errEl.style.display = "none";
+      errEl.textContent = "";
+    }
+
+    function initialFromName(name) {
+      const s = (name || "").trim();
+      return s ? s.charAt(0).toUpperCase() : "?";
+    }
+
+    async function initAccount() {
+      if (!sb) {
+        showError("Supabase client missing.");
+        return;
+      }
+
+      hideError();
+
+      // 1) session
+      const { data: { session }, error: sessErr } = await sb.auth.getSession();
+      if (sessErr) {
+        console.error("Session error:", sessErr);
+        showError("Session error.");
+        return;
+      }
+
+      if (!session || !session.user) {
+        // niezalogowany → przerzut na login
+        window.location.href = "/login.html";
+        return;
+      }
+
+      const uid = session.user.id;
+      const email = session.user.email || "";
+      const meta = session.user.user_metadata || {};
+      const fallbackName = meta.display_name || meta.username || (email ? email.split("@")[0] : "Player");
+
+      // UI base
+      nameEl.textContent = fallbackName || "Player";
+      avatarEl.textContent = initialFromName(fallbackName);
+      metaEl.textContent = "Loading profile…";
+
+      if (copyBtn) {
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(uid);
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
+          } catch {
+            // fallback
+            showError("Clipboard blocked by browser.");
+          }
+        });
+      }
+
+      // 2) load profile row
+      await loadProfile(uid, fallbackName);
+
+      // 3) load stats
+      await loadStats(uid);
+    }
+
+    async function loadProfile(uid, fallbackName) {
       try {
-        const { data, error } = await ppSupabase
+        const { data, error } = await sb
           .from("profiles")
           .select("display_name, bio, created_at")
           .eq("user_id", uid)
           .maybeSingle();
 
         if (error) {
-          console.error("Error loading profile:", error);
-          nameEl.textContent = "Profile not available.";
-          errorEl.textContent = "Error loading profile.";
+          console.error("Profile load error:", error);
+          metaEl.textContent = "";
+          showError("Could not load profile.");
           return;
         }
 
-        if (!data) {
-          nameEl.textContent = "Profile not found.";
-          return;
-        }
+        const displayName = (data && data.display_name) ? data.display_name : (fallbackName || "Player");
+        nameEl.textContent = displayName;
+        avatarEl.textContent = initialFromName(displayName);
 
-        nameEl.textContent = data.display_name || "Player";
-        const created = data.created_at ? new Date(data.created_at) : null;
-        if (created) {
-          const dateText = created.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          });
+        if (data && data.created_at) {
+          const created = new Date(data.created_at);
+          const dateText = created.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
           metaEl.textContent = `Member since ${dateText}`;
+        } else {
+          metaEl.textContent = "";
         }
 
-        if (data.bio) {
-          bioEl.textContent = data.bio;
-        }
-      } catch (err) {
-        console.error("Unexpected error loading profile:", err);
-        errorEl.textContent = "Unexpected error.";
+        bioEl.textContent = (data && data.bio) ? data.bio : "";
+      } catch (e) {
+        console.error("Unexpected profile error:", e);
+        metaEl.textContent = "";
+        showError("Unexpected error loading profile.");
       }
     }
 
-    // przykładowa statystyka – Tap to Survive best run
     async function loadStats(uid) {
       try {
-        const { data, error } = await ppSupabase
+        const { data, error } = await sb
           .from("tts_scores")
           .select("score, created_at")
           .eq("user_id", uid)
@@ -178,20 +201,21 @@
           .limit(1);
 
         if (error) {
-          console.error("Error loading stats:", error);
+          console.error("Stats load error:", error);
           return;
         }
 
-        if (data && data.length > 0) {
+        if (data && data.length) {
           const best = data[0];
-          const scoreText = `${best.score.toFixed(1)} s`;
-          statTTSValue.textContent = scoreText;
-          statsBox.style.display = "block";
+          statTTS.textContent = `${Number(best.score).toFixed(1)} s`;
+          statsCard.style.display = "block";
         }
-      } catch (err) {
-        console.error("Unexpected error loading stats:", err);
+      } catch (e) {
+        console.error("Unexpected stats error:", e);
       }
     }
+
+    document.addEventListener("DOMContentLoaded", initAccount);
   </script>
 </body>
 </html>
