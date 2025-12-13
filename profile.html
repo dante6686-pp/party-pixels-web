@@ -16,20 +16,49 @@
       <section class="pp-profile-hero">
         <div class="pp-profile-title-row">
           <div class="pp-profile-avatar" id="ppProfileAvatar">?</div>
-          <div>
+
+          <div class="pp-profile-title-col">
+            <!-- VIEW MODE -->
             <h1 class="pp-profile-title" id="ppProfileName">Loading…</h1>
             <div class="pp-profile-meta" id="ppProfileMeta"></div>
+
+            <!-- EDIT MODE (hidden by default) -->
+            <div class="pp-profile-edit" id="ppEditWrap" style="display:none;">
+              <label class="pp-field">
+                <span class="pp-field-label">Display name</span>
+                <input class="pp-input" id="ppEditName" type="text" maxlength="24" autocomplete="nickname" />
+              </label>
+
+              <label class="pp-field">
+                <span class="pp-field-label">Bio</span>
+                <textarea class="pp-textarea" id="ppEditBio" rows="3" maxlength="240"></textarea>
+                <span class="pp-field-hint" id="ppBioCount">0 / 240</span>
+              </label>
+            </div>
           </div>
         </div>
 
+        <!-- VIEW MODE bio -->
         <p class="pp-profile-bio" id="ppProfileBio"></p>
 
         <div class="pp-profile-actions">
           <button class="pp-btn pp-btn-ghost" id="ppCopyUserId" type="button">Copy user id</button>
+
+          <!-- Edit / Save / Cancel -->
+          <button class="pp-btn" id="ppEditBtn" type="button">Edit profile</button>
+
+          <button class="pp-btn pp-btn-accent" id="ppSaveBtn" type="button" style="display:none;">
+            Save
+          </button>
+          <button class="pp-btn pp-btn-ghost" id="ppCancelBtn" type="button" style="display:none;">
+            Cancel
+          </button>
+
           <button class="pp-btn pp-btn-danger" id="ppHardLogout" type="button">Log out</button>
         </div>
 
         <p class="pp-profile-error" id="ppProfileError" style="display:none;"></p>
+        <p class="pp-profile-success" id="ppProfileSuccess" style="display:none;"></p>
       </section>
 
       <section class="pp-card" id="ppStatsCard" style="display:none;">
@@ -46,13 +75,12 @@
 
   <!-- PARTS loader -->
   <script>
-    function loadPart(id, file, cb) {
+    function loadPart(id, file) {
       fetch(file)
         .then(r => r.text())
         .then(html => {
           const el = document.getElementById(id);
           if (el) el.innerHTML = html;
-          if (typeof cb === "function") cb();
         })
         .catch(err => console.error("Load error:", file, err));
     }
@@ -63,10 +91,10 @@
 
   <!-- Supabase + auth + tipjar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="/pp-auth.js?v=4001" defer></script>
+  <script src="/pp-auth.js?v=5001" defer></script>
   <script src="/tipjar.js" defer></script>
 
-  <!-- Profile logic (HARD SYNC) -->
+  <!-- Profile logic -->
   <script>
     const PP_LOGIN_URL = "/account.html";
 
@@ -78,6 +106,7 @@
     const metaEl   = document.getElementById("ppProfileMeta");
     const bioEl    = document.getElementById("ppProfileBio");
     const errEl    = document.getElementById("ppProfileError");
+    const okEl     = document.getElementById("ppProfileSuccess");
     const avatarEl = document.getElementById("ppProfileAvatar");
 
     const statsCard = document.getElementById("ppStatsCard");
@@ -86,26 +115,49 @@
     const copyBtn   = document.getElementById("ppCopyUserId");
     const logoutBtn = document.getElementById("ppHardLogout");
 
+    const editBtn   = document.getElementById("ppEditBtn");
+    const saveBtn   = document.getElementById("ppSaveBtn");
+    const cancelBtn = document.getElementById("ppCancelBtn");
+    const editWrap  = document.getElementById("ppEditWrap");
+    const editName  = document.getElementById("ppEditName");
+    const editBio   = document.getElementById("ppEditBio");
+    const bioCount  = document.getElementById("ppBioCount");
+
+    let sb = null;
+    let currentUser = null;
+    let currentProfile = { display_name: "", bio: "", created_at: null };
+
     function showError(msg) {
       errEl.textContent = msg;
       errEl.style.display = "block";
+      okEl.style.display = "none";
+      okEl.textContent = "";
     }
-    function hideError() {
+    function showOk(msg) {
+      okEl.textContent = msg;
+      okEl.style.display = "block";
       errEl.style.display = "none";
       errEl.textContent = "";
+      setTimeout(() => { okEl.style.display = "none"; }, 1200);
     }
+    function hideMsgs() {
+      errEl.style.display = "none";
+      errEl.textContent = "";
+      okEl.style.display = "none";
+      okEl.textContent = "";
+    }
+
     function initialFromName(name) {
       const s = (name || "").trim();
       return s ? s.charAt(0).toUpperCase() : "?";
     }
 
-    // Twardy update headera (bez czekania na pp-auth)
+    // hard header update for THIS page (żeby nie było "Login")
     function hardUpdateHeader(name) {
       const btn = document.querySelector("[data-pp-user-button]");
       const label = document.querySelector("[data-pp-user-label]");
       const av = document.querySelector("[data-pp-user-avatar]");
-
-      if (!btn || !label || !av) return; // header jeszcze się nie dociągnął
+      if (!btn || !label || !av) return;
 
       label.textContent = name || "User";
       av.textContent = initialFromName(name);
@@ -122,128 +174,244 @@
       setTimeout(() => waitForSupabaseSDK(cb, startedAt), 50);
     }
 
-    async function initProfile() {
-      hideError();
-      metaEl.textContent = "Booting…";
+    function setEditMode(on) {
+      if (on) {
+        editWrap.style.display = "block";
+        saveBtn.style.display = "inline-flex";
+        cancelBtn.style.display = "inline-flex";
+        editBtn.style.display = "none";
+        bioEl.style.display = "none";
 
-      waitForSupabaseSDK(async () => {
-        try {
-          const sb =
-            window.ppSupabaseClient ||
-            window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // fill inputs from currentProfile
+        editName.value = currentProfile.display_name || nameEl.textContent || "";
+        editBio.value = currentProfile.bio || bioEl.textContent || "";
+        updateBioCount();
+      } else {
+        editWrap.style.display = "none";
+        saveBtn.style.display = "none";
+        cancelBtn.style.display = "none";
+        editBtn.style.display = "inline-flex";
+        bioEl.style.display = "";
+      }
+    }
 
-          // 1) auth
-          const { data: userRes, error: userErr } = await sb.auth.getUser();
-          if (userErr) {
-            showError("Auth error.");
-            metaEl.textContent = "";
-            return;
-          }
+    function updateBioCount() {
+      const len = (editBio.value || "").length;
+      bioCount.textContent = `${len} / 240`;
+    }
+    editBio.addEventListener("input", updateBioCount);
 
-          const user = userRes?.user;
-          if (!user) {
-            window.location.href = PP_LOGIN_URL;
-            return;
-          }
+    function validateDisplayName(raw) {
+      const name = (raw || "").trim();
 
-          const uid = user.id;
-          const email = user.email || "";
-          const meta = user.user_metadata || {};
-          const fallbackName =
-            meta.display_name ||
-            meta.username ||
-            (email ? email.split("@")[0] : "Player");
+      // 2–20 chars
+      if (name.length < 2) return { ok:false, msg:"Display name too short (min 2)." };
+      if (name.length > 20) return { ok:false, msg:"Display name too long (max 20)." };
 
-          // base UI
-          nameEl.textContent = fallbackName || "Player";
-          avatarEl.textContent = initialFromName(fallbackName);
-          metaEl.textContent = "Loading profile…";
-          bioEl.textContent = "";
+      // allow: letters, numbers, underscore, dash, dot
+      if (!/^[A-Za-z0-9._-]+$/.test(name)) {
+        return { ok:false, msg:"Use only letters, numbers, . _ - (no spaces)." };
+      }
 
-          // header może się załadować po chwili → spróbuj kilka razy
-          let tries = 0;
-          const t = setInterval(() => {
-            hardUpdateHeader(fallbackName);
-            tries++;
-            if (tries > 25) clearInterval(t); // ~2.5s
-          }, 100);
+      return { ok:true, value:name };
+    }
 
-          // copy uid
-          copyBtn.addEventListener("click", async () => {
-            try {
-              await navigator.clipboard.writeText(uid);
-              copyBtn.textContent = "Copied!";
-              setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
-            } catch {
-              showError("Clipboard blocked by browser.");
-            }
-          });
+    function normalizeBio(raw) {
+      const bio = (raw || "").trim();
+      if (bio.length > 240) return { ok:false, msg:"Bio too long (max 240)." };
+      return { ok:true, value:bio };
+    }
 
-          // HARD logout (działa zawsze)
-          logoutBtn.addEventListener("click", async () => {
-            logoutBtn.disabled = true;
-            const old = logoutBtn.textContent;
-            logoutBtn.textContent = "Logging out…";
+    async function loadProfileAndStats() {
+      hideMsgs();
+      metaEl.textContent = "Loading profile…";
 
-            try {
-              await sb.auth.signOut();
-            } catch (e) {
-              console.error("Hard logout error:", e);
-            }
+      // user metadata fallback name
+      const email = currentUser.email || "";
+      const meta = currentUser.user_metadata || {};
+      const fallbackName =
+        meta.display_name ||
+        meta.username ||
+        (email ? email.split("@")[0] : "Player");
 
-            window.location.href = PP_LOGIN_URL;
-          });
+      // Header + basic UI asap
+      nameEl.textContent = fallbackName || "Player";
+      avatarEl.textContent = initialFromName(fallbackName);
+      hardUpdateHeader(fallbackName);
 
-          // 2) profile row
-          const { data: prof, error: profErr } = await sb
-            .from("profiles")
-            .select("display_name, bio, created_at")
-            .eq("user_id", uid)
-            .maybeSingle();
+      // Try to load profile row
+      const uid = currentUser.id;
 
-          if (profErr) {
-            console.error("Profile load error:", profErr);
-            showError("Could not load profile.");
-            metaEl.textContent = "";
-            return;
-          }
+      const { data: prof, error: profErr } = await sb
+        .from("profiles")
+        .select("display_name, bio, created_at")
+        .eq("user_id", uid)
+        .maybeSingle();
 
-          const displayName = (prof && prof.display_name)
-            ? prof.display_name
-            : (fallbackName || "Player");
+      if (profErr) {
+        console.error("Profile load error:", profErr);
+        showError("Could not load profile.");
+        metaEl.textContent = "";
+      } else {
+        const displayName = (prof && prof.display_name) ? prof.display_name : (fallbackName || "Player");
+        const bio = (prof && prof.bio) ? prof.bio : "";
 
-          nameEl.textContent = displayName;
-          avatarEl.textContent = initialFromName(displayName);
-          bioEl.textContent = (prof && prof.bio) ? prof.bio : "";
+        currentProfile.display_name = displayName;
+        currentProfile.bio = bio;
+        currentProfile.created_at = prof ? prof.created_at : null;
 
-          // update header again with real displayName
-          hardUpdateHeader(displayName);
+        nameEl.textContent = displayName;
+        avatarEl.textContent = initialFromName(displayName);
+        bioEl.textContent = bio;
 
-          if (prof && prof.created_at) {
-            const created = new Date(prof.created_at);
-            const dateText = created.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
-            metaEl.textContent = `Member since ${dateText}`;
-          } else {
-            metaEl.textContent = "";
-          }
+        hardUpdateHeader(displayName);
 
-          // 3) stats
-          const { data: stat, error: statErr } = await sb
-            .from("tts_scores")
-            .select("score")
-            .eq("user_id", uid)
-            .order("score", { ascending: false })
-            .limit(1);
-
-          if (!statErr && stat && stat.length) {
-            statTTS.textContent = `${Number(stat[0].score).toFixed(1)} s`;
-            statsCard.style.display = "block";
-          }
-        } catch (e) {
-          console.error("Profile init crash:", e);
-          showError("Profile error.");
+        if (prof && prof.created_at) {
+          const created = new Date(prof.created_at);
+          const dateText = created.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
+          metaEl.textContent = `Member since ${dateText}`;
+        } else {
           metaEl.textContent = "";
         }
+      }
+
+      // Stats
+      const { data: stat, error: statErr } = await sb
+        .from("tts_scores")
+        .select("score")
+        .eq("user_id", uid)
+        .order("score", { ascending: false })
+        .limit(1);
+
+      if (!statErr && stat && stat.length) {
+        statTTS.textContent = `${Number(stat[0].score).toFixed(1)} s`;
+        statsCard.style.display = "block";
+      }
+    }
+
+    async function initProfile() {
+      waitForSupabaseSDK(async () => {
+        sb = window.ppSupabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Guard
+        const { data: userRes, error: userErr } = await sb.auth.getUser();
+        if (userErr) {
+          showError("Auth error.");
+          return;
+        }
+        currentUser = userRes?.user;
+        if (!currentUser) {
+          window.location.href = PP_LOGIN_URL;
+          return;
+        }
+
+        // Copy uid
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(currentUser.id);
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
+          } catch {
+            showError("Clipboard blocked by browser.");
+          }
+        });
+
+        // Logout (hard)
+        logoutBtn.addEventListener("click", async () => {
+          logoutBtn.disabled = true;
+          const old = logoutBtn.textContent;
+          logoutBtn.textContent = "Logging out…";
+          try { await sb.auth.signOut(); } catch (e) { console.error(e); }
+          window.location.href = PP_LOGIN_URL;
+          logoutBtn.textContent = old;
+          logoutBtn.disabled = false;
+        });
+
+        // Edit handlers
+        editBtn.addEventListener("click", () => {
+          hideMsgs();
+          setEditMode(true);
+        });
+
+        cancelBtn.addEventListener("click", () => {
+          hideMsgs();
+          setEditMode(false);
+        });
+
+        saveBtn.addEventListener("click", async () => {
+          hideMsgs();
+
+          const vName = validateDisplayName(editName.value);
+          if (!vName.ok) return showError(vName.msg);
+
+          const vBio = normalizeBio(editBio.value);
+          if (!vBio.ok) return showError(vBio.msg);
+
+          const newName = vName.value;
+          const newBio = vBio.value;
+
+          // loading state
+          saveBtn.disabled = true;
+          cancelBtn.disabled = true;
+          editName.disabled = true;
+          editBio.disabled = true;
+          const oldSave = saveBtn.textContent;
+          saveBtn.textContent = "Saving…";
+
+          try {
+            const uid = currentUser.id;
+
+            // 1) Upsert profile row
+            const { error: upErr } = await sb
+              .from("profiles")
+              .upsert(
+                { user_id: uid, display_name: newName, bio: newBio },
+                { onConflict: "user_id" }
+              );
+
+            if (upErr) {
+              console.error("Upsert error:", upErr);
+              showError("Could not save profile.");
+              return;
+            }
+
+            // 2) Update auth metadata (żeby global header mógł brać display_name)
+            const { error: metaErr } = await sb.auth.updateUser({
+              data: { display_name: newName }
+            });
+
+            if (metaErr) {
+              // nie blokujemy (profil i tak zapisany), ale logujemy
+              console.warn("Metadata update error:", metaErr);
+            }
+
+            // UI update
+            currentProfile.display_name = newName;
+            currentProfile.bio = newBio;
+
+            nameEl.textContent = newName;
+            bioEl.textContent = newBio;
+            avatarEl.textContent = initialFromName(newName);
+            hardUpdateHeader(newName);
+
+            // jeśli pp-auth ma swoją funkcję — też spróbuj
+            if (window.ppUpdateUserButton) {
+              try { await window.ppUpdateUserButton(); } catch {}
+            }
+
+            setEditMode(false);
+            showOk("Saved.");
+
+          } finally {
+            saveBtn.disabled = false;
+            cancelBtn.disabled = false;
+            editName.disabled = false;
+            editBio.disabled = false;
+            saveBtn.textContent = oldSave;
+          }
+        });
+
+        await loadProfileAndStats();
       });
     }
 
