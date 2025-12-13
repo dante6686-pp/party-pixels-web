@@ -7,11 +7,6 @@
   <link rel="stylesheet" href="/pp-main.css" />
 </head>
 <body>
-  <div style="position:fixed;inset:auto 12px 12px 12px;z-index:999999;
-background:#11162a;border:1px solid #24273a;color:#f4f4ff;
-padding:8px 10px;border-radius:14px;font-size:12px;">
-PROFILE HTML VERSION: 999 ✅
-  </div>
   <div class="page">
     <div id="header"></div>
 
@@ -39,7 +34,6 @@ PROFILE HTML VERSION: 999 ✅
 
       <section class="pp-card" id="ppStatsCard" style="display:none;">
         <div class="pp-card-title">Game stats</div>
-
         <div class="pp-stat-row">
           <div class="pp-stat-label">Tap to Survive – best run</div>
           <div class="pp-stat-value" id="ppStatTTS">–</div>
@@ -72,12 +66,16 @@ PROFILE HTML VERSION: 999 ✅
 
   <!-- Supabase + auth + tipjar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js?v=999"></script>
+  <script src="/pp-auth.js?v=1001"></script>
   <script src="/tipjar.js"></script>
 
-  <!-- Profile logic (NO DOMContentLoaded needed; script is at end of body) -->
+  <!-- Profile logic (self-contained fallback client + on-screen debug) -->
   <script>
     const PP_LOGIN_URL = "/account.html";
+
+    // SAME AS pp-auth.js (keep in sync)
+    const SUPABASE_URL = "https://dyfrzwxhycqnqntvkuxy.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d3hoeWNxbnFudHZrdXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1ODM5MjgsImV4cCI6MjA4MDE1OTkyOH0.n4jP0q7YZY-jQaSnHUkKWyI9wM02iHXnRXS31AATnY0";
 
     const nameEl = document.getElementById("ppProfileName");
     const metaEl = document.getElementById("ppProfileMeta");
@@ -88,6 +86,26 @@ PROFILE HTML VERSION: 999 ✅
     const statsCard = document.getElementById("ppStatsCard");
     const statTTS   = document.getElementById("ppStatTTS");
     const copyBtn   = document.getElementById("ppCopyUserId");
+
+    // tiny on-screen debug (remove later)
+    const dbg = document.createElement("div");
+    dbg.style.position = "fixed";
+    dbg.style.left = "12px";
+    dbg.style.bottom = "12px";
+    dbg.style.zIndex = "999999";
+    dbg.style.fontSize = "12px";
+    dbg.style.padding = "6px 10px";
+    dbg.style.borderRadius = "999px";
+    dbg.style.border = "1px solid rgba(36,39,58,0.9)";
+    dbg.style.background = "rgba(6, 9, 24, 0.88)";
+    dbg.style.color = "#f4f4ff";
+    dbg.textContent = "profile: booting…";
+    document.body.appendChild(dbg);
+
+    function dbgSet(t) {
+      dbg.textContent = "profile: " + t;
+      metaEl.textContent = t; // też pokazuj w meta
+    }
 
     function showError(msg) {
       errEl.textContent = msg;
@@ -104,141 +122,128 @@ PROFILE HTML VERSION: 999 ✅
       return s ? s.charAt(0).toUpperCase() : "?";
     }
 
-    function waitForPPClient(cb, startedAt = Date.now()) {
-      if (window.ppSupabaseClient) return cb(window.ppSupabaseClient);
-
-      // 3s timeout -> pokaż błąd na ekranie
+    function waitForSupabaseSDK(cb, startedAt = Date.now()) {
+      if (window.supabase && typeof window.supabase.createClient === "function") return cb();
       if (Date.now() - startedAt > 3000) {
-        showError("ppSupabaseClient not ready (timeout). Check pp-auth.js include/cache.");
-        metaEl.textContent = "";
+        showError("Supabase SDK not loaded.");
+        dbgSet("SDK missing");
         return;
       }
-
-      setTimeout(() => waitForPPClient(cb, startedAt), 50);
+      setTimeout(() => waitForSupabaseSDK(cb, startedAt), 50);
     }
 
-    async function loadProfile(sb, uid, fallbackName) {
-      try {
-        const { data, error } = await sb
-          .from("profiles")
-          .select("display_name, bio, created_at")
-          .eq("user_id", uid)
-          .maybeSingle();
-
-        if (error) {
-          console.error("Profile load error:", error);
-          metaEl.textContent = "";
-          showError("Could not load profile.");
-          return;
-        }
-
-        const displayName = (data && data.display_name)
-          ? data.display_name
-          : (fallbackName || "Player");
-
-        nameEl.textContent = displayName;
-        avatarEl.textContent = initialFromName(displayName);
-
-        if (data && data.created_at) {
-          const created = new Date(data.created_at);
-          const dateText = created.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric"
-          });
-          metaEl.textContent = `Member since ${dateText}`;
-        } else {
-          metaEl.textContent = "";
-        }
-
-        bioEl.textContent = (data && data.bio) ? data.bio : "";
-      } catch (e) {
-        console.error("Unexpected profile error:", e);
-        metaEl.textContent = "";
-        showError("Unexpected error loading profile.");
-      }
-    }
-
-    async function loadStats(sb, uid) {
-      try {
-        const { data, error } = await sb
-          .from("tts_scores")
-          .select("score, created_at")
-          .eq("user_id", uid)
-          .order("score", { ascending: false })
-          .limit(1);
-
-        if (error) {
-          console.error("Stats load error:", error);
-          return;
-        }
-
-        if (data && data.length) {
-          const best = data[0];
-          statTTS.textContent = `${Number(best.score).toFixed(1)} s`;
-          statsCard.style.display = "block";
-        }
-      } catch (e) {
-        console.error("Unexpected stats error:", e);
-      }
-    }
-
-    async function initProfile(sb) {
+    async function init() {
       hideError();
+      dbgSet("waiting for SDK…");
 
-      metaEl.textContent = "Client OK. Loading session…";
+      waitForSupabaseSDK(async () => {
+        try {
+          dbgSet("creating client…");
 
-      const { data: { session }, error: sessErr } = await sb.auth.getSession();
-      if (sessErr) {
-        console.error("Session error:", sessErr);
-        showError("Session error.");
-        metaEl.textContent = "";
-        return;
-      }
+          // prefer shared client from pp-auth.js, fallback to local client
+          const sb = window.ppSupabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      if (!session || !session.user) {
-        window.location.href = PP_LOGIN_URL;
-        return;
-      }
-
-      const uid = session.user.id;
-      const email = session.user.email || "";
-      const meta = session.user.user_metadata || {};
-      const fallbackName =
-        meta.display_name ||
-        meta.username ||
-        (email ? email.split("@")[0] : "Player");
-
-      nameEl.textContent = fallbackName || "Player";
-      avatarEl.textContent = initialFromName(fallbackName);
-      metaEl.textContent = "Loading profile…";
-
-      if (copyBtn) {
-        copyBtn.addEventListener("click", async () => {
-          try {
-            await navigator.clipboard.writeText(uid);
-            copyBtn.textContent = "Copied!";
-            setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
-          } catch {
-            showError("Clipboard blocked by browser.");
+          dbgSet("auth.getUser()…");
+          const { data: userRes, error: userErr } = await sb.auth.getUser();
+          if (userErr) {
+            console.error("getUser error:", userErr);
+            showError("Auth error (getUser).");
+            dbgSet("auth error");
+            return;
           }
-        });
-      }
 
-      await loadProfile(sb, uid, fallbackName);
-      await loadStats(sb, uid);
+          const user = userRes?.user;
+          if (!user) {
+            dbgSet("no user → redirect");
+            window.location.href = PP_LOGIN_URL;
+            return;
+          }
+
+          const uid = user.id;
+          const email = user.email || "";
+          const meta = user.user_metadata || {};
+          const fallbackName = meta.display_name || meta.username || (email ? email.split("@")[0] : "Player");
+
+          nameEl.textContent = fallbackName || "Player";
+          avatarEl.textContent = initialFromName(fallbackName);
+          bioEl.textContent = "";
+
+          if (copyBtn) {
+            copyBtn.addEventListener("click", async () => {
+              try {
+                await navigator.clipboard.writeText(uid);
+                copyBtn.textContent = "Copied!";
+                setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
+              } catch {
+                showError("Clipboard blocked by browser.");
+              }
+            });
+          }
+
+          // Optional: ensure profile row exists (works only if your RLS allows it)
+          dbgSet("profiles upsert…");
+          await sb
+            .from("profiles")
+            .upsert(
+              { user_id: uid, display_name: fallbackName || "Player" },
+              { onConflict: "user_id" }
+            );
+
+          // Load profile
+          dbgSet("profiles select…");
+          const { data: prof, error: profErr } = await sb
+            .from("profiles")
+            .select("display_name, bio, created_at")
+            .eq("user_id", uid)
+            .maybeSingle();
+
+          if (profErr) {
+            console.error("Profile load error:", profErr);
+            showError("Could not load profile (RLS / policy?).");
+            dbgSet("profiles blocked");
+            return;
+          }
+
+          const displayName = (prof && prof.display_name) ? prof.display_name : (fallbackName || "Player");
+          nameEl.textContent = displayName;
+          avatarEl.textContent = initialFromName(displayName);
+
+          if (prof && prof.created_at) {
+            const created = new Date(prof.created_at);
+            const dateText = created.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+            metaEl.textContent = `Member since ${dateText}`;
+            dbg.textContent = "profile: OK";
+          } else {
+            metaEl.textContent = "";
+            dbg.textContent = "profile: OK (no created_at)";
+          }
+
+          bioEl.textContent = (prof && prof.bio) ? prof.bio : "";
+
+          // Stats
+          dbgSet("stats…");
+          const { data: stat, error: statErr } = await sb
+            .from("tts_scores")
+            .select("score")
+            .eq("user_id", uid)
+            .order("score", { ascending: false })
+            .limit(1);
+
+          if (!statErr && stat && stat.length) {
+            statTTS.textContent = `${Number(stat[0].score).toFixed(1)} s`;
+            statsCard.style.display = "block";
+          }
+
+          dbg.textContent = "profile: done ✅";
+        } catch (e) {
+          console.error("Profile init crash:", e);
+          showError("Profile script crashed.");
+          dbgSet("crash");
+        }
+      });
     }
 
-    // start immediately (no DOMContentLoaded)
-    metaEl.textContent = "Booting…";
-
-    waitForPPClient((sb) => {
-      initProfile(sb).catch((e) => {
-        console.error("initProfile crash:", e);
-        showError("Profile script crashed.");
-        metaEl.textContent = "";
-      });
-    });
+    init();
   </script>
 </body>
 </html>
