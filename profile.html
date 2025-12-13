@@ -39,8 +39,6 @@
           <div class="pp-stat-label">Tap to Survive – best run</div>
           <div class="pp-stat-value" id="ppStatTTS">–</div>
         </div>
-
-        <!-- możesz dopinać kolejne staty tu -->
       </section>
     </main>
 
@@ -69,10 +67,10 @@
 
   <!-- Supabase + auth + tipjar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js?v=5"></script>
+  <script src="/pp-auth.js?v=999"></script>
   <script src="/tipjar.js"></script>
 
-  <!-- Profile logic -->
+  <!-- Profile logic (NO DOMContentLoaded needed; script is at end of body) -->
   <script>
     const PP_LOGIN_URL = "/account.html";
 
@@ -102,61 +100,16 @@
     }
 
     function waitForPPClient(cb, startedAt = Date.now()) {
-  if (window.ppSupabaseClient) return cb(window.ppSupabaseClient);
+      if (window.ppSupabaseClient) return cb(window.ppSupabaseClient);
 
-  // po 3 sekundach pokaż błąd na ekranie (bez konsoli)
-  if (Date.now() - startedAt > 3000) {
-    showError("ppSupabaseClient not ready (timeout). Check pp-auth.js include + cache.");
-    return;
-  }
-
-  setTimeout(() => waitForPPClient(cb, startedAt), 50);
-    }
-    async function initProfile(sb) {
-      hideError();
-
-      // session
-      const { data: { session }, error: sessErr } = await sb.auth.getSession();
-      if (sessErr) {
-        console.error("Session error:", sessErr);
-        showError("Session error.");
+      // 3s timeout -> pokaż błąd na ekranie
+      if (Date.now() - startedAt > 3000) {
+        showError("ppSupabaseClient not ready (timeout). Check pp-auth.js include/cache.");
+        metaEl.textContent = "";
         return;
       }
 
-      if (!session || !session.user) {
-        window.location.href = PP_LOGIN_URL;
-        return;
-      }
-
-      const uid = session.user.id;
-      const email = session.user.email || "";
-      const meta = session.user.user_metadata || {};
-      const fallbackName =
-        meta.display_name ||
-        meta.username ||
-        (email ? email.split("@")[0] : "Player");
-
-      // base UI
-      nameEl.textContent = fallbackName || "Player";
-      avatarEl.textContent = initialFromName(fallbackName);
-      metaEl.textContent = "Loading profile…";
-
-      // copy id
-      if (copyBtn) {
-        copyBtn.addEventListener("click", async () => {
-          try {
-            await navigator.clipboard.writeText(uid);
-            copyBtn.textContent = "Copied!";
-            setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
-          } catch {
-            showError("Clipboard blocked by browser.");
-          }
-        });
-      }
-
-      // load data
-      await loadProfile(sb, uid, fallbackName);
-      await loadStats(sb, uid);
+      setTimeout(() => waitForPPClient(cb, startedAt), 50);
     }
 
     async function loadProfile(sb, uid, fallbackName) {
@@ -225,16 +178,62 @@
       }
     }
 
-    // Start immediately (script is already at the end of <body>)
-metaEl.textContent = "Booting…";
+    async function initProfile(sb) {
+      hideError();
 
-waitForPPClient((sb) => {
-  metaEl.textContent = "Client OK. Loading session…";
-  initProfile(sb).catch((e) => {
-    console.error("initProfile crash:", e);
-    showError("Profile script crashed.");
-  });
-});
+      metaEl.textContent = "Client OK. Loading session…";
+
+      const { data: { session }, error: sessErr } = await sb.auth.getSession();
+      if (sessErr) {
+        console.error("Session error:", sessErr);
+        showError("Session error.");
+        metaEl.textContent = "";
+        return;
+      }
+
+      if (!session || !session.user) {
+        window.location.href = PP_LOGIN_URL;
+        return;
+      }
+
+      const uid = session.user.id;
+      const email = session.user.email || "";
+      const meta = session.user.user_metadata || {};
+      const fallbackName =
+        meta.display_name ||
+        meta.username ||
+        (email ? email.split("@")[0] : "Player");
+
+      nameEl.textContent = fallbackName || "Player";
+      avatarEl.textContent = initialFromName(fallbackName);
+      metaEl.textContent = "Loading profile…";
+
+      if (copyBtn) {
+        copyBtn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(uid);
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
+          } catch {
+            showError("Clipboard blocked by browser.");
+          }
+        });
+      }
+
+      await loadProfile(sb, uid, fallbackName);
+      await loadStats(sb, uid);
+    }
+
+    // start immediately (no DOMContentLoaded)
+    metaEl.textContent = "Booting…";
+
+    waitForPPClient((sb) => {
+      initProfile(sb).catch((e) => {
+        console.error("initProfile crash:", e);
+        showError("Profile script crashed.");
+        metaEl.textContent = "";
+      });
+    });
   </script>
 </body>
 </html>
