@@ -71,6 +71,12 @@
   <script src="/pp-auth.js"></script>
   <script src="/tipjar.js"></script>
 
+  <script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    if (window.ppRequireAuth) await window.ppRequireAuth();
+  });
+  </script>
+
   <!-- Account logic -->
   <script>
     const nameEl = document.getElementById("ppProfileName");
