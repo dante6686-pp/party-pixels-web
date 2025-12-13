@@ -370,9 +370,9 @@
               );
 
             if (upErr) {
-              console.error("Upsert error:", upErr);
-              showError("Could not save profile.");
-              return;
+  console.error("Upsert error:", upErr);
+  showError(`Could not save profile: ${upErr.message || "unknown error"}`);
+  return;
             }
 
             // 2) Update auth metadata (żeby global header mógł brać display_name)
