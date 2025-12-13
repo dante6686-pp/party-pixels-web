@@ -7,17 +7,6 @@
   <link rel="stylesheet" href="/pp-main.css" />
 </head>
 <body>
-  <!-- DEBUG BOX (HTML, zawsze widoczny) -->
-  <div id="ppDebugBox" style="
-    position:fixed; top:12px; right:12px; z-index:999999;
-    font-size:12px; padding:6px 10px; border-radius:999px;
-    border:1px solid rgba(36,39,58,0.9);
-    background:rgba(6, 9, 24, 0.88);
-    color:#f4f4ff;
-  ">
-    JS not started
-  </div>
-
   <div class="page">
     <div id="header"></div>
 
@@ -45,10 +34,13 @@
 
       <section class="pp-card" id="ppStatsCard" style="display:none;">
         <div class="pp-card-title">Game stats</div>
+
         <div class="pp-stat-row">
           <div class="pp-stat-label">Tap to Survive – best run</div>
           <div class="pp-stat-value" id="ppStatTTS">–</div>
         </div>
+
+        <!-- kolejne staty dopinaj tu -->
       </section>
     </main>
 
@@ -76,19 +68,14 @@
 
   <!-- Supabase + auth + tipjar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="/pp-auth.js?v=2002" defer></script>
+  <script src="/pp-auth.js?v=2003" defer></script>
   <script src="/tipjar.js" defer></script>
 
   <!-- Profile logic -->
   <script>
-    // 1) TWARDY sygnał, czy JS odpalił
-    const dbg = document.getElementById("ppDebugBox");
-    dbg.textContent = "JS started…";
-
-    // routing
     const PP_LOGIN_URL = "/account.html";
 
-    // same project as pp-auth.js
+    // keep in sync with pp-auth.js
     const SUPABASE_URL = "https://dyfrzwxhycqnqntvkuxy.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR5ZnJ6d3hoeWNxbnFudHZrdXh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1ODM5MjgsImV4cCI6MjA4MDE1OTkyOH0.n4jP0q7YZY-jQaSnHUkKWyI9wM02iHXnRXS31AATnY0";
 
@@ -118,41 +105,33 @@
     function waitForSupabaseSDK(cb, startedAt = Date.now()) {
       if (window.supabase && typeof window.supabase.createClient === "function") return cb();
       if (Date.now() - startedAt > 4000) {
-        dbg.textContent = "SDK missing";
         showError("Supabase SDK not loaded.");
         return;
       }
       setTimeout(() => waitForSupabaseSDK(cb, startedAt), 50);
     }
 
-    async function init() {
+    async function initProfile() {
       hideError();
       metaEl.textContent = "Booting…";
-      dbg.textContent = "booting…";
 
       waitForSupabaseSDK(async () => {
         try {
-          dbg.textContent = "client…";
-
-          // Prefer shared client from pp-auth.js; fallback to local
           const sb =
             window.ppSupabaseClient ||
             window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-          dbg.textContent = "getUser…";
           metaEl.textContent = "Loading session…";
-
-          // getUser is often more reliable on mobile than only getSession
           const { data: userRes, error: userErr } = await sb.auth.getUser();
+
           if (userErr) {
-            dbg.textContent = "auth error";
-            showError("Auth error (getUser).");
+            showError("Auth error.");
+            metaEl.textContent = "";
             return;
           }
 
           const user = userRes?.user;
           if (!user) {
-            dbg.textContent = "no user → redirect";
             window.location.href = PP_LOGIN_URL;
             return;
           }
@@ -181,9 +160,7 @@
             });
           }
 
-          dbg.textContent = "profiles select…";
           metaEl.textContent = "Loading profile…";
-
           const { data: prof, error: profErr } = await sb
             .from("profiles")
             .select("display_name, bio, created_at")
@@ -191,26 +168,28 @@
             .maybeSingle();
 
           if (profErr) {
-            dbg.textContent = "profiles blocked";
-            showError("Could not load profile (RLS/policy?).");
+            showError("Could not load profile.");
+            metaEl.textContent = "";
             return;
           }
 
-          const displayName = (prof && prof.display_name) ? prof.display_name : (fallbackName || "Player");
+          const displayName = (prof && prof.display_name)
+            ? prof.display_name
+            : (fallbackName || "Player");
+
           nameEl.textContent = displayName;
           avatarEl.textContent = initialFromName(displayName);
+          bioEl.textContent = (prof && prof.bio) ? prof.bio : "";
 
           if (prof && prof.created_at) {
             const created = new Date(prof.created_at);
-            const dateText = created.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+            const dateText = created.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
             metaEl.textContent = `Member since ${dateText}`;
           } else {
             metaEl.textContent = "";
           }
 
-          bioEl.textContent = (prof && prof.bio) ? prof.bio : "";
-
-          dbg.textContent = "stats…";
+          // stats
           const { data: stat, error: statErr } = await sb
             .from("tts_scores")
             .select("score")
@@ -223,17 +202,16 @@
             statsCard.style.display = "block";
           }
 
-          dbg.textContent = "done ✅";
         } catch (e) {
           console.error("Profile init crash:", e);
-          dbg.textContent = "crash";
-          showError("Profile script crashed.");
+          showError("Profile error.");
+          metaEl.textContent = "";
         }
       });
     }
 
-    // odpal po chwili (żeby defer scripts miały czas)
-    setTimeout(init, 0);
+    // start (script is at end of body, but other scripts are defer)
+    setTimeout(initProfile, 0);
   </script>
 </body>
 </html>
