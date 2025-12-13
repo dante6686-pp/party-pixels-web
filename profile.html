@@ -49,26 +49,24 @@
 
   <!-- PARTS loader -->
   <script>
-    function loadPart(id, file, cb) {
+    function loadPart(id, file) {
       fetch(file)
         .then(r => r.text())
         .then(html => {
           const el = document.getElementById(id);
           if (el) el.innerHTML = html;
-          if (typeof cb === "function") cb();
         })
         .catch(err => console.error("Load error:", file, err));
     }
 
-    loadPart("header", "/header.html", () => {
-      if (window.ppUpdateUserButton) window.ppUpdateUserButton();
-    });
+    // Header sam odpali ppUpdateUserButton() w swoim <script> (po poprawce)
+    loadPart("header", "/header.html");
     loadPart("footer", "/footer.html");
   </script>
 
   <!-- Supabase + auth + tipjar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="/pp-auth.js?v=2003" defer></script>
+  <script src="/pp-auth.js?v=3001" defer></script>
   <script src="/tipjar.js" defer></script>
 
   <!-- Profile logic -->
@@ -121,6 +119,7 @@
             window.ppSupabaseClient ||
             window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+          // Guard: must be logged in
           metaEl.textContent = "Loading session…";
           const { data: userRes, error: userErr } = await sb.auth.getUser();
 
@@ -144,10 +143,12 @@
             meta.username ||
             (email ? email.split("@")[0] : "Player");
 
+          // base UI
           nameEl.textContent = fallbackName || "Player";
           avatarEl.textContent = initialFromName(fallbackName);
           bioEl.textContent = "";
 
+          // copy uid
           if (copyBtn) {
             copyBtn.addEventListener("click", async () => {
               try {
@@ -160,6 +161,7 @@
             });
           }
 
+          // load profile row
           metaEl.textContent = "Loading profile…";
           const { data: prof, error: profErr } = await sb
             .from("profiles")
@@ -168,6 +170,7 @@
             .maybeSingle();
 
           if (profErr) {
+            console.error("Profile load error:", profErr);
             showError("Could not load profile.");
             metaEl.textContent = "";
             return;
@@ -210,8 +213,25 @@
       });
     }
 
-    // start (script is at end of body, but other scripts are defer)
+    // start
     setTimeout(initProfile, 0);
+
+    // Backup logout (jeśli pp-auth nie podepnie handlera, to ten ratuje)
+    (function () {
+      const btn = document.querySelector("[data-pp-logout]");
+      if (!btn) return;
+
+      btn.addEventListener("click", async () => {
+        const sb = window.ppSupabaseClient;
+        if (!sb) return;
+
+        try {
+          await sb.auth.signOut();
+          if (window.ppUpdateUserButton) await window.ppUpdateUserButton();
+          window.location.href = PP_LOGIN_URL;
+        } catch {}
+      });
+    })();
   </script>
 </body>
 </html>
