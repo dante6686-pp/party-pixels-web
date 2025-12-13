@@ -53,46 +53,63 @@ async function ppUpdateUserButton() {
   }
 }
 
+//init login form
 function ppInitLoginForm() {
   const form = document.querySelector("[data-pp-login-form]");
-  if (!form) return; // nie jesteś na login page
+  if (!form) return;
 
   const emailInput = form.querySelector('input[name="email"]');
   const passInput  = form.querySelector('input[name="password"]');
-  const errorEl    = document.querySelector("[data-pp-login-error]");
-  const btn        = form.querySelector("[data-pp-login-btn]") || form.querySelector('button[type="submit"]');
+  const errorEl    = form.querySelector("[data-pp-login-error]") || document.querySelector("[data-pp-login-error]");
+  const btn        = form.querySelector('button[type="submit"]');
 
-  const initialBtnHtml = btn ? btn.innerHTML : "";
+  if (!emailInput || !passInput || !btn) {
+    console.error("Login form missing elements:", {
+      hasEmail: !!emailInput,
+      hasPass: !!passInput,
+      hasBtn: !!btn,
+      hasForm: !!form
+    });
+    return;
+  }
+
+  const originalBtnHTML = btn.innerHTML;
 
   function setError(msg) {
-    if (!errorEl) return;
+    if (!errorEl) {
+      if (msg) console.warn("Login error (no error element):", msg);
+      return;
+    }
     errorEl.textContent = msg || "";
     errorEl.style.display = msg ? "block" : "none";
   }
 
   function setLoading(isLoading) {
-    if (!btn) return;
+    // disable/enable inputs + button
+    emailInput.disabled = isLoading;
+    passInput.disabled  = isLoading;
+    btn.disabled        = isLoading;
 
     if (isLoading) {
       form.classList.add("pp-auth-disabled");
-      emailInput && (emailInput.disabled = true);
-      passInput && (passInput.disabled = true);
-      btn.disabled = true;
-
       btn.classList.add("pp-btn-loading");
+
       btn.innerHTML = `<span class="pp-btn-spinner"></span><span>Logging in…</span>`;
+      // żeby spinner i tekst były w linii nawet bez dodatkowego CSS:
       btn.style.display = "inline-flex";
       btn.style.alignItems = "center";
       btn.style.justifyContent = "center";
       btn.style.gap = "8px";
     } else {
       form.classList.remove("pp-auth-disabled");
-      emailInput && (emailInput.disabled = false);
-      passInput && (passInput.disabled = false);
-      btn.disabled = false;
-
       btn.classList.remove("pp-btn-loading");
-      btn.innerHTML = initialBtnHtml;
+
+      btn.innerHTML = originalBtnHTML;
+      // przywracamy default
+      btn.style.display = "";
+      btn.style.alignItems = "";
+      btn.style.justifyContent = "";
+      btn.style.gap = "";
     }
   }
 
@@ -100,8 +117,10 @@ function ppInitLoginForm() {
     e.preventDefault();
     setError("");
 
-    const email = (emailInput?.value || "").trim();
-    const password = passInput?.value || "";
+    const email = (emailInput.value || "").trim();
+    const password = passInput.value || "";
+
+    console.log("Login submit:", { emailLength: email.length, hasPassword: !!password });
 
     if (!email || !password) {
       setError("Fill in email and password.");
@@ -111,21 +130,20 @@ function ppInitLoginForm() {
     setLoading(true);
 
     try {
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
       if (error) {
-        console.error("Login error:", error);
+        console.error("Supabase login error:", error);
         setError(error.message || "Login failed.");
         setLoading(false);
         return;
       }
 
-      // sukces: odśwież topbar i idź na profil
+      console.log("Login OK:", data);
       await ppUpdateUserButton();
       window.location.href = "/profile.html";
-
     } catch (err) {
-      console.error("Unexpected login error:", err);
+      console.error("Unexpected login exception:", err);
       setError("Something went wrong. Try again.");
       setLoading(false);
     }
