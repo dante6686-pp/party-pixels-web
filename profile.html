@@ -101,11 +101,17 @@
       return s ? s.charAt(0).toUpperCase() : "?";
     }
 
-    function waitForPPClient(cb) {
-      if (window.ppSupabaseClient) return cb(window.ppSupabaseClient);
-      setTimeout(() => waitForPPClient(cb), 50);
-    }
+    function waitForPPClient(cb, startedAt = Date.now()) {
+  if (window.ppSupabaseClient) return cb(window.ppSupabaseClient);
 
+  // po 3 sekundach pokaż błąd na ekranie (bez konsoli)
+  if (Date.now() - startedAt > 3000) {
+    showError("ppSupabaseClient not ready (timeout). Check pp-auth.js include + cache.");
+    return;
+  }
+
+  setTimeout(() => waitForPPClient(cb, startedAt), 50);
+    }
     async function initProfile(sb) {
       hideError();
 
@@ -219,9 +225,16 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      waitForPPClient(initProfile);
-    });
+    // Start immediately (script is already at the end of <body>)
+metaEl.textContent = "Booting…";
+
+waitForPPClient((sb) => {
+  metaEl.textContent = "Client OK. Loading session…";
+  initProfile(sb).catch((e) => {
+    console.error("initProfile crash:", e);
+    showError("Profile script crashed.");
+  });
+});
   </script>
 </body>
 </html>
