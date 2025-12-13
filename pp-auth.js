@@ -92,7 +92,7 @@ function ppInitLoginForm() {
 
       // sukces: odśwież topbar i idź na konto
       await ppUpdateUserButton();
-      window.location.href = "/account.html";
+      window.location.href = "/profile.html";
     } catch (err) {
       console.error("Unexpected login error:", err);
       if (errorEl) {
@@ -120,7 +120,7 @@ function ppInitLogout() {
       }
 
       await ppUpdateUserButton();
-      window.location.href = "/login.html";
+      window.location.href = "/account.html";
     } catch (err) {
       console.error("Unexpected logout error:", err);
       btn.disabled = false;
