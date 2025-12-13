@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Party Pixels · Account</title>
+  <title>Party Pixels · Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/pp-main.css" />
 </head>
@@ -63,22 +63,19 @@
     loadPart("header", "/header.html", () => {
       if (window.ppUpdateUserButton) window.ppUpdateUserButton();
     });
+
     loadPart("footer", "/footer.html");
   </script>
 
   <!-- Supabase + auth + tipjar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js"></script>
+  <script src="/pp-auth.js?v=5"></script>
   <script src="/tipjar.js"></script>
 
+  <!-- Profile logic -->
   <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    if (window.ppRequireAuth) await window.ppRequireAuth();
-  });
-  </script>
+    const PP_LOGIN_URL = "/account.html";
 
-  <!-- Account logic -->
-  <script>
     const nameEl = document.getElementById("ppProfileName");
     const metaEl = document.getElementById("ppProfileMeta");
     const bioEl  = document.getElementById("ppProfileBio");
@@ -88,12 +85,6 @@
     const statsCard = document.getElementById("ppStatsCard");
     const statTTS   = document.getElementById("ppStatTTS");
     const copyBtn   = document.getElementById("ppCopyUserId");
-
-    // bierzemy klienta z pp-auth.js
-    const sb = window.ppSupabaseClient || window.ppSupabase;
-    if (!sb) {
-      console.error("No Supabase client found. Expose it from pp-auth.js as window.ppSupabaseClient or window.ppSupabase.");
-    }
 
     function showError(msg) {
       errEl.textContent = msg;
@@ -110,15 +101,15 @@
       return s ? s.charAt(0).toUpperCase() : "?";
     }
 
-    async function initAccount() {
-      if (!sb) {
-        showError("Supabase client missing.");
-        return;
-      }
+    function waitForPPClient(cb) {
+      if (window.ppSupabaseClient) return cb(window.ppSupabaseClient);
+      setTimeout(() => waitForPPClient(cb), 50);
+    }
 
+    async function initProfile(sb) {
       hideError();
 
-      // 1) session
+      // session
       const { data: { session }, error: sessErr } = await sb.auth.getSession();
       if (sessErr) {
         console.error("Session error:", sessErr);
@@ -127,7 +118,6 @@
       }
 
       if (!session || !session.user) {
-        // niezalogowany → przerzut na login
         window.location.href = PP_LOGIN_URL;
         return;
       }
@@ -135,13 +125,17 @@
       const uid = session.user.id;
       const email = session.user.email || "";
       const meta = session.user.user_metadata || {};
-      const fallbackName = meta.display_name || meta.username || (email ? email.split("@")[0] : "Player");
+      const fallbackName =
+        meta.display_name ||
+        meta.username ||
+        (email ? email.split("@")[0] : "Player");
 
-      // UI base
+      // base UI
       nameEl.textContent = fallbackName || "Player";
       avatarEl.textContent = initialFromName(fallbackName);
       metaEl.textContent = "Loading profile…";
 
+      // copy id
       if (copyBtn) {
         copyBtn.addEventListener("click", async () => {
           try {
@@ -149,20 +143,17 @@
             copyBtn.textContent = "Copied!";
             setTimeout(() => (copyBtn.textContent = "Copy user id"), 900);
           } catch {
-            // fallback
             showError("Clipboard blocked by browser.");
           }
         });
       }
 
-      // 2) load profile row
-      await loadProfile(uid, fallbackName);
-
-      // 3) load stats
-      await loadStats(uid);
+      // load data
+      await loadProfile(sb, uid, fallbackName);
+      await loadStats(sb, uid);
     }
 
-    async function loadProfile(uid, fallbackName) {
+    async function loadProfile(sb, uid, fallbackName) {
       try {
         const { data, error } = await sb
           .from("profiles")
@@ -177,13 +168,20 @@
           return;
         }
 
-        const displayName = (data && data.display_name) ? data.display_name : (fallbackName || "Player");
+        const displayName = (data && data.display_name)
+          ? data.display_name
+          : (fallbackName || "Player");
+
         nameEl.textContent = displayName;
         avatarEl.textContent = initialFromName(displayName);
 
         if (data && data.created_at) {
           const created = new Date(data.created_at);
-          const dateText = created.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+          const dateText = created.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          });
           metaEl.textContent = `Member since ${dateText}`;
         } else {
           metaEl.textContent = "";
@@ -197,7 +195,7 @@
       }
     }
 
-    async function loadStats(uid) {
+    async function loadStats(sb, uid) {
       try {
         const { data, error } = await sb
           .from("tts_scores")
@@ -221,7 +219,9 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", initAccount);
+    document.addEventListener("DOMContentLoaded", () => {
+      waitForPPClient(initProfile);
+    });
   </script>
 </body>
 </html>
