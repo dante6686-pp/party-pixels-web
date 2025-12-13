@@ -16,3 +16,10 @@
     </a>
   </div>
 </header>
+
+<script>
+  // Header is loaded dynamically → auth must re-sync HERE
+  if (window.ppUpdateUserButton) {
+    window.ppUpdateUserButton();
+  }
+</script>
