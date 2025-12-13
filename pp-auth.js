@@ -103,6 +103,30 @@ function ppInitLoginForm() {
   });
 }
 
+// --- Auth guards (routing: login=/account.html, profile=/profile.html) ---
+
+window.ppRequireAuth = async function ppRequireAuth() {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  if (error) console.warn("ppRequireAuth session error:", error);
+
+  if (!session || !session.user) {
+    window.location.href = "/account.html"; // login page
+    return null;
+  }
+  return session.user;
+};
+
+window.ppRedirectIfLoggedIn = async function ppRedirectIfLoggedIn() {
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  if (error) console.warn("ppRedirectIfLoggedIn session error:", error);
+
+  if (session && session.user) {
+    window.location.href = "/profile.html"; // profile page
+    return true;
+  }
+  return false;
+};
+
 // 4) Logout button (na account.html)
 function ppInitLogout() {
   const btn = document.querySelector("[data-pp-logout]");
