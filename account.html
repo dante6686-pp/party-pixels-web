@@ -58,6 +58,12 @@
   <!-- Supabase + auth -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
+  <script>
+  document.body.insertAdjacentHTML(
+    "afterbegin",
+    '<div style="position:fixed;bottom:10px;left:10px;z-index:9999;background:#11162a;border:1px solid #24273a;color:#f4f4ff;padding:6px 10px;border-radius:999px;font-size:12px;">pp-auth.js loaded ✅</div>'
+  );
+  </script>
 
   <script>
   document.addEventListener("DOMContentLoaded", async () => {
