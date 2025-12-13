@@ -38,12 +38,12 @@ async function ppUpdateUserButton() {
       labelEl.textContent = name;
       avatarEl.textContent = initial;
       avatarEl.style.display = "inline-flex";
-      btn.href = "/account.html";
+      btn.href = "/profile.html";
     } else {
       labelEl.textContent = "Login";
       avatarEl.textContent = "";
       avatarEl.style.display = "none";
-      btn.href = "/login.html";
+      btn.href = "/account.html";
     }
   } catch (err) {
     console.error("ppUpdateUserButton error:", err);
