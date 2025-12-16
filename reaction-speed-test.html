@@ -200,6 +200,12 @@
       const reaction = Math.floor(end - startTime);
       scoreOut.textContent = `Reaction: ${reaction} ms`;
 
+      ppSaveToyScore(
+  "reaction-speed-test",
+  reaction,
+  { better: "min", unit: "ms" }
+);
+
       if (!best || reaction < Number(best)) {
         best = reaction;
         localStorage.setItem("rs-best", best);
