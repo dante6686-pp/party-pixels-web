@@ -106,11 +106,8 @@
     <div class="rs-container">
 
       <!-- SCORE u góry -->
-      <div class="badge">
       <div id="rs-score">—</div>
-      <br><br>
       <div id="rs-best">Your best: —</div>
-      </div>
 
       <!-- PRZYCISK GRY NA DOLE -->
       <div id="rs-box" class="rs-box rs-waiting">
@@ -121,20 +118,32 @@
 
     </div>
 
-    <div id="tipjar"></div>
-
   </div>
 
-  <!-- Header Loader -->
-  <script>
-  fetch("/header.html")
-    .then(r => r.text())
-    .then(t => document.getElementById("header").innerHTML = t)
-    .catch(e => console.error("Header load error:", e));
-  </script>
+  <!-- Footer -->
+  <div id="footer"></div>
 
-  <!-- TipJar Loader -->
-  <script src="/tipjar.js"></script>
+  <!-- User authentication/login -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+
+  <!-- Load page elements -->
+<script>
+  function loadPart(id, file) {
+    fetch(file)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById(id).innerHTML = html;
+      })
+      .catch(err => console.error(`Load error in ${file}:`, err));
+  }
+
+  loadPart("header", "/header.html");
+  loadPart("footer", "/footer.html");
+</script>
+
+<!-- PayPal.me Link-->
+<script src="/tipjar.js"></script>
 
   <!-- GAME LOGIC -->
   <script>
