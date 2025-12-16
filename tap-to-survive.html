@@ -7,52 +7,54 @@
 
   <link rel="stylesheet" href="/pp-main.css" />
 
-  <!-- Page-specific styles only -->
   <style>
-    /* optional: per-toy background image (if you want to override global) */
-    /* body::before { background-image: url('/media/tts-splash.png'); } */
+    /* lekki local layout – reszta z pp-main.css */
+    .pp-wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 22px 16px 64px;
+    }
 
-    .pp-toy-header {
+    .pp-head-row {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      gap: 12px;
       flex-wrap: wrap;
-      gap: 10px;
       margin-bottom: 14px;
     }
 
-    .pp-toy-title {
+    .pp-title {
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 800;
       margin: 0;
     }
 
-    .pp-toy-subtitle {
+    .pp-subtitle {
       margin: 6px 0 0;
+      color: var(--muted);
       font-size: 13px;
-      color: var(--muted);
-      max-width: 640px;
+      max-width: 680px;
     }
 
-    .pp-back-link {
+    .pp-back {
       font-size: 12px;
-      text-decoration: none;
       color: var(--muted);
-      border-bottom: 1px dotted rgba(154, 156, 210, 0.4);
-      white-space: nowrap;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(154,156,210,0.4);
+      padding-bottom: 2px;
     }
-    .pp-back-link:hover { color: var(--text); }
+    .pp-back:hover { color: var(--text); }
 
-    .pp-game-card {
-      position: relative;
+    .pp-card {
       border-radius: 18px;
-      padding: 14px 12px 14px;
+      padding: 16px 16px 18px;
       background:
-        radial-gradient(circle at top, rgba(255, 92, 255, 0.15), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.25), transparent 65%),
-        linear-gradient(145deg, rgba(10, 14, 35, 0.96), rgba(4, 5, 14, 0.98));
-      border: 1px solid var(--border);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+        radial-gradient(circle at top left, rgba(255, 92, 255, 0.12), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.18), transparent 65%),
+        rgba(7, 11, 32, 0.92);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
     }
 
     .pp-section-label {
@@ -60,26 +62,27 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--muted);
-      margin: 0 0 10px;
+      margin-bottom: 10px;
     }
 
-    .pp-life-shell {
+    .life-bar-shell {
       width: 100%;
       height: 14px;
       border-radius: 999px;
       border: 1px solid rgba(120, 40, 80, 0.8);
       background: rgba(9, 9, 23, 0.95);
       overflow: hidden;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .pp-life-fill {
+    .life-bar-fill {
       width: 100%;
       height: 100%;
       border-radius: 999px;
       background: linear-gradient(90deg, #4ade80, #facc15, #fb7185);
       transition: width 0.08s linear;
     }
-    .pp-life-row {
+
+    .life-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -88,16 +91,16 @@
       margin-bottom: 12px;
     }
 
-    .pp-game-layout {
+    .game-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.5fr);
       gap: 14px;
     }
     @media (max-width: 720px) {
-      .pp-game-layout { grid-template-columns: 1fr; }
+      .game-layout { grid-template-columns: 1fr; }
     }
 
-    .pp-char-card {
+    .char-card {
       border-radius: 16px;
       border: 1px solid rgba(56, 63, 120, 0.9);
       background: radial-gradient(circle at top left, rgba(255, 92, 92, 0.2), rgba(5, 7, 18, 0.96));
@@ -106,7 +109,7 @@
       gap: 10px;
       align-items: center;
     }
-    .pp-char-avatar {
+    .char-avatar {
       width: 56px;
       height: 56px;
       border-radius: 18px;
@@ -115,37 +118,37 @@
       align-items: center;
       justify-content: center;
       font-size: 28px;
-      user-select: none;
+      flex: 0 0 auto;
     }
-    .pp-char-name { font-size: 13px; font-weight: 600; }
-    .pp-char-quote { font-size: 12px; color: var(--muted); }
-    .pp-char-mode { font-size: 11px; margin-top: 4px; color: #facc15; }
+    .char-text-main { display:flex; flex-direction:column; gap:2px; min-width:0; }
+    .char-name { font-size: 13px; font-weight: 700; }
+    .char-quote { font-size: 12px; color: var(--muted); }
+    .char-mode { font-size: 11px; margin-top: 4px; color: #facc15; }
 
-    .pp-game-buttons {
+    .game-buttons {
       display: flex;
       gap: 10px;
       margin-top: 12px;
       flex-wrap: wrap;
     }
 
-    .pp-btn-main {
-      flex: 1;
-      min-width: 210px;
+    .btn-main {
+      flex: 1 1 220px;
       padding: 10px 14px;
       border-radius: 999px;
       border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
       color: #fff;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 12px 26px rgba(0,0,0,0.35);
     }
-    .pp-btn-main:disabled { opacity: 0.5; cursor: default; }
+    .btn-main:disabled { opacity: 0.5; cursor: default; }
 
-    .pp-btn-ghost {
+    .btn-ghost {
+      flex: 0 0 auto;
       padding: 10px 14px;
       border-radius: 999px;
       border: 1px solid rgba(99, 102, 241, 0.7);
@@ -154,25 +157,24 @@
       font-size: 13px;
       cursor: pointer;
     }
-    .pp-btn-ghost:disabled { opacity: 0.4; cursor: default; }
+    .btn-ghost:disabled { opacity: 0.4; cursor: default; }
 
-    .pp-stats-row {
+    .stats-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 12px;
+      margin-top: 10px;
       font-size: 11px;
       color: var(--muted);
     }
-    .pp-stat-pill {
+    .stat-pill {
       padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid rgba(46, 51, 100, 0.9);
       background: rgba(6, 9, 24, 0.96);
-      white-space: nowrap;
     }
 
-    .pp-side-card {
+    .side-card {
       border-radius: 16px;
       border: 1px solid rgba(56, 63, 120, 0.9);
       background: rgba(7, 9, 24, 0.96);
@@ -184,23 +186,27 @@
       gap: 6px;
     }
 
-    .pp-game-message {
+    .game-message {
       margin-top: 10px;
       font-size: 12px;
       color: var(--muted);
     }
-    .pp-game-message.is-dead { color: #ff7a7a; }
+    .game-message.gameover { color: #ff7a7a; }
 
-    .pp-mini-link {
+    .leaderboard-link {
       margin-top: 8px;
       font-size: 12px;
     }
-    .pp-mini-link a {
-      color: var(--muted);
+    .leaderboard-link a {
+      color: var(--accent2);
       text-decoration: none;
-      border-bottom: 1px dotted rgba(154, 156, 210, 0.4);
+      border-bottom: 1px dotted rgba(92,138,255,0.55);
+      padding-bottom: 2px;
     }
-    .pp-mini-link a:hover { color: var(--text); }
+    .leaderboard-link a:hover {
+      color: var(--accent1);
+      border-bottom-color: rgba(255,92,255,0.55);
+    }
   </style>
 </head>
 
@@ -208,68 +214,68 @@
   <div class="page">
     <div id="header"></div>
 
-    <main>
-      <div class="pp-toy-header">
+    <main class="pp-wrap">
+      <section class="pp-head-row">
         <div>
-          <h1 class="pp-toy-title">Tap to Survive</h1>
-          <p class="pp-toy-subtitle">
-            Panic mini-game: your life drains constantly. Tap to stay alive as long as you can.
+          <h1 class="pp-title">Tap to Survive</h1>
+          <p class="pp-subtitle">
+            Panic mini-game: your life drains constantly. Hit <strong>Start</strong> when you’re ready, then spam taps to stay alive.
           </p>
         </div>
-        <a class="pp-back-link" href="/index.html">← Back to Web Toys</a>
-      </div>
+        <a class="pp-back" href="/index.html">← Back to Web Toys</a>
+      </section>
 
-      <section class="pp-game-card">
-        <p class="pp-section-label">Game</p>
+      <section class="pp-card">
+        <div class="pp-section-label">Game</div>
 
-        <div class="pp-life-shell">
-          <div id="lifeBar" class="pp-life-fill"></div>
+        <div class="life-bar-shell">
+          <div id="lifeBar" class="life-bar-fill"></div>
         </div>
-        <div class="pp-life-row">
+        <div class="life-row">
           <span>Life</span>
           <span id="lifeText">100 / 100</span>
         </div>
 
-        <div class="pp-game-layout">
+        <div class="game-layout">
           <!-- LEFT -->
           <div>
-            <div class="pp-char-card">
-              <div id="charAvatar" class="pp-char-avatar">😎</div>
-              <div>
-                <div class="pp-char-name">Little Survivor</div>
-                <div id="charStatus" class="pp-char-quote">"This is fine."</div>
-                <div id="charMode" class="pp-char-mode">Normal mode</div>
+            <div class="char-card">
+              <div id="charAvatar" class="char-avatar">😎</div>
+              <div class="char-text-main">
+                <div class="char-name">Little Survivor</div>
+                <div id="charStatus" class="char-quote">"This is fine."</div>
+                <div id="charMode" class="char-mode">Ready</div>
               </div>
             </div>
 
-            <div class="pp-game-buttons">
-              <button id="tapButton" class="pp-btn-main">Tap to survive</button>
-              <button id="restartButton" class="pp-btn-ghost" disabled>Restart run</button>
+            <div class="game-buttons">
+              <button id="tapButton" class="btn-main" type="button">Start</button>
+              <button id="restartButton" class="btn-ghost" type="button" disabled>Restart run</button>
             </div>
 
-            <div class="pp-stats-row">
-              <div class="pp-stat-pill">Time survived: <span id="timeSurvived">0.0</span>s</div>
-              <div class="pp-stat-pill">Best (local): <span id="bestTime">0.0</span>s</div>
-              <div class="pp-stat-pill">Taps: <span id="tapCount">0</span></div>
+            <div class="stats-row">
+              <div class="stat-pill">Time survived: <span id="timeSurvived">0.0</span>s</div>
+              <div class="stat-pill">Best: <span id="bestTime">0.0</span>s</div>
+              <div class="stat-pill">Taps: <span id="tapCount">0</span></div>
             </div>
 
-            <div id="gameMessage" class="pp-game-message">
-              Keep tapping before the bar hits zero.
+            <div id="gameMessage" class="game-message">
+              Read the rules, then hit <strong>Start</strong>.
             </div>
 
-            <div class="pp-mini-link">
-              <a href="/tap-to-survive-highscores.html">View global highscores →</a>
+            <div class="leaderboard-link">
+              <a href="/highscores.html?toy=tap-to-survive">View global highscores →</a>
             </div>
           </div>
 
           <!-- RIGHT -->
-          <aside class="pp-side-card">
+          <div class="side-card">
             <strong>How it works</strong>
             <span>• Your life drains automatically over time.</span>
             <span>• Every tap restores a bit of life.</span>
-            <span>• If you’re logged in, your best run saves to your profile stats.</span>
+            <span>• Logged in? Your best run can be saved to the global leaderboard.</span>
             <span>• Mobile tip: spam that thumb, but watch your screen 😉</span>
-          </aside>
+          </div>
         </div>
       </section>
     </main>
@@ -296,29 +302,63 @@
     loadPart("footer", "/footer.html");
   </script>
 
-  <!-- Supabase + auth (needed for ppSaveToyScore) + tipjar -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js"></script>
-  <script src="/tipjar.js"></script>
+  <!-- Supabase + auth + tipjar -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="/pp-auth.js" defer></script>
+  <script src="/tipjar.js" defer></script>
 
-  <!-- GAME LOGIC + SAVE TO toy_scores -->
+  <!-- GAME LOGIC -->
   <script>
-    // ---- Local best ----
-    const LS_KEY = "tts-best";
-    let bestTime = Number(localStorage.getItem(LS_KEY) || 0);
+    // ---- Toy score saver (uses your helper if present)
+    async function ppSaveToyScoreSafe(toyId, score, meta = {}) {
+      // If you already have ppSaveToyScore globally (recommended), use it.
+      if (typeof window.ppSaveToyScore === "function") {
+        try {
+          const res = await window.ppSaveToyScore(toyId, score, meta);
+          // silently ignore not-logged-in etc.
+          return res;
+        } catch {
+          return { ok: false, error: "save exception" };
+        }
+      }
 
-    // ---- Game state ----
+      // fallback: minimal inline save (still skips if not logged in)
+      const sb = window.ppSupabaseClient;
+      if (!sb) return { ok: false, error: "Supabase client missing" };
+
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return { ok: false, error: "Not logged in" };
+
+      const payload = {
+        user_id: user.id,
+        toy_id: toyId,
+        score: Number(score),
+        meta: meta || {}
+      };
+
+      const { error } = await sb.from("toy_scores").insert(payload);
+      if (error) return { ok: false, error: error.message };
+      return { ok: true };
+    }
+
+    // ---- basic game state
+    const TOY_ID = "tap-to-survive";
+
     const maxLife = 100;
     let life = maxLife;
-    let running = true;
+
+    let running = false; // IMPORTANT: game doesn't start automatically
+    let armed = false;   // not started yet
+
     let tapCount = 0;
     let timeSurvived = 0;
+    let bestTime = 0;
     let lastTimestamp = performance.now();
 
     const drainPerSecond = 7;
     const healPerTap = 5;
 
-    // ---- UI refs ----
+    // UI refs
     const lifeBar = document.getElementById("lifeBar");
     const lifeText = document.getElementById("lifeText");
     const tapButton = document.getElementById("tapButton");
@@ -331,7 +371,9 @@
     const charStatus = document.getElementById("charStatus");
     const charMode = document.getElementById("charMode");
 
-    bestTimeEl.textContent = bestTime.toFixed(1);
+    // Local best (optional)
+    const localBest = Number(localStorage.getItem("tts-best") || "0");
+    if (localBest > 0) bestTime = localBest;
 
     function updateUI() {
       const pct = Math.max(0, Math.min(1, life / maxLife));
@@ -341,13 +383,20 @@
       bestTimeEl.textContent = bestTime.toFixed(1);
       tapCountEl.textContent = tapCount;
 
+      if (!armed) {
+        charAvatar.textContent = "😎";
+        charStatus.textContent = `"Read it. Then press Start."`;
+        charMode.textContent = "Ready";
+        return;
+      }
+
       if (!running && life <= 0) {
-        gameMessage.classList.add("is-dead");
+        gameMessage.classList.add("gameover");
         charAvatar.textContent = "💀";
         charStatus.textContent = `"Ok, that hurt."`;
         charMode.textContent = "Game over";
       } else {
-        gameMessage.classList.remove("is-dead");
+        gameMessage.classList.remove("gameover");
       }
 
       const pct2 = Math.max(0, Math.min(1, life / maxLife));
@@ -370,24 +419,21 @@
       life = maxLife;
       timeSurvived = 0;
       tapCount = 0;
-      running = true;
+
+      running = false;
+      armed = false;
+
       lastTimestamp = performance.now();
+
       tapButton.disabled = false;
+      tapButton.textContent = "Start";
+
       restartButton.disabled = true;
-      gameMessage.textContent = "Keep tapping before the bar hits zero.";
-      charMode.textContent = "Normal mode";
+
+      gameMessage.textContent = "Read the rules, then hit Start.";
+      gameMessage.classList.remove("gameover");
+
       updateUI();
-    }
-
-    async function saveBestOnline(seconds) {
-      // silent: if not logged in or client missing -> just return ok:false
-      if (!window.ppSaveToyScore) return { ok:false, error:"ppSaveToyScore missing" };
-
-      return await window.ppSaveToyScore(
-        "tap-to-survive",
-        Number(seconds),
-        { better: "max", unit: "s" }
-      );
     }
 
     async function handleRunEnd() {
@@ -396,24 +442,30 @@
       restartButton.disabled = false;
 
       const score = Number(timeSurvived.toFixed(1));
+      const scoreText = score.toFixed(1);
 
       if (score > bestTime) {
         bestTime = score;
-        localStorage.setItem(LS_KEY, String(bestTime));
-        gameMessage.textContent = `New best: ${bestTime.toFixed(1)}s`;
+        localStorage.setItem("tts-best", String(bestTime));
+        bestTimeEl.textContent = bestTime.toFixed(1);
 
-        // try online save (non-blocking UX message)
-        const res = await saveBestOnline(bestTime);
+        // save to Supabase (silent if not logged in)
+        const res = await ppSaveToyScoreSafe(TOY_ID, score, {
+          taps: tapCount,
+          mode: "classic",
+          unit: "seconds",
+          higher_is_better: true
+        });
 
         if (res && res.ok) {
-          gameMessage.textContent = `New best: ${bestTime.toFixed(1)}s · saved to profile ✅`;
+          gameMessage.textContent = `New best: ${scoreText}s — saved to global highscores.`;
           charMode.textContent = "Record saved";
         } else {
-          // not logged in / client missing / etc -> keep it friendly
-          gameMessage.textContent = `New best: ${bestTime.toFixed(1)}s · log in to save it to your profile.`;
+          // not logged in / missing client / RLS — keep it friendly
+          gameMessage.textContent = `New best: ${scoreText}s — saved locally. (Log in to sync highscores.)`;
         }
       } else {
-        gameMessage.textContent = `You died. Time: ${score.toFixed(1)}s (no new record).`;
+        gameMessage.textContent = `You died. Time: ${scoreText}s (no new record).`;
       }
 
       updateUI();
@@ -439,13 +491,28 @@
     }
 
     tapButton.addEventListener("click", () => {
+      // Start run
+      if (!armed) {
+        armed = true;
+        running = true;
+        lastTimestamp = performance.now();
+        tapButton.textContent = "Tap to survive";
+        gameMessage.textContent = "GO!";
+        restartButton.disabled = true;
+        updateUI();
+        return;
+      }
+
+      // Normal tap heal
       if (!running) return;
       life = Math.min(maxLife, life + healPerTap);
       tapCount += 1;
       updateUI();
     });
 
-    restartButton.addEventListener("click", resetGame);
+    restartButton.addEventListener("click", () => {
+      resetGame();
+    });
 
     // start
     resetGame();
