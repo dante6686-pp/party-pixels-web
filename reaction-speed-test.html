@@ -1,166 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Party Pixels – Reaction Speed Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <link rel="stylesheet" href="pp-main.css">
+  <meta charset="UTF-8" />
+  <title>Party Pixels · Reaction Speed Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="/pp-main.css" />
 
   <style>
-    /* --- SPECYFICZNE DLA TEJ STRONY --- */
+    /* Page-specific background */
+    body.toy-bg-reaction {
+      background: url("media/rt-splash.jpg") center / cover fixed no-repeat #000;
+      background-color: rgba(0, 0, 0, 0.55);
+      background-blend-mode: multiply;
+    }
+    body.toy-bg-reaction::before { content: none; }
 
-    /* Tło tylko dla tej gry */
-  body.toy-bg-reaction {
-    background: url("media/rt-splash.jpg")
-                center / cover fixed no-repeat #000;
-    /* żadnych blendów, żadnych gradientów */
-    background-color: rgba(0, 0, 0, 0.55); /* przyciemnienie */
-  background-blend-mode: multiply;       /* miesza tło z czernią */
-  }
-
-  /* Wyłącz globalne splash tło z body::before na tej stronie */
-  body.toy-bg-reaction::before {
-    content: none;
-  }
-
-    .rs-container {
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 20px;
-      text-align: center;
+    .rs-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 18px 16px 56px;
     }
 
-    /* SCORE NA GÓRZE */
-    #rs-score {
-      font-size: 1.6rem;
-      margin-bottom: 8px;
-      font-weight: 700;
-      color: #fff;
+    .rs-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 10px 0 12px;
     }
 
-    #rs-best {
-      font-size: 1rem;
-      opacity: 0.7;
-      margin-bottom: 24px;
-      color: #b8c0ff;
+    .rs-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      margin: 0;
     }
 
-    /* WIELKI PRZYCISK NA DOLE EKRANU */
+    .rs-sub {
+      margin: 6px 0 0;
+      opacity: 0.75;
+      font-size: 13px;
+      max-width: 54ch;
+    }
+
+    .rs-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .rs-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 12px;
+      border: 1px solid rgba(140, 160, 255, 0.45);
+      background: rgba(8, 10, 24, 0.55);
+      color: rgba(245, 245, 255, 0.92);
+      backdrop-filter: blur(10px);
+    }
+    .rs-link:hover { border-color: rgba(255, 92, 255, 0.55); }
+
+    .rs-card {
+      margin-top: 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background:
+        radial-gradient(circle at top left, rgba(255, 92, 255, 0.16), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.18), transparent 60%),
+        rgba(7, 11, 32, 0.86);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.55);
+      padding: 16px;
+    }
+
+    .rs-score {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 0 6px;
+    }
+
+    .rs-best {
+      margin: 0 0 14px;
+      opacity: 0.75;
+      color: rgba(184, 192, 255, 0.95);
+      font-size: 13px;
+    }
+
     .rs-box {
       width: 100%;
       height: 320px;
-      border-radius: 20px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.8rem;
-      font-weight: 600;
+      font-size: 22px;
+      font-weight: 750;
       cursor: pointer;
       user-select: none;
-      transition: background 0.25s ease, color 0.25s ease;
-      margin-top: 30px;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.08s ease;
+      margin-top: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .rs-box:active { transform: scale(0.995); }
+
+    .rs-waiting { background: rgba(44, 44, 69, 0.85); color: rgba(208, 208, 255, 0.95); }
+    .rs-ready   { background: rgba(143, 43, 43, 0.88); color: rgba(255, 222, 222, 0.95); }
+    .rs-click   { background: rgba(43, 143, 62, 0.92); color: rgba(234, 255, 234, 0.95); }
+
+    .rs-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      align-items: center;
     }
 
-    .rs-waiting {
-      background: #2c2c45;
-      color: #d0d0ff;
-    }
-
-    .rs-ready {
-      background: #8f2b2b;
-      color: #ffdede;
-    }
-
-    .rs-click {
-      background: #2b8f3e;
-      color: #eaffea;
-    }
-
-    /* Restart */
-    #rs-restart {
-      margin-top: 20px;
-      padding: 10px 22px;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: none;
+    .rs-btn {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(140, 160, 255, 0.45);
+      background: rgba(8, 10, 24, 0.6);
+      color: rgba(245, 245, 255, 0.92);
+      font-size: 12px;
       cursor: pointer;
-      background: #6e63ff;
-      color: white;
-      transition: opacity 0.2s;
     }
+    .rs-btn:hover { border-color: rgba(255, 92, 255, 0.55); }
 
-    #rs-restart:hover {
-      opacity: 0.8;
+    .rs-note {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.75;
+      line-height: 1.45;
     }
-
   </style>
 </head>
+
 <body class="toy-bg-reaction">
   <div class="page">
-
-    <!-- Header -->
     <div id="header"></div>
 
-    <!-- CONTENT -->
-    <div class="rs-container">
+    <main class="rs-wrap">
+      <a href="/index.html" class="pp-back-link">← Back</a>
 
-      <!-- SCORE u góry -->
-      <div id="rs-score">—</div>
-      <div id="rs-best">Your best: —</div>
+      <div class="rs-head">
+        <div>
+          <h1 class="rs-title">Reaction Speed Test</h1>
+          <p class="rs-sub">
+            Tap when it turns green. Lower milliseconds = better.
+          </p>
+        </div>
 
-      <!-- PRZYCISK GRY NA DOLE -->
-      <div id="rs-box" class="rs-box rs-waiting">
-        Tap to start
+        <div class="rs-actions">
+          <a class="rs-link" href="/highscores.html?toy=reaction-speed-test">
+            View highscores →
+          </a>
+        </div>
       </div>
 
-      <button id="rs-restart">Restart</button>
+      <section class="rs-card">
+        <div class="rs-score" id="rs-score">—</div>
+        <div class="rs-best" id="rs-best">Your best: —</div>
 
-    </div>
+        <div id="rs-box" class="rs-box rs-waiting">Tap to start</div>
 
+        <div class="rs-controls">
+          <button id="rs-restart" class="rs-btn" type="button">Restart</button>
+        </div>
+
+        <div class="rs-note" id="rs-note">
+          Tip: if you tap too early, it doesn’t count.
+          If you’re logged in, your personal best can be saved to highscores.
+        </div>
+      </section>
+    </main>
+
+    <div id="footer"></div>
   </div>
 
-  <!-- Footer -->
-  <div id="footer"></div>
-
-  <!-- User authentication/login -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/pp-auth.js"></script>
-
-  <!-- Load page elements -->
-<script>
-  function loadPart(id, file) {
-    fetch(file)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById(id).innerHTML = html;
-      })
-      .catch(err => console.error(`Load error in ${file}:`, err));
-  }
-
-  loadPart("header", "/header.html");
-  loadPart("footer", "/footer.html");
-</script>
-
-<!-- PayPal.me Link-->
-<script src="/tipjar.js"></script>
-
-  <!-- GAME LOGIC -->
+  <!-- Parts loader -->
   <script>
+    function loadPart(id, file, cb) {
+      fetch(file)
+        .then(r => r.text())
+        .then(html => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = html;
+          if (typeof cb === "function") cb();
+        })
+        .catch(err => console.error("Load error:", file, err));
+    }
+
+    loadPart("header", "/header.html", () => {
+      if (window.ppUpdateUserButton) window.ppUpdateUserButton();
+    });
+    loadPart("footer", "/footer.html");
+  </script>
+
+  <!-- Auth + tipjar -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+  <script src="/tipjar.js"></script>
+
+  <!-- Game logic -->
+  <script>
+    const TOY_ID = "reaction-speed-test";
+
     const box = document.getElementById("rs-box");
     const scoreOut = document.getElementById("rs-score");
     const bestOut = document.getElementById("rs-best");
     const restart = document.getElementById("rs-restart");
+    const note = document.getElementById("rs-note");
 
     let waiting = true;
     let ready = false;
     let startTime = 0;
     let timeout = null;
 
+    // local best (ms) — lower is better
     let best = localStorage.getItem("rs-best") || null;
     if (best) bestOut.textContent = "Your best: " + best + " ms";
 
     function startGame() {
+      scoreOut.textContent = "—";
+      note.textContent = "Wait for green… Don’t tap too early.";
       box.textContent = "Wait for green…";
       box.className = "rs-box rs-ready";
       waiting = false;
@@ -182,9 +250,32 @@
       waiting = true;
       ready = false;
       clearTimeout(timeout);
+      timeout = null;
     }
 
-    box.addEventListener("click", () => {
+    async function maybeSaveBest(reactionMs) {
+      // save only if logged in + helper exists
+      if (typeof window.ppSaveToyScore !== "function") return;
+
+      // store meta so highscores.html can render correctly
+      const meta = {
+        better: "min",
+        unit: "ms",
+        // optional: for future debugging / sorting
+        v: 1
+      };
+
+      const res = await window.ppSaveToyScore(TOY_ID, reactionMs, meta);
+
+      // silent fail when not logged in (that’s expected)
+      if (!res || res.ok) return;
+
+      if (res.error === "Not logged in") return;
+
+      console.warn("ppSaveToyScore failed:", res.error);
+    }
+
+    box.addEventListener("click", async () => {
       if (waiting) {
         startGame();
         return;
@@ -192,31 +283,43 @@
 
       if (!ready) {
         scoreOut.textContent = "Too early!";
+        note.textContent = "Too early — doesn’t count. Tap to start again.";
         resetToWaiting();
         return;
       }
 
       const end = performance.now();
       const reaction = Math.floor(end - startTime);
+
       scoreOut.textContent = `Reaction: ${reaction} ms`;
+      note.textContent = "Tap to start again.";
 
-      ppSaveToyScore(
-  "reaction-speed-test",
-  reaction,
-  { better: "min", unit: "ms" }
-);
-
+      // update local best
+      let isNewBest = false;
       if (!best || reaction < Number(best)) {
         best = reaction;
+        isNewBest = true;
         localStorage.setItem("rs-best", best);
         bestOut.textContent = "Your best: " + best + " ms";
+      }
+
+      // save only if it's a new personal best (avoid spamming DB)
+      if (isNewBest) {
+        await maybeSaveBest(reaction);
       }
 
       resetToWaiting();
     });
 
-    restart.addEventListener("click", resetToWaiting);
-  </script>
+    restart.addEventListener("click", () => {
+      scoreOut.textContent = "—";
+      note.textContent = "Tap the box to start.";
+      resetToWaiting();
+    });
 
+    // init screen
+    resetToWaiting();
+    note.textContent = "Tap the box to start.";
+  </script>
 </body>
 </html>
