@@ -194,3 +194,24 @@ if (document.readyState === "loading") {
 }
 
 window.ppUpdateUserButton = ppUpdateUserButton;
+
+// --- Toy scores (shared) ---
+window.ppSaveToyScore = async function ppSaveToyScore(toyId, score, meta = {}) {
+  const sb = window.ppSupabaseClient;
+  if (!sb) return { ok: false, error: "Supabase client missing" };
+
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) return { ok: false, error: "Not logged in" };
+
+  const payload = {
+    user_id: user.id,
+    toy_id: toyId,
+    score: Number(score),
+    meta: meta || {}
+  };
+
+  const { error } = await sb.from("toy_scores").insert(payload);
+  if (error) return { ok: false, error: error.message };
+
+  return { ok: true };
+};
