@@ -61,12 +61,9 @@
         <p class="pp-profile-success" id="ppProfileSuccess" style="display:none;"></p>
       </section>
 
+      <!-- STATS (rendered dynamically from toy_scores) -->
       <section class="pp-card" id="ppStatsCard" style="display:none;">
         <div class="pp-card-title">Game stats</div>
-        <div class="pp-stat-row">
-          <div class="pp-stat-label">Tap to Survive – best run</div>
-          <div class="pp-stat-value" id="ppStatTTS">–</div>
-        </div>
       </section>
     </main>
 
@@ -91,7 +88,7 @@
 
   <!-- Supabase + auth + tipjar -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="/pp-auth.js?v=5001" defer></script>
+  <script src="/pp-auth.js?v=5002" defer></script>
   <script src="/tipjar.js" defer></script>
 
   <!-- Profile logic -->
@@ -110,7 +107,6 @@
     const avatarEl = document.getElementById("ppProfileAvatar");
 
     const statsCard = document.getElementById("ppStatsCard");
-    const statTTS   = document.getElementById("ppStatTTS");
 
     const copyBtn   = document.getElementById("ppCopyUserId");
     const logoutBtn = document.getElementById("ppHardLogout");
@@ -182,7 +178,6 @@
         editBtn.style.display = "none";
         bioEl.style.display = "none";
 
-        // fill inputs from currentProfile
         editName.value = currentProfile.display_name || nameEl.textContent || "";
         editBio.value = currentProfile.bio || bioEl.textContent || "";
         updateBioCount();
@@ -203,16 +198,11 @@
 
     function validateDisplayName(raw) {
       const name = (raw || "").trim();
-
-      // 2–20 chars
       if (name.length < 2) return { ok:false, msg:"Display name too short (min 2)." };
       if (name.length > 20) return { ok:false, msg:"Display name too long (max 20)." };
-
-      // allow: letters, numbers, underscore, dash, dot
       if (!/^[A-Za-z0-9._-]+$/.test(name)) {
         return { ok:false, msg:"Use only letters, numbers, . _ - (no spaces)." };
       }
-
       return { ok:true, value:name };
     }
 
@@ -222,11 +212,70 @@
       return { ok:true, value:bio };
     }
 
+    // NEW: universal stats from toy_scores
+    async function loadToyStats(uid) {
+      try {
+        const { data, error } = await sb
+          .from("toy_scores")
+          .select("toy_id, score, meta, created_at")
+          .eq("user_id", uid)
+          .order("created_at", { ascending: false })
+          .limit(300);
+
+        if (error) {
+          console.error("toy_scores load error:", error);
+          return;
+        }
+        if (!data || !data.length) return;
+
+        const bestByToy = new Map();
+
+        function better(row) { return (row?.meta?.better || "max"); }
+        function isBetter(a, b) {
+          return better(a) === "min" ? a.score < b.score : a.score > b.score;
+        }
+
+        for (const row of data) {
+          const prev = bestByToy.get(row.toy_id);
+          if (!prev || isBetter(row, prev)) bestByToy.set(row.toy_id, row);
+        }
+
+        statsCard.style.display = "block";
+
+        // clear previous
+        statsCard.querySelectorAll(".pp-stat-row, .pp-stats-list").forEach(n => n.remove());
+
+        const list = document.createElement("div");
+        list.className = "pp-stats-list";
+
+        const rows = Array.from(bestByToy.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+
+        for (const [toyId, row] of rows) {
+          const unit = row?.meta?.unit ? ` ${row.meta.unit}` : "";
+          const scoreNum = Number(row.score);
+          const pretty = row?.meta?.unit === "ms"
+            ? `${scoreNum.toFixed(0)}${unit}`
+            : `${scoreNum.toFixed(1)}${unit}`;
+
+          const item = document.createElement("div");
+          item.className = "pp-stat-row";
+          item.innerHTML = `
+            <div class="pp-stat-label">${toyId}</div>
+            <div class="pp-stat-value">${pretty}</div>
+          `;
+          list.appendChild(item);
+        }
+
+        statsCard.appendChild(list);
+      } catch (e) {
+        console.error("loadToyStats crash:", e);
+      }
+    }
+
     async function loadProfileAndStats() {
       hideMsgs();
       metaEl.textContent = "Loading profile…";
 
-      // user metadata fallback name
       const email = currentUser.email || "";
       const meta = currentUser.user_metadata || {};
       const fallbackName =
@@ -234,12 +283,10 @@
         meta.username ||
         (email ? email.split("@")[0] : "Player");
 
-      // Header + basic UI asap
       nameEl.textContent = fallbackName || "Player";
       avatarEl.textContent = initialFromName(fallbackName);
       hardUpdateHeader(fallbackName);
 
-      // Try to load profile row
       const uid = currentUser.id;
 
       const { data: prof, error: profErr } = await sb
@@ -275,25 +322,14 @@
         }
       }
 
-      // Stats
-      const { data: stat, error: statErr } = await sb
-        .from("tts_scores")
-        .select("score")
-        .eq("user_id", uid)
-        .order("score", { ascending: false })
-        .limit(1);
-
-      if (!statErr && stat && stat.length) {
-        statTTS.textContent = `${Number(stat[0].score).toFixed(1)} s`;
-        statsCard.style.display = "block";
-      }
+      // NEW: load universal toy stats
+      await loadToyStats(uid);
     }
 
     async function initProfile() {
       waitForSupabaseSDK(async () => {
         sb = window.ppSupabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Guard
         const { data: userRes, error: userErr } = await sb.auth.getUser();
         if (userErr) {
           showError("Auth error.");
@@ -305,7 +341,6 @@
           return;
         }
 
-        // Copy uid
         copyBtn.addEventListener("click", async () => {
           try {
             await navigator.clipboard.writeText(currentUser.id);
@@ -316,7 +351,6 @@
           }
         });
 
-        // Logout (hard)
         logoutBtn.addEventListener("click", async () => {
           logoutBtn.disabled = true;
           const old = logoutBtn.textContent;
@@ -327,7 +361,6 @@
           logoutBtn.disabled = false;
         });
 
-        // Edit handlers
         editBtn.addEventListener("click", () => {
           hideMsgs();
           setEditMode(true);
@@ -350,7 +383,6 @@
           const newName = vName.value;
           const newBio = vBio.value;
 
-          // loading state
           saveBtn.disabled = true;
           cancelBtn.disabled = true;
           editName.disabled = true;
@@ -361,7 +393,6 @@
           try {
             const uid = currentUser.id;
 
-            // 1) Upsert profile row
             const { error: upErr } = await sb
               .from("profiles")
               .upsert(
@@ -370,22 +401,17 @@
               );
 
             if (upErr) {
-  console.error("Upsert error:", upErr);
-  showError(`Could not save profile: ${upErr.message || "unknown error"}`);
-  return;
+              console.error("Upsert error:", upErr);
+              showError(`Could not save profile: ${upErr.message || "unknown error"}`);
+              return;
             }
 
-            // 2) Update auth metadata (żeby global header mógł brać display_name)
             const { error: metaErr } = await sb.auth.updateUser({
               data: { display_name: newName }
             });
 
-            if (metaErr) {
-              // nie blokujemy (profil i tak zapisany), ale logujemy
-              console.warn("Metadata update error:", metaErr);
-            }
+            if (metaErr) console.warn("Metadata update error:", metaErr);
 
-            // UI update
             currentProfile.display_name = newName;
             currentProfile.bio = newBio;
 
@@ -394,7 +420,6 @@
             avatarEl.textContent = initialFromName(newName);
             hardUpdateHeader(newName);
 
-            // jeśli pp-auth ma swoją funkcję — też spróbuj
             if (window.ppUpdateUserButton) {
               try { await window.ppUpdateUserButton(); } catch {}
             }
