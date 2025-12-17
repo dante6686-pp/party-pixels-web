@@ -75,7 +75,7 @@
             <tr>
               <th>#</th>
               <th>Player</th>
-              <th>Score</th>
+              <th id="ppScoreHead">Score</th>
               <th>When</th>
             </tr>
           </thead>
@@ -111,11 +111,18 @@
   <script src="/pp-auth.js"></script>
 
   <script>
-    const titleEl = document.getElementById("ppTitle");
-    const subEl   = document.getElementById("ppSubtitle");
-    const bodyEl  = document.getElementById("ppBody");
-    const statusEl= document.getElementById("ppStatus");
-    const backEl  = document.getElementById("ppBackLink");
+    const titleEl   = document.getElementById("ppTitle");
+    const subEl     = document.getElementById("ppSubtitle");
+    const bodyEl    = document.getElementById("ppBody");
+    const statusEl  = document.getElementById("ppStatus");
+    const backEl    = document.getElementById("ppBackLink");
+    const scoreHead = document.getElementById("ppScoreHead");
+
+    // per-toy defaults (fallback jeśli meta nie jest dostępne)
+    const TOY_RULES = {
+      "tap-to-survive":         { better: "max", unit: "s",  decimals: 1, scoreLabel: "Time (s)" },
+      "reaction-speed-test":    { better: "min", unit: "ms", decimals: 0, scoreLabel: "Reaction (ms)" },
+    };
 
     function fmtWhen(ts) {
       if (!ts) return "";
@@ -132,6 +139,30 @@
       }[c]));
     }
 
+    function pickRules(toyId, maybeMeta) {
+      const base = TOY_RULES[toyId] || { better:"max", unit:"score", decimals: 1, scoreLabel: "Score" };
+
+      // jeśli w przyszłości meta zacznie dochodzić z bazy, to nadpisz:
+      const better = (maybeMeta && (maybeMeta.better === "min" || maybeMeta.better === "max")) ? maybeMeta.better : base.better;
+      const unit   = (maybeMeta && typeof maybeMeta.unit === "string" && maybeMeta.unit.trim()) ? maybeMeta.unit.trim() : base.unit;
+
+      // heurystyka: ms zwykle bez miejsc po przecinku
+      const decimals = (unit === "ms") ? 0 : base.decimals;
+
+      const scoreLabel =
+        (unit === "ms") ? "Reaction (ms)" :
+        (unit === "s")  ? "Time (s)" :
+        base.scoreLabel;
+
+      return { better, unit, decimals, scoreLabel };
+    }
+
+    function formatScore(n, rules) {
+      const num = Number(n);
+      if (!isFinite(num)) return "—";
+      return rules.decimals === 0 ? String(Math.round(num)) : num.toFixed(rules.decimals);
+    }
+
     async function run() {
       const params = new URLSearchParams(location.search);
       const toyId = (params.get("toy") || "").trim();
@@ -140,17 +171,16 @@
         titleEl.textContent = "Highscores";
         subEl.textContent = "Missing ?toy=…";
         bodyEl.innerHTML = `<tr><td colspan="4">Missing toy id.</td></tr>`;
-        statusEl.textContent = "Add ?toy=tap-to-survive (example).";
+        statusEl.textContent = "Add ?toy=tap-to-survive or ?toy=reaction-speed-test";
         statusEl.classList.add("err");
         return;
       }
 
-      // set title + back link
+      // title + back link
       titleEl.textContent = `Highscores · ${toyId}`;
-      backEl.href = `/${toyId}.html`.includes("tap-to-survive.html") ? "/tap-to-survive.html" : "/index.html";
+      backEl.href = `/${toyId}.html`;
       backEl.textContent = "← Back";
 
-      // need client
       const sb = window.ppSupabaseClient;
       if (!sb) {
         bodyEl.innerHTML = `<tr><td colspan="4">Auth client not ready.</td></tr>`;
@@ -161,21 +191,20 @@
 
       statusEl.textContent = "Loading…";
 
-      // current user (optional)
+      // current user (optional) — only for YOU badge
       let currentUid = null;
       try {
         const { data } = await sb.auth.getUser();
         currentUid = data?.user?.id || null;
       } catch {}
 
-      // 1) get best rows per user for this toy
-      // We'll load latest N rows and reduce client-side (good enough for v1).
+      // load scores (IMPORTANT: if RLS blocks SELECT, you'll only see your own rows)
       const { data: rows, error } = await sb
         .from("toy_scores")
-        .select("user_id, toy_id, score, created_at")
+        .select("user_id, toy_id, score, meta, created_at")
         .eq("toy_id", toyId)
-        .order("score", { ascending: false })
-        .limit(500);
+        .order("created_at", { ascending: false })
+        .limit(1000);
 
       if (error) {
         console.error(error);
@@ -187,29 +216,56 @@
 
       if (!rows || rows.length === 0) {
         bodyEl.innerHTML = `<tr><td colspan="4">No scores yet.</td></tr>`;
-        statusEl.textContent = "Be the first to die gloriously.";
+        statusEl.textContent = "No scores yet.";
         return;
       }
 
-      // best per user
+      // decide rules (use first row meta if present, else defaults by toy)
+      const rules = pickRules(toyId, rows[0]?.meta || null);
+      scoreHead.textContent = rules.scoreLabel;
+
+      // best per user (min or max depending on rules.better)
       const bestByUser = new Map();
       for (const r of rows) {
         const uid = r.user_id;
         if (!uid) continue;
-        if (!bestByUser.has(uid) || Number(r.score) > Number(bestByUser.get(uid).score)) {
-          bestByUser.set(uid, r);
-        }
-      }
-      const best = Array.from(bestByUser.values()).sort((a,b) => Number(b.score) - Number(a.score)).slice(0, 200);
 
-      // 2) load profiles for display_name
+        const score = Number(r.score);
+        if (!isFinite(score)) continue;
+
+        if (!bestByUser.has(uid)) {
+          bestByUser.set(uid, r);
+          continue;
+        }
+
+        const prev = bestByUser.get(uid);
+        const prevScore = Number(prev.score);
+
+        const isBetter =
+          (rules.better === "min") ? (score < prevScore) :
+          (score > prevScore);
+
+        if (isBetter) bestByUser.set(uid, r);
+      }
+
+      // sort leaderboard
+      const best = Array.from(bestByUser.values()).sort((a, b) => {
+        const A = Number(a.score), B = Number(b.score);
+        return (rules.better === "min") ? (A - B) : (B - A);
+      }).slice(0, 200);
+
+      // load display names
       const userIds = best.map(r => r.user_id);
-      const { data: profs } = await sb
+
+      // NOTE: jeśli profiles ma RLS "tylko swoje", tu też będzie pusto — trzeba policy / view
+      const { data: profs, error: profErr } = await sb
         .from("profiles")
         .select("user_id, display_name")
         .in("user_id", userIds);
 
-      const nameByUser = new Map((profs || []).map(p => [p.user_id, p.display_name || "Player"]));
+      if (profErr) console.warn("profiles select blocked:", profErr);
+
+      const nameByUser = new Map((profs || []).map(p => [p.user_id, (p.display_name || "Player")]));
 
       bodyEl.innerHTML = "";
       best.forEach((r, idx) => {
@@ -226,13 +282,21 @@
             ${escapeHtml(name)}
             ${isYou ? `<span class="pp-you-badge">YOU</span>` : ""}
           </td>
-          <td class="pp-score">${Number(r.score).toFixed(1)}</td>
+          <td class="pp-score">${escapeHtml(formatScore(r.score, rules))}</td>
           <td class="pp-when">${escapeHtml(fmtWhen(r.created_at))}</td>
         `;
         bodyEl.appendChild(tr);
       });
 
-      statusEl.textContent = "Showing best run per player.";
+      // if RLS is blocking, you'll usually end up with only 1 user in bestByUser (you)
+      const usersShown = best.length;
+      statusEl.textContent =
+        `Showing best run per player · ${usersShown} player${usersShown === 1 ? "" : "s"} · better = ${rules.better.toUpperCase()}.`;
+
+      if (usersShown <= 1) {
+        statusEl.classList.add("err");
+        statusEl.textContent += " If you expected more: your Supabase RLS likely blocks reading other users’ scores.";
+      }
     }
 
     document.addEventListener("DOMContentLoaded", run);
