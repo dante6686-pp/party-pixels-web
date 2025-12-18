@@ -1,5 +1,16 @@
 [
   {
+    "id": "noto",
+    "title": "Night of the Oni",
+    "type": "Game",
+    "status": "development",
+    "desc": "Steal the artifact. Escape through the Torii. Don’t get caught.",
+    "tags": ["action", "orient"],
+    "href": "/games/noto/",
+    "thumb": "/media/noto-splash.jpg",
+    "added": "2025-12-16"
+  },
+  {
     "id": "tap-to-survive",
     "title": "Tap to Survive",
     "type": "Game",
