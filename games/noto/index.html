@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Night of the Oni — Party Pixels</title>
+
+  <meta name="description" content="Steal the artifact. Escape through the Torii. Don’t get caught." />
+  <meta property="og:title" content="Night of the Oni — Party Pixels" />
+  <meta property="og:description" content="Steal the artifact. Escape through the Torii. Don’t get caught." />
+  <meta property="og:type" content="website" />
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.10);
+      --txt:#e8eef7;
+      --muted:rgba(232,238,247,.72);
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    a{color:inherit}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    .top{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+    h1{margin:0;font-size:28px;letter-spacing:.2px}
+    .tag{color:var(--muted);font-size:14px}
+    .btns{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;
+      background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.14);text-decoration:none}
+    .btn:hover{background:rgba(255,255,255,.16)}
+    .card{background:var(--card);border:1px solid var(--stroke);border-radius:18px;padding:14px}
+    .frame{
+      width:100%;
+      height:72vh;
+      border:0;
+      border-radius:14px;
+      background:#000;
+    }
+    .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:13px}
+    .pill{border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;background:rgba(255,255,255,.06)}
+    @media (max-width:600px){
+      h1{font-size:24px}
+      .frame{height:78vh}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Night of the Oni</h1>
+        <div class="tag">Steal the artifact. Escape through the Torii. Don’t get caught.</div>
+      </div>
+
+      <div class="btns">
+        <a class="btn" href="/toys/">← Back</a>
+        <a class="btn" href="https://paypal.me/Dante6686" target="_blank" rel="noopener">Support</a>
+        <button class="btn" id="btnFullscreen" type="button">Fullscreen</button>
+        <a class="btn" href="https://noto-alpha.vercel.app/" target="_blank" rel="noopener">Open in new tab</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <iframe
+        id="gameFrame"
+        class="frame"
+        src="https://noto-alpha.vercel.app/"
+        allow="fullscreen; gamepad; autoplay"
+        loading="eager"
+      ></iframe>
+
+      <div class="meta">
+        <span class="pill">UE4 HTML5 build</span>
+        <span class="pill">First load downloads ~85MB</span>
+        <span class="pill">Mobile: best in Chrome</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const frame = document.getElementById('gameFrame');
+    const btn = document.getElementById('btnFullscreen');
+
+    btn.addEventListener('click', async () => {
+      try {
+        if (frame.requestFullscreen) await frame.requestFullscreen();
+        else if (frame.webkitRequestFullscreen) frame.webkitRequestFullscreen();
+      } catch (e) {
+        // jak przeglądarka blokuje, user może kliknąć "Open in new tab"
+        console.log(e);
+      }
+    });
+  </script>
+</body>
+</html>
