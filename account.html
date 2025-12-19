@@ -10,21 +10,6 @@
   position: relative;
 }
 
-/* Mascot in corner */
-.login-mascot {
-  position: absolute;
-  top: -28px;
-  right: -28px;
-
-  width: 100px;
-  height: 100px;
-
-  image-rendering: pixelated;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
-
-  pointer-events: none;
-  opacity: 0.95;
-}
   </style>
 </head>
 <body class="page-bg">
@@ -35,10 +20,9 @@
 
         <!-- Mascot -->
   <img
-    src="/media/pp-mascot.png"
-    alt="Party Pixels mascot"
-    class="login-mascot"
-  />
+  src="/media/pp-mascot.png"
+  class="pp-mascot pp-mascot-floating pp-mascot-top-right"
+>
       
       <h1>Login</h1>
       <p class="auth-sub">Log in to save your toys, scores and chaos.</p>
