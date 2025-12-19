@@ -32,6 +32,27 @@
   border-color: var(--accent1);
 }
 */
+    .pp-mascot {
+  width: 42px;
+  height: 42px;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.pp-mascot img {
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  opacity: 0.9;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.pp-mascot img:hover {
+  transform: translateY(-2px) scale(1.05);
+  opacity: 1;
+}
+
     :root {
       --bg: #050712;
       --bg2: #0b0f23;
