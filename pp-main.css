@@ -7,50 +7,51 @@
   height: 26px;
   width: 100%;
 }
-/*
-.user-badge {
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  background: rgba(6, 9, 24, 0.9);
-    }
 
-.account-link {
-  font-size: 12px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--accent2);
-  color: var(--text);
-  text-decoration: none;
-  background: rgba(20, 28, 52, 0.6);
-  white-space: nowrap;
-}
-
-.account-link:hover {
-  border-color: var(--accent1);
-}
-*/
-    .pp-mascot {
-  width: 42px;
-  height: 42px;
-  margin-left: 5px;
-  display: flex;
-  align-items: center;
-}
-
-.pp-mascot img {
-  width: 100%;
+/* Base mascot – NEVER position or size here */
+.pp-mascot {
+  display: block;
   height: auto;
-  image-rendering: pixelated;
-  opacity: 0.9;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  user-select: none;
+  pointer-events: none;
 }
 
-.pp-mascot img:hover {
-  transform: translateY(-2px) scale(1.05);
-  opacity: 1;
+.pp-mascot-header {
+  width: 28px;
+  height: auto;
+  margin-right: 8px;
+
+  filter:
+    drop-shadow(0 0 4px rgba(140, 80, 255, 0.35));
+}
+
+.pp-mascot-floating {
+  position: absolute;
+  z-index: 20;
+  width: 72px;
+
+  filter:
+    drop-shadow(0 0 8px rgba(140, 80, 255, 0.35))
+    drop-shadow(0 0 18px rgba(80, 200, 255, 0.25));
+
+  animation: ppMascotFloat 4s ease-in-out infinite;
+}
+
+.pp-mascot-floating {
+  position: absolute;
+  z-index: 20;
+  width: 72px;
+
+  filter:
+    drop-shadow(0 0 8px rgba(140, 80, 255, 0.35))
+    drop-shadow(0 0 18px rgba(80, 200, 255, 0.25));
+
+  animation: ppMascotFloat 4s ease-in-out infinite;
+}
+
+.pp-mascot-top-right {
+  top: -12px;
+  right: -12px;
 }
 
     :root {
