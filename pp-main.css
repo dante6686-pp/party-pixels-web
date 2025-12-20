@@ -1,3 +1,30 @@
+.pp-intro {
+  margin: 26px 0 30px;
+  padding: 16px 16px 18px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 92, 255, 0.10), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.14), transparent 65%),
+    rgba(7, 11, 32, 0.88);
+  border: 1px solid var(--border);
+}
+
+.pp-intro-title {
+  font-size: 16px;
+  margin: 0 0 10px;
+}
+
+.pp-intro p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0 0 10px;
+}
+
+.pp-intro p:last-child {
+  margin-bottom: 0;
+}
+
 .pp-spacer {
   height: 14px; /* możesz zmienić na 8, 12, 20 itd. */
   width: 100%;
