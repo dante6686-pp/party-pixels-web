@@ -203,40 +203,6 @@
       opacity: .8;
       text-decoration: none;
     }
-    
-    @media (max-width: 920px) {
-  .pp-profile-hero-grid {
-    grid-template-columns: 132px 1fr; /* avatar | reszta */
-    grid-template-areas:
-      "left  right"
-      "left  right";
-    align-items: start;
-  }
-
-  /* Lewa kolumna przestaje być 2-kolumnowa (bo avatar już jest osobno w gridzie) */
-  .pp-profile-left {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .pp-profile-avatar-card {
-    width: 132px;
-    height: 132px;
-  }
-
-  /* prawa kolumna: bio wyżej, przyciski pod nim */
-  .pp-profile-right {
-    min-width: 0;
-  }
-
-  .pp-profile-bio-bubble {
-    margin-top: 10px;
-  }
-
-  .pp-profile-actions {
-    margin-top: 14px;  /* na mobile NIE wciskamy na dół */
-  }
-}
   </style>
 </head>
 
