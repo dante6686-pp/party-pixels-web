@@ -8,8 +8,201 @@
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612"
      crossorigin="anonymous"></script>
-  
+
+  <!-- PROFILE PAGE OVERRIDES (layout like the 2nd screenshot) -->
+  <style>
+    /* Page spacing (keeps your global styles intact) */
+    .pp-profile {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 40px;
+    }
+
+    /* HERO CARD */
+    .pp-profile-hero {
+      position: relative;
+      border-radius: 22px;
+      padding: 22px;
+      overflow: hidden;
+
+      /* glassy gradient like screenshot */
+      background:
+        radial-gradient(1200px 600px at 0% 0%, rgba(160, 90, 255, .22), transparent 55%),
+        radial-gradient(1000px 500px at 60% 40%, rgba(70, 120, 255, .18), transparent 55%),
+        linear-gradient(180deg, rgba(10, 12, 22, .72), rgba(8, 10, 18, .82));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow:
+        0 18px 55px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Two-column hero layout */
+    .pp-profile-hero-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .pp-profile-hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* LEFT COLUMN */
+    .pp-profile-left {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    @media (max-width: 520px) {
+      .pp-profile-left {
+        grid-template-columns: 104px 1fr;
+      }
+    }
+
+    /* Avatar as square card with inner circle (like your mock) */
+    .pp-profile-avatar-card {
+      width: 132px;
+      height: 132px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(120px 120px at 30% 30%, rgba(190, 120, 255, .35), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow:
+        0 12px 30px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    @media (max-width: 520px) {
+      .pp-profile-avatar-card { width: 104px; height: 104px; border-radius: 16px; }
+    }
+
+    /* The actual avatar element you already use in JS */
+    .pp-profile-avatar {
+      width: 92px;
+      height: 92px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      letter-spacing: .02em;
+      user-select: none;
+
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.18), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      color: rgba(255,255,255,.92);
+      font-size: 34px;
+    }
+
+    @media (max-width: 520px) {
+      .pp-profile-avatar { width: 74px; height: 74px; font-size: 28px; }
+    }
+
+    .pp-profile-title {
+      margin: 0;
+      line-height: 1.05;
+      font-size: 44px;
+      letter-spacing: -0.02em;
+      color: rgba(255,255,255,.95);
+      text-shadow: 0 2px 10px rgba(0,0,0,.35);
+    }
+
+    @media (max-width: 520px) {
+      .pp-profile-title { font-size: 34px; }
+    }
+
+    .pp-profile-meta {
+      margin-top: 8px;
+      font-size: 14px;
+      opacity: .75;
+    }
+
+    /* RIGHT COLUMN (bio bubble / edit panel) */
+    .pp-profile-right {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pp-profile-bio-bubble {
+      display: inline-block;
+      width: fit-content;
+      max-width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      color: rgba(255,255,255,.86);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    /* Make it look like the bubble is "floating" on the right */
+    .pp-profile-right .pp-profile-bio-bubble {
+      margin-top: 4px;
+    }
+
+    /* EDIT FORM should also look like a panel on the right */
+    .pp-profile-edit {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.26);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .pp-field { display: grid; gap: 6px; margin: 10px 0; }
+    .pp-field-label { font-size: 12px; opacity: .75; }
+    .pp-field-hint { font-size: 12px; opacity: .65; }
+
+    /* ACTIONS: bottom-right */
+    .pp-profile-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    /* Messages */
+    .pp-profile-error,
+    .pp-profile-success {
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      max-width: 100%;
+    }
+
+    /* STATS card spacing (keep your existing .pp-card) */
+    #ppStatsCard {
+      margin-top: 16px;
+    }
+
+    /* Small quality-of-life: keep the back link aligned with screenshot */
+    .pp-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0 14px;
+      opacity: .8;
+      text-decoration: none;
+    }
+  </style>
 </head>
+
 <body>
   <div class="page">
     <div id="header"></div>
@@ -18,13 +211,23 @@
       <a href="/index.html" class="pp-back-link">← Back</a>
 
       <section class="pp-profile-hero">
-        <div class="pp-profile-title-row">
-          <div class="pp-profile-avatar" id="ppProfileAvatar">?</div>
+        <div class="pp-profile-hero-grid">
+          <!-- LEFT -->
+          <div class="pp-profile-left">
+            <div class="pp-profile-avatar-card">
+              <div class="pp-profile-avatar" id="ppProfileAvatar">?</div>
+            </div>
 
-          <div class="pp-profile-title-col">
-            <!-- VIEW MODE -->
-            <h1 class="pp-profile-title" id="ppProfileName">Loading…</h1>
-            <div class="pp-profile-meta" id="ppProfileMeta"></div>
+            <div class="pp-profile-title-col">
+              <h1 class="pp-profile-title" id="ppProfileName">Loading…</h1>
+              <div class="pp-profile-meta" id="ppProfileMeta"></div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="pp-profile-right">
+            <!-- VIEW MODE bio (bubble) -->
+            <div class="pp-profile-bio-bubble" id="ppProfileBio"></div>
 
             <!-- EDIT MODE (hidden by default) -->
             <div class="pp-profile-edit" id="ppEditWrap" style="display:none;">
@@ -39,30 +242,27 @@
                 <span class="pp-field-hint" id="ppBioCount">0 / 240</span>
               </label>
             </div>
+
+            <!-- Actions bottom-right -->
+            <div class="pp-profile-actions">
+              <button class="pp-btn pp-btn-ghost" id="ppCopyUserId" type="button">Copy user id</button>
+
+              <button class="pp-btn" id="ppEditBtn" type="button">Edit profile</button>
+
+              <button class="pp-btn pp-btn-accent" id="ppSaveBtn" type="button" style="display:none;">
+                Save
+              </button>
+              <button class="pp-btn pp-btn-ghost" id="ppCancelBtn" type="button" style="display:none;">
+                Cancel
+              </button>
+
+              <button class="pp-btn pp-btn-danger" id="ppHardLogout" type="button">Log out</button>
+            </div>
+
+            <p class="pp-profile-error" id="ppProfileError" style="display:none;"></p>
+            <p class="pp-profile-success" id="ppProfileSuccess" style="display:none;"></p>
           </div>
         </div>
-
-        <!-- VIEW MODE bio -->
-        <p class="pp-profile-bio" id="ppProfileBio"></p>
-
-        <div class="pp-profile-actions">
-          <button class="pp-btn pp-btn-ghost" id="ppCopyUserId" type="button">Copy user id</button>
-
-          <!-- Edit / Save / Cancel -->
-          <button class="pp-btn" id="ppEditBtn" type="button">Edit profile</button>
-
-          <button class="pp-btn pp-btn-accent" id="ppSaveBtn" type="button" style="display:none;">
-            Save
-          </button>
-          <button class="pp-btn pp-btn-ghost" id="ppCancelBtn" type="button" style="display:none;">
-            Cancel
-          </button>
-
-          <button class="pp-btn pp-btn-danger" id="ppHardLogout" type="button">Log out</button>
-        </div>
-
-        <p class="pp-profile-error" id="ppProfileError" style="display:none;"></p>
-        <p class="pp-profile-success" id="ppProfileSuccess" style="display:none;"></p>
       </section>
 
       <!-- STATS (rendered dynamically from toy_scores) -->
@@ -180,16 +380,20 @@
         saveBtn.style.display = "inline-flex";
         cancelBtn.style.display = "inline-flex";
         editBtn.style.display = "none";
+
+        // hide bubble in edit mode
         bioEl.style.display = "none";
 
         editName.value = currentProfile.display_name || nameEl.textContent || "";
-        editBio.value = currentProfile.bio || bioEl.textContent || "";
+        editBio.value = currentProfile.bio || (bioEl.textContent || "");
         updateBioCount();
       } else {
         editWrap.style.display = "none";
         saveBtn.style.display = "none";
         cancelBtn.style.display = "none";
         editBtn.style.display = "inline-flex";
+
+        // show bubble again
         bioEl.style.display = "";
       }
     }
@@ -313,7 +517,9 @@
 
         nameEl.textContent = displayName;
         avatarEl.textContent = initialFromName(displayName);
-        bioEl.textContent = bio;
+
+        // bubble text
+        bioEl.textContent = bio || "";
 
         hardUpdateHeader(displayName);
 
@@ -326,7 +532,6 @@
         }
       }
 
-      // NEW: load universal toy stats
       await loadToyStats(uid);
     }
 
@@ -420,7 +625,7 @@
             currentProfile.bio = newBio;
 
             nameEl.textContent = newName;
-            bioEl.textContent = newBio;
+            bioEl.textContent = newBio || "";
             avatarEl.textContent = initialFromName(newName);
             hardUpdateHeader(newName);
 
