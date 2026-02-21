@@ -3,67 +3,12 @@
     "id": "noto",
     "title": "Night of the Oni",
     "type": "Game",
-    "status": "soon",
+    "status": "live",
     "desc": "Steal the artifact. Escape through the Torii. Don’t get caught.",
     "tags": ["action", "orient"],
     "href": "/games/noto/",
     "thumb": "/media/noto-splash.jpg",
     "added": "2025-12-18"
-  },
-  {
-    "id": "tts2",
-    "title": "Tap To Survive 2",
-    "type": "Game",
-    "status": "live",
-    "desc": "One finger, one tiny character, one draining life bar. Tap to keep them alive as the chaos ramps up.",
-    "tags": ["arcade", "party pixels"],
-    "href": "/tap-to-survive-2.html",
-    "thumb": "/media/tts2-splash.jpg",
-    "added": "2025-12-13"
-  },
-  {
-    "id": "reaction-speed-test",
-    "title": "Reaction Speed Test",
-    "type": "Game",
-    "status": "live",
-    "desc": "Tap as fast as possible when the screen flashes.",
-    "tags": ["reflex", "challenge"],
-    "href": "/reaction-speed-test.html",
-    "thumb": "/media/rt-splash.jpg",
-    "added": "2025-12-06"
-  },
-  {
-    "id": "angry-fruit",
-    "title": "Angry Fruit",
-    "type": "Game",
-    "status": "soon",
-    "desc": "Colorful arcade chaos with emotionally unstable fruit.",
-    "tags": ["arcade", "party pixels"],
-    "href": "/angry-fruit. html",
-    "thumb": "/media/af-.png",
-    "added": "2025-12-02"
-  },
-  {
-    "id": "face-remix",
-    "title": "Face Remix",
-    "type": "Generator",
-    "status": "live",
-    "desc": "Upload a selfie, choose a vibe – princess, cyberpunk, anime hero – and let the pixels turn you into a stylized character.",
-    "tags": ["AI", "Character"],
-    "href": "/face-remix.html",
-    "thumb": "/media/fr-splash.jpg",
-    "added": "2025-11-15"
-  },
-  {
-    "id": "relationship-forecast-2",
-    "title": "Relationship Forecast 2",
-    "type": "Generator",
-    "status": "live",
-    "desc": "Provide two names. Receive a brutally honest, TikTok-level relationship verdict.",
-    "tags": ["AI text", "love toy"],
-    "href": "/relationship-forecast-2.html",
-    "thumb": "/media/rf2-splash.jpg",
-    "added": "2025-11-10"
   },
   {
     "id": "tap-to-survive",
@@ -74,6 +19,61 @@
     "tags": ["idle", "cookie clicker"],
     "href": "/tap-to-survive.html",
     "thumb": "/media/tts2-splash.jpg",
-    "added": "2025-10-25"
-  }, 
+    "added": "2025-12-16"
+  },
+  {
+    "id": "relationship-forecast-2",
+    "title": "Relationship Forecast 2",
+    "type": "Generator",
+    "status": "live",
+    "desc": "Provide two names. Receive a brutally honest, TikTok-level relationship verdict.",
+    "tags": ["AI text", "love toy"],
+    "href": "/relationship-forecast-2.html",
+    "thumb": "/media/rf2-splash.jpg",
+    "added": "2025-12-08"
+  },
+  {
+    "id": "reaction-speed-test",
+    "title": "Reaction Speed Test",
+    "type": "Game",
+    "status": "live",
+    "desc": "Tap as fast as possible when the screen flashes.",
+    "tags": ["reflex", "challenge"],
+    "href": "/reaction-speed-test.html",
+    "thumb": "/media/rt-splash.jpg",
+    "added": "2025-12-09"
+  },
+  {
+    "id": "angry-fruit",
+    "title": "Angry Fruit",
+    "type": "Game",
+    "status": "soon",
+    "desc": "Colorful arcade chaos with emotionally unstable fruit.",
+    "tags": ["arcade", "party pixels"],
+    "href": "/angry-fruit. html",
+    "thumb": "/media/af-.png",
+    "added": "2025-12-12"
+  },
+  {
+    "id": "tts2",
+    "title": "Tap To Survive 2",
+    "type": "Game",
+    "status": "live",
+    "desc": "One finger, one tiny character, one draining life bar. Tap to keep them alive as the chaos ramps up.",
+    "tags": ["arcade", "party pixels"],
+    "href": "/tap-to-survive-2.html",
+    "thumb": "/media/tts2-splash.jpg",
+    "added": "2025-12-10"
+  },
+  {
+    "id": "face-remix",
+    "title": "Face Remix",
+    "type": "Generator",
+    "status": "live",
+    "desc": "Upload a selfie, choose a vibe – princess, cyberpunk, anime hero – and let the pixels turn you into a stylized character.",
+    "tags": ["AI", "Character"],
+    "href": "/face-remix.html",
+    "thumb": "/media/fr-splash.jpg",
+    "added": "2025-12-01"
+  }
 ]
