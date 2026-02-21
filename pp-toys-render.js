@@ -2,7 +2,7 @@
 (function () {
   let allToys = [];
   let currentFilter = "all";    // all | game | generator
-  let currentSort = "date";    // alpha | date
+  let currentSort = "alpha";    // alpha | date
 
   function parseDate(value) {
     if (!value) return 0;
