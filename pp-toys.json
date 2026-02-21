@@ -22,28 +22,6 @@
     "added": "2025-12-13"
   },
   {
-    "id": "tts2",
-    "title": "World Button",
-    "type": "Generator",
-    "status": "live",
-    "desc": "World button.",
-    "tags": ["arcade", "party pixels"],
-    "href": "https://world-button.vercel.app/",
-    "thumb": "/media/tts2-splash.jpg",
-    "added": "2025-12-10"
-  },
-  {
-    "id": "tts2",
-    "title": "Get Nothing",
-    "type": "Generator",
-    "status": "live",
-    "desc": "World button.",
-    "tags": ["arcade", "party pixels"],
-    "href": "https://getnothing.win/",
-    "thumb": "/media/tts2-splash.jpg",
-    "added": "2025-12-08"
-  },
-  {
     "id": "reaction-speed-test",
     "title": "Reaction Speed Test",
     "type": "Game",
