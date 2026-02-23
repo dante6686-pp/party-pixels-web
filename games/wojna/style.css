@@ -1,44 +1,219 @@
+:root{
+  --bg:#0b0c10;
+  --panel:rgba(255,255,255,0.06);
+  --stroke:rgba(255,255,255,0.12);
+  --text:rgba(255,255,255,0.92);
+  --muted:rgba(255,255,255,0.6);
+  --accent:rgba(255,255,255,0.18);
+  --radius:18px;
+}
 
-    body{
-      margin:0;
-      background:#0b0c10;
-      color:white;
-      font-family:system-ui;
-    }
+*{
+  box-sizing:border-box;
+}
 
-    .top{
-      padding:12px;
-      border-bottom:1px solid rgba(255,255,255,0.1);
-      display:flex;
-      justify-content:space-between;
-      font-weight:600;
-    }
+html,body{
+  height:100%;
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+}
 
-    .game{
-      position:relative;
-      height:70vh;
-    }
+.page{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+}
 
-    #gameRoot{
-      width:100%;
-      height:100%;
-    }
+/* TOPBAR */
 
-    .hud{
-      position:absolute;
-      bottom:12px;
-      left:0;
-      right:0;
-      display:flex;
-      justify-content:center;
-      gap:10px;
-    }
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 14px;
+  border-bottom:1px solid var(--stroke);
+  backdrop-filter:blur(6px);
+}
 
-    button{
-      padding:12px 14px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,0.2);
-      background:rgba(255,255,255,0.1);
-      color:white;
-      font-weight:700;
-    }
+.brand{
+  font-weight:800;
+  letter-spacing:0.3px;
+}
+
+.status{
+  font-size:14px;
+  color:var(--muted);
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.dot{
+  opacity:0.4;
+}
+
+/* LAYOUT */
+
+.layout{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:12px;
+  padding:12px;
+  min-height:0;
+}
+
+/* GAME AREA */
+
+.gameWrap{
+  position:relative;
+  border-radius:var(--radius);
+  border:1px solid var(--stroke);
+  background:var(--panel);
+  overflow:hidden;
+}
+
+.gameRoot{
+  width:100%;
+  height:100%;
+  min-height:520px;
+}
+
+/* HUD */
+
+.hud{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  pointer-events:none;
+}
+
+.hudRow{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  pointer-events:none;
+}
+
+.btn{
+  pointer-events:auto;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:rgba(0,0,0,0.35);
+  color:var(--text);
+  font-weight:700;
+  backdrop-filter:blur(4px);
+  transition:.15s;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,0.22);
+}
+
+.btn:active{
+  transform:scale(.97);
+}
+
+.btn.primary{
+  background:var(--accent);
+}
+
+.btn.ghost{
+  background:transparent;
+}
+
+.toast{
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  min-height:18px;
+}
+
+/* SIDE */
+
+.side{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  min-height:0;
+}
+
+.panel{
+  border:1px solid var(--stroke);
+  border-radius:var(--radius);
+  padding:12px;
+  background:var(--panel);
+}
+
+.panelTitle{
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.panelHint{
+  color:var(--muted);
+  font-size:13px;
+  white-space:pre-wrap;
+}
+
+.handCard{
+  border:1px dashed var(--stroke);
+  border-radius:14px;
+  padding:12px;
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  font-weight:700;
+}
+
+.log{
+  font-family:ui-monospace,Menlo,monospace;
+  font-size:12px;
+  color:var(--muted);
+  max-height:240px;
+  overflow:auto;
+  white-space:pre-wrap;
+}
+
+/* MOBILE */
+
+@media (max-width:900px){
+
+  .layout{
+    grid-template-columns:1fr;
+  }
+
+  .side{
+    order:2;
+  }
+
+  .gameRoot{
+    min-height:60vh;
+  }
+
+  .hud{
+    padding-bottom:18px;
+  }
+}
+
+/* EXTRA JUICE (subtelny glow kart/strefy) */
+
+.gameWrap::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(600px 200px at 50% 80%, rgba(255,255,255,0.05), transparent),
+    radial-gradient(600px 200px at 50% 20%, rgba(255,255,255,0.04), transparent);
+  opacity:.6;
+}
