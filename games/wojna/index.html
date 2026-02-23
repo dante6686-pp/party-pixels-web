@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wojna na Osiedlu</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
+
+  <style>
+    body{
+      margin:0;
+      background:#0b0c10;
+      color:white;
+      font-family:system-ui;
+    }
+
+    .top{
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,0.1);
+      display:flex;
+      justify-content:space-between;
+      font-weight:600;
+    }
+
+    .game{
+      position:relative;
+      height:70vh;
+    }
+
+    #gameRoot{
+      width:100%;
+      height:100%;
+    }
+
+    .hud{
+      position:absolute;
+      bottom:12px;
+      left:0;
+      right:0;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+    }
+
+    button{
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.2);
+      background:rgba(255,255,255,0.1);
+      color:white;
+      font-weight:700;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="top">
+  <div>P2 HP: <span id="p2hp">15</span></div>
+  <div>Tura: <span id="turn">1</span></div>
+  <div>P1 HP: <span id="p1hp">15</span></div>
+</div>
+
+<div class="game">
+  <div id="gameRoot"></div>
+
+  <div class="hud">
+    <button id="play">ZAGRAJ</button>
+    <button id="end">END</button>
+    <button id="react">😈</button>
+  </div>
+</div>
+
+<script>
+const state = {
+  turn:1,
+  p1hp:15,
+  p2hp:15,
+  hand:["Plotkara"]
+}
+
+function render(){
+  p1hp.textContent = state.p1hp
+  p2hp.textContent = state.p2hp
+  turn.textContent = state.turn
+}
+
+class MatchScene extends Phaser.Scene{
+  create(){
+    const w=this.scale.width
+    const h=this.scale.height
+
+    this.card = this.add.rectangle(w/2,h/2,260,360,0xffffff,0.1)
+      .setStrokeStyle(2,0xffffff,0.2)
+
+    this.text = this.add.text(w/2,h/2,state.hand[0],{
+      fontSize:"28px",
+      fontStyle:"700"
+    }).setOrigin(0.5)
+
+    window.playCard=()=>{
+      if(!state.hand.length)return
+
+      this.tweens.add({
+        targets:[this.card,this.text],
+        scaleX:1.05,
+        scaleY:1.05,
+        yoyo:true,
+        duration:90
+      })
+
+      state.hand.shift()
+      this.text.setText(state.hand[0]||"—")
+    }
+
+    window.endTurn=()=>{
+      state.turn++
+      state.p2hp-=2
+      render()
+    }
+
+    window.react=()=>{
+      const pop=this.add.text(w/2,h/2-200,"HAŃBA!",{
+        fontSize:"42px",
+        fontStyle:"900"
+      }).setOrigin(0.5)
+
+      this.tweens.add({
+        targets:pop,
+        y:pop.y-40,
+        alpha:0,
+        duration:700,
+        onComplete:()=>pop.destroy()
+      })
+    }
+  }
+}
+
+new Phaser.Game({
+  type:Phaser.AUTO,
+  parent:"gameRoot",
+  scale:{mode:Phaser.Scale.RESIZE},
+  backgroundColor:"#0b0c10",
+  scene:MatchScene
+})
+
+play.onclick=()=>playCard()
+end.onclick=()=>endTurn()
+react.onclick=()=>react()
+
+render()
+</script>
+
+</body>
+</html>
