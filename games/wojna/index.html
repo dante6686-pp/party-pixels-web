@@ -3,124 +3,470 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wojna na Osiedlu</title>
+  <title>Party Pixels • Wojna na Osiedlu</title>
 
-  <link rel="stylesheet" href="pp-main.css">
+  <!-- Twój CSS -->
+  <link rel="stylesheet" href="./style.css" />
 
+  <!-- Phaser (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.70.0/dist/phaser.min.js"></script>
-
-  <script>
-let DB = null;
-
-async function loadCards(){
-  const res = await fetch("./assets/cards.json", { cache: "no-store" });
-  if(!res.ok) throw new Error("Nie mogę wczytać cards.json");
-  DB = await res.json();
-}
-
-function cardById(id){
-  return DB.cards.find(c => c.id === id);
-}
-  </script>
 </head>
 
 <body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">Party Pixels • Wojna na Osiedlu</div>
 
-<div class="top">
-  <div>P2 HP: <span id="p2hp">15</span></div>
-  <div>Tura: <span id="turn">1</span></div>
-  <div>P1 HP: <span id="p1hp">15</span></div>
-</div>
+      <div class="status">
+        <span id="p2hp">P2 HP: 15</span>
+        <span class="dot">•</span>
+        <span id="turn">Tura: 1</span>
+        <span class="dot">•</span>
+        <span id="p1hp">P1 HP: 15</span>
+      </div>
+    </header>
 
-<div class="game">
-  <div id="gameRoot"></div>
+    <main class="layout">
+      <!-- GAME -->
+      <section class="gameWrap">
+        <div id="gameRoot" class="gameRoot"></div>
 
-  <div class="hud">
-    <button id="play">ZAGRAJ</button>
-    <button id="end">END</button>
-    <button id="react">😈</button>
+        <!-- HUD (DOM overlay) -->
+        <div class="hud">
+          <div class="hudRow">
+            <button id="btnPrev" class="btn ghost">◀</button>
+            <button id="btnPlay" class="btn primary">ZAGRAJ</button>
+            <button id="btnNext" class="btn ghost">▶</button>
+          </div>
+
+          <div class="hudRow">
+            <button id="btnEnd" class="btn">END TURN</button>
+            <button id="btnReact" class="btn ghost">😈 Hańba</button>
+            <button id="btnShare" class="btn ghost">🔗 Share</button>
+          </div>
+
+          <div id="toast" class="toast" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- SIDE -->
+      <aside class="side">
+        <div class="panel">
+          <div class="panelTitle">Wybrana karta</div>
+          <div id="handCard" class="handCard">Ładowanie…</div>
+          <div id="handMeta" class="panelHint"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panelTitle">Hańba</div>
+          <div class="panelHint">
+            P1: <b id="p1shame">0</b> • P2: <b id="p2shame">0</b><br/>
+            (Hańba obniża ATK jednostki o tyle punktów.)
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelTitle">Stół</div>
+          <div class="panelHint">
+            P1 unit: <b id="p1board">—</b><br/>
+            P2 unit: <b id="p2board">—</b>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelTitle">Log</div>
+          <div id="log" class="log"></div>
+        </div>
+      </aside>
+    </main>
   </div>
-</div>
 
-<script>
-const state = {
-  turn:1,
-  p1hp:15,
-  p2hp:15,
-  hand:["Plotkara"]
-}
+  <script>
+    // ---------------------------
+    // DB (cards.json)
+    // ---------------------------
+    let DB = null;
 
-function render(){
-  p1hp.textContent = state.p1hp
-  p2hp.textContent = state.p2hp
-  turn.textContent = state.turn
-}
-
-class MatchScene extends Phaser.Scene{
-  create(){
-    const w=this.scale.width
-    const h=this.scale.height
-
-    this.card = this.add.rectangle(w/2,h/2,260,360,0xffffff,0.1)
-      .setStrokeStyle(2,0xffffff,0.2)
-
-    this.text = this.add.text(w/2,h/2,state.hand[0],{
-      fontSize:"28px",
-      fontStyle:"700"
-    }).setOrigin(0.5)
-
-    window.playCard=()=>{
-      if(!state.hand.length)return
-
-      this.tweens.add({
-        targets:[this.card,this.text],
-        scaleX:1.05,
-        scaleY:1.05,
-        yoyo:true,
-        duration:90
-      })
-
-      state.hand.shift()
-      this.text.setText(state.hand[0]||"—")
+    async function loadCards(){
+      const res = await fetch("./assets/cards.json", { cache: "no-store" });
+      if(!res.ok) throw new Error("Nie mogę wczytać ./assets/cards.json");
+      DB = await res.json();
+      if(!DB || !Array.isArray(DB.cards)) throw new Error("cards.json ma zły format");
     }
 
-    window.endTurn=()=>{
-      state.turn++
-      state.p2hp-=2
-      render()
+    function cardById(id){
+      return DB.cards.find(c => c.id === id);
     }
 
-    window.react=()=>{
-      const pop=this.add.text(w/2,h/2-200,"HAŃBA!",{
-        fontSize:"42px",
-        fontStyle:"900"
-      }).setOrigin(0.5)
+    // ---------------------------
+    // STATE (MVP)
+    // ---------------------------
+    const state = {
+      turn: 1,
+      active: "p1", // p1 zaczyna
+      players: {
+        p1: { hp: 15, shame: 0, board: null, hand: [], sel: 0 },
+        p2: { hp: 15, shame: 0, board: null, hand: [], sel: 0 }
+      },
+      log: []
+    };
 
-      this.tweens.add({
-        targets:pop,
-        y:pop.y-40,
-        alpha:0,
-        duration:700,
-        onComplete:()=>pop.destroy()
-      })
+    function clampHp(p){
+      p.hp = Math.max(0, Math.min(15, p.hp));
     }
-  }
-}
 
-new Phaser.Game({
-  type:Phaser.AUTO,
-  parent:"gameRoot",
-  scale:{mode:Phaser.Scale.RESIZE},
-  backgroundColor:"#0b0c10",
-  scene:MatchScene
-})
+    function currentPlayer(){
+      return state.players[state.active];
+    }
 
-play.onclick=()=>playCard()
-end.onclick=()=>endTurn()
-react.onclick=()=>react()
+    function enemyPlayer(){
+      const k = state.active === "p1" ? "p2" : "p1";
+      return state.players[k];
+    }
 
-render()
-</script>
+    function getSelectedCardId(p){
+      if(!p.hand.length) return null;
+      p.sel = Math.max(0, Math.min(p.sel, p.hand.length - 1));
+      return p.hand[p.sel];
+    }
 
+    // ---------------------------
+    // RESOLVER (effects)
+    // ---------------------------
+    function applyAction(effect, ctx){
+      const { self, enemy } = ctx;
+      const t = effect.target;
+      const a = effect.amount ?? 0;
+
+      const decShame = (p, n) => p.shame = Math.max(0, p.shame - n);
+
+      if(effect.action === "apply_shame"){
+        if(t === "self_player") self.shame += a;
+        if(t === "enemy_player") enemy.shame += a;
+        if(t === "both_players"){ self.shame += a; enemy.shame += a; }
+      }
+
+      if(effect.action === "remove_shame"){
+        if(t === "self_player") decShame(self, a);
+        if(t === "enemy_player") decShame(enemy, a);
+        if(t === "both_players"){ decShame(self, a); decShame(enemy, a); }
+      }
+
+      if(effect.action === "deal_damage"){
+        if(t === "enemy_unit" && enemy.board){
+          enemy.board.hp -= a;
+          if(enemy.board.hp <= 0) enemy.board = null;
+        }
+        if(t === "enemy_player"){
+          enemy.hp -= a; clampHp(enemy);
+        }
+      }
+
+      if(effect.action === "heal_player"){
+        if(t === "self_player"){ self.hp += a; clampHp(self); }
+        if(t === "enemy_player"){ enemy.hp += a; clampHp(enemy); }
+      }
+    }
+
+    function resolveOnPlay(card, ctx){
+      if(!card.effects) return;
+      for(const e of card.effects){
+        if(e.trigger === "on_play") applyAction(e, ctx);
+      }
+    }
+
+    function playSelectedCard(){
+      const apKey = state.active;
+      const epKey = apKey === "p1" ? "p2" : "p1";
+      const self = state.players[apKey];
+      const enemy = state.players[epKey];
+
+      const cardId = getSelectedCardId(self);
+      if(!cardId) return { ok:false, msg:"Brak karty w ręce" };
+
+      const card = cardById(cardId);
+      if(!card) return { ok:false, msg:"Nie znam tej karty" };
+
+      // zdejmij z ręki
+      self.hand.splice(self.sel, 1);
+      if(self.sel >= self.hand.length) self.sel = Math.max(0, self.hand.length - 1);
+
+      const ctx = { self, enemy };
+
+      if(card.type === "unit"){
+        if(self.board) return { ok:false, msg:"Masz już jednostkę na stole (MVP max 1)" };
+
+        self.board = { id: card.id, name: card.name, hp: card.stats.hp, atk: card.stats.atk };
+        resolveOnPlay(card, ctx);
+        pushLog(`${apKey.toUpperCase()} PLAY UNIT: ${card.name}`);
+        return { ok:true, msg:`Unit: ${card.name}` };
+      }
+
+      if(card.type === "action"){
+        resolveOnPlay(card, ctx);
+        pushLog(`${apKey.toUpperCase()} PLAY ACTION: ${card.name}`);
+        return { ok:true, msg:`Akcja: ${card.name}` };
+      }
+
+      pushLog(`${apKey.toUpperCase()} PLAY ???: ${card.name}`);
+      return { ok:false, msg:"Nieobsługiwany typ karty" };
+    }
+
+    function effectiveAtk(p){
+      if(!p.board) return 0;
+      return Math.max(0, p.board.atk - p.shame);
+    }
+
+    function endTurn(){
+      const apKey = state.active;
+      const epKey = apKey === "p1" ? "p2" : "p1";
+      const A = state.players[apKey];
+      const E = state.players[epKey];
+
+      const atk = effectiveAtk(A);
+
+      if(atk > 0){
+        if(E.board){
+          E.board.hp -= atk;
+          pushLog(`${apKey.toUpperCase()} COMBAT → ${atk} dmg w unit ${E.board.name}`);
+          if(E.board.hp <= 0){
+            pushLog(`${epKey.toUpperCase()} UNIT DOWN: ${E.board.name}`);
+            E.board = null;
+          }
+        } else {
+          E.hp -= atk; clampHp(E);
+          pushLog(`${apKey.toUpperCase()} COMBAT → ${atk} dmg w gracza (${epKey})`);
+        }
+      } else {
+        pushLog(`${apKey.toUpperCase()} COMBAT → 0 (Hańba/Brak unity)`);
+      }
+
+      state.turn += 1;
+      state.active = epKey;
+      pushLog(`— TURN ${state.turn} (active: ${state.active}) —`);
+    }
+
+    // ---------------------------
+    // LOG + UI RENDER
+    // ---------------------------
+    const el = {
+      p1hp: null, p2hp: null, turn: null,
+      p1shame: null, p2shame: null,
+      p1board: null, p2board: null,
+      handCard: null, handMeta: null,
+      log: null, toast: null
+    };
+
+    function pushLog(s){
+      state.log.unshift(s);
+      if(state.log.length > 60) state.log.length = 60;
+      render();
+      if(sceneBus) sceneBus.emit("log", s);
+    }
+
+    function toast(msg){
+      el.toast.textContent = msg;
+      setTimeout(() => { if(el.toast.textContent === msg) el.toast.textContent = ""; }, 900);
+    }
+
+    function render(){
+      const p1 = state.players.p1;
+      const p2 = state.players.p2;
+
+      el.p1hp.textContent = `P1 HP: ${p1.hp}`;
+      el.p2hp.textContent = `P2 HP: ${p2.hp}`;
+      el.turn.textContent = `Tura: ${state.turn} (aktywny: ${state.active.toUpperCase()})`;
+
+      el.p1shame.textContent = String(p1.shame);
+      el.p2shame.textContent = String(p2.shame);
+
+      el.p1board.textContent = p1.board ? `${p1.board.name} (${p1.board.hp}hp, ${p1.board.atk}atk)` : "—";
+      el.p2board.textContent = p2.board ? `${p2.board.name} (${p2.board.hp}hp, ${p2.board.atk}atk)` : "—";
+
+      // selected card view
+      const ap = currentPlayer();
+      const cardId = getSelectedCardId(ap);
+      if(!cardId){
+        el.handCard.textContent = "— (pusta ręka)";
+        el.handMeta.textContent = "";
+      } else {
+        const c = cardById(cardId);
+        el.handCard.textContent = `${c.name} • ${c.type.toUpperCase()} • cost ${c.cost}`;
+        const stats = c.type === "unit" ? `ATK ${c.stats.atk} / HP ${c.stats.hp}` : "";
+        el.handMeta.textContent =
+          `Ręka: ${ap.hand.length} • Wybrana: ${ap.sel + 1}/${ap.hand.length} ${stats ? "• " + stats : ""}\n${c.text || ""}`;
+      }
+
+      // log
+      el.log.textContent = state.log.join("\n");
+    }
+
+    // ---------------------------
+    // Phaser scene (visual board)
+    // ---------------------------
+    let sceneBus = null;
+
+    class MatchScene extends Phaser.Scene {
+      constructor(){ super("Match"); }
+
+      create(){
+        sceneBus = new Phaser.Events.EventEmitter();
+
+        this.title = this.add.text(14, 10, "OSIEDLE ARENA", { fontSize: "14px" }).setAlpha(0.6);
+
+        this.enemySlot = this.add.rectangle(this.scale.width/2, this.scale.height*0.28, 300, 120, 0xffffff, 0.07)
+          .setStrokeStyle(2, 0xffffff, 0.12);
+        this.selfSlot = this.add.rectangle(this.scale.width/2, this.scale.height*0.60, 300, 120, 0xffffff, 0.07)
+          .setStrokeStyle(2, 0xffffff, 0.12);
+
+        this.enemyText = this.add.text(this.enemySlot.x, this.enemySlot.y, "", { fontSize:"18px", fontStyle:"700" }).setOrigin(0.5);
+        this.selfText = this.add.text(this.selfSlot.x, this.selfSlot.y, "", { fontSize:"18px", fontStyle:"700" }).setOrigin(0.5);
+
+        this.updateBoardTexts();
+
+        // pop for Hańba / logs
+        sceneBus.on("react", () => this.popText("HAŃBA!", this.scale.width/2, this.scale.height*0.12));
+        sceneBus.on("log", (s) => {
+          if(s.includes("UNIT DOWN")) this.popText("K.O.", this.scale.width/2, this.scale.height*0.42);
+        });
+
+        this.scale.on("resize", (size) => {
+          const w = size.width, h = size.height;
+          this.enemySlot.setPosition(w/2, h*0.28);
+          this.selfSlot.setPosition(w/2, h*0.60);
+          this.enemyText.setPosition(w/2, h*0.28);
+          this.selfText.setPosition(w/2, h*0.60);
+          this.updateBoardTexts();
+        });
+
+        // periodic sync from state -> visuals (MVP)
+        this.time.addEvent({
+          delay: 120,
+          loop: true,
+          callback: () => this.updateBoardTexts()
+        });
+      }
+
+      updateBoardTexts(){
+        const p1 = state.players.p1;
+        const p2 = state.players.p2;
+
+        this.enemyText.setText(p2.board ? `${p2.board.name}\nHP ${p2.board.hp} • ATK ${p2.board.atk} (eff ${Math.max(0,p2.board.atk - p2.shame)})` : "—");
+        this.selfText.setText(p1.board ? `${p1.board.name}\nHP ${p1.board.hp} • ATK ${p1.board.atk} (eff ${Math.max(0,p1.board.atk - p1.shame)})` : "—");
+      }
+
+      popText(txt, x, y){
+        const t = this.add.text(x, y, txt, { fontSize:"44px", fontStyle:"900" }).setOrigin(0.5);
+        this.tweens.add({
+          targets: t,
+          y: y - 40,
+          alpha: 0,
+          duration: 700,
+          ease: "Cubic.easeOut",
+          onComplete: () => t.destroy()
+        });
+      }
+    }
+
+    function startGame(){
+      new Phaser.Game({
+        type: Phaser.AUTO,
+        parent: "gameRoot",
+        backgroundColor: "#0b0c10",
+        scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH },
+        scene: [MatchScene]
+      });
+    }
+
+    // ---------------------------
+    // Wire DOM
+    // ---------------------------
+    function wireDom(){
+      el.p1hp = document.getElementById("p1hp");
+      el.p2hp = document.getElementById("p2hp");
+      el.turn = document.getElementById("turn");
+      el.p1shame = document.getElementById("p1shame");
+      el.p2shame = document.getElementById("p2shame");
+      el.p1board = document.getElementById("p1board");
+      el.p2board = document.getElementById("p2board");
+      el.handCard = document.getElementById("handCard");
+      el.handMeta = document.getElementById("handMeta");
+      el.log = document.getElementById("log");
+      el.toast = document.getElementById("toast");
+
+      const btnPrev = document.getElementById("btnPrev");
+      const btnNext = document.getElementById("btnNext");
+      const btnPlay = document.getElementById("btnPlay");
+      const btnEnd = document.getElementById("btnEnd");
+      const btnReact = document.getElementById("btnReact");
+      const btnShare = document.getElementById("btnShare");
+
+      btnPrev.onclick = () => {
+        const ap = currentPlayer();
+        if(!ap.hand.length) return;
+        ap.sel = (ap.sel - 1 + ap.hand.length) % ap.hand.length;
+        render();
+      };
+
+      btnNext.onclick = () => {
+        const ap = currentPlayer();
+        if(!ap.hand.length) return;
+        ap.sel = (ap.sel + 1) % ap.hand.length;
+        render();
+      };
+
+      btnPlay.onclick = () => {
+        const r = playSelectedCard();
+        toast(r.msg);
+        render();
+      };
+
+      btnEnd.onclick = () => {
+        endTurn();
+        toast("Drama resolved");
+        render();
+      };
+
+      btnReact.onclick = () => {
+        // reakcja tylko wizualna + log
+        pushLog(`${state.active.toUpperCase()} REACT: HAŃBA_STICKER`);
+        if(sceneBus) sceneBus.emit("react");
+        toast("Hańba poszła w eter");
+      };
+
+      btnShare.onclick = async () => {
+        const url = window.location.href;
+        try {
+          await navigator.clipboard.writeText(url);
+          toast("Link skopiowany");
+        } catch {
+          toast("Nie mogę skopiować — skopiuj ręcznie");
+        }
+      };
+    }
+
+    // ---------------------------
+    // BOOT
+    // ---------------------------
+    (async () => {
+      wireDom();
+      try {
+        await loadCards();
+
+        // init hands
+        state.players.p1.hand = [...DB.starterDeck];
+        state.players.p2.hand = [...DB.starterDeck];
+
+        pushLog(`— TURN ${state.turn} (active: ${state.active}) —`);
+        render();
+        startGame();
+        toast("Załadowano karty");
+      } catch (err) {
+        console.error(err);
+        if(el.handCard) el.handCard.textContent = "Błąd ładowania cards.json";
+        if(el.handMeta) el.handMeta.textContent = String(err?.message || err);
+      }
+    })();
+  </script>
 </body>
 </html>
