@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "id": "unit_plotkara_01",
+      "name": "Plotkara",
+      "type": "unit",
+      "rarity": "common",
+      "cost": 1,
+      "stats": { "atk": 2, "hp": 2 },
+      "text": "Kiedy wchodzi: +1 Hańba dla przeciwnika.",
+      "effects": [
+        { "trigger": "on_play", "action": "apply_shame", "target": "enemy_player", "amount": 1 }
+      ]
+    },
+    {
+      "id": "unit_kox_01",
+      "name": "Kox z Siłki",
+      "type": "unit",
+      "rarity": "common",
+      "cost": 2,
+      "stats": { "atk": 3, "hp": 3 },
+      "text": "Brak efektu. Czysta przemoc."
+    },
+    {
+      "id": "unit_ochroniarz_01",
+      "name": "Ochroniarz Żabki",
+      "type": "unit",
+      "rarity": "common",
+      "cost": 2,
+      "stats": { "atk": 2, "hp": 4 },
+      "text": "Kiedy wchodzi: zdejmij 1 Hańby z siebie.",
+      "effects": [
+        { "trigger": "on_play", "action": "remove_shame", "target": "self_player", "amount": 1 }
+      ]
+    },
+    {
+      "id": "action_donos_01",
+      "name": "Donos do Administracji",
+      "type": "action",
+      "rarity": "common",
+      "cost": 1,
+      "text": "Przeciwnik dostaje 2 Hańby.",
+      "effects": [
+        { "trigger": "on_play", "action": "apply_shame", "target": "enemy_player", "amount": 2 }
+      ]
+    },
+    {
+      "id": "action_wyjasnij_01",
+      "name": "Wyjaśnij To Na Klatce",
+      "type": "action",
+      "rarity": "common",
+      "cost": 1,
+      "text": "Zadaj 2 dmg jednostce przeciwnika (jeśli istnieje).",
+      "effects": [
+        { "trigger": "on_play", "action": "deal_damage", "target": "enemy_unit", "amount": 2 }
+      ]
+    },
+    {
+      "id": "action_krzyk_01",
+      "name": "Krzyk Przez Balkon",
+      "type": "action",
+      "rarity": "common",
+      "cost": 1,
+      "text": "Obie strony: +1 Hańba.",
+      "effects": [
+        { "trigger": "on_play", "action": "apply_shame", "target": "both_players", "amount": 1 }
+      ]
+    },
+    {
+      "id": "action_sponsor_01",
+      "name": "Sponsor Od Wujka",
+      "type": "action",
+      "rarity": "common",
+      "cost": 1,
+      "text": "Ulecz siebie o 3.",
+      "effects": [
+        { "trigger": "on_play", "action": "heal_player", "target": "self_player", "amount": 3 }
+      ]
+    }
+  ],
+  "starterDeck": [
+    "unit_plotkara_01",
+    "unit_kox_01",
+    "unit_ochroniarz_01",
+    "action_donos_01",
+    "action_wyjasnij_01",
+    "action_krzyk_01",
+    "action_sponsor_01"
+  ]
+}
