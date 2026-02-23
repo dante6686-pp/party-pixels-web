@@ -88,7 +88,7 @@
     let DB = null;
 
     async function loadCards(){
-      const res = await fetch("./assets/cards.json", { cache: "no-store" });
+      const res = await fetch("/games/wojna/public/assets/cards/cards.json", { cache: "no-store" });
       if(!res.ok) throw new Error("Nie mogę wczytać ./assets/cards.json");
       DB = await res.json();
       if(!DB || !Array.isArray(DB.cards)) throw new Error("cards.json ma zły format");
