@@ -1,3 +1,153 @@
+/* === What's New Carousel === */
+.pp-whatsnew {
+  border-radius: 18px;
+  padding: 14px;
+  margin: 18px 0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+
+.pp-whatsnew__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pp-whatsnew__head h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+
+.pp-whatsnew__viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  outline: none;
+}
+
+.pp-whatsnew__track {
+  display: flex;
+  gap: 12px;
+  transform: translateX(0);
+  transition: transform 260ms ease;
+  will-change: transform;
+}
+
+.pp-whatsnew__slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.pp-whatsnew__media {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.pp-whatsnew__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+}
+
+.pp-whatsnew__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+}
+
+.pp-whatsnew__body {
+  padding: 12px 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.pp-whatsnew__title {
+  font-size: 16px;
+  margin: 0;
+}
+
+.pp-whatsnew__subtitle {
+  margin: 0;
+  opacity: 0.85;
+  line-height: 1.25;
+  font-size: 13px;
+}
+
+.pp-whatsnew__cta {
+  justify-self: start;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.pp-whatsnew__controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.pp-whatsnew__btn {
+  width: 40px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.pp-whatsnew__btn:active { transform: translateY(1px); }
+
+.pp-whatsnew__dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.pp-whatsnew__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.25);
+}
+
+.pp-whatsnew__dot.is-active {
+  background: rgba(255,255,255,0.9);
+}
+
+/* Make it feel like cards on larger screens */
+@media (min-width: 900px) {
+  .pp-whatsnew__slide {
+    flex-basis: 66%;
+    min-width: 66%;
+  }
+  .pp-whatsnew__media { height: 220px; }
+}
 .pp-intro {
   margin: 26px 0 30px;
   padding: 16px 16px 18px;
