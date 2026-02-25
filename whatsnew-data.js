@@ -21,7 +21,7 @@ window.PP_WHATS_NEW = [
     subtitle: "Sort by newest + poprawki mobile.",
     cta: "View",
     href: "/profile.html",
-    image: "/media/whatsnew/slide.jpg",
+    image: "/media/whatsnew/profile.jpg",
     tag: "FIX"
   },
   {
