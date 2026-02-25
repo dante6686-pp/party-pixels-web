@@ -5,7 +5,7 @@ window.PP_WHATS_NEW = [
     subtitle: "Szybkie 1v1 przez link. MVP w drodze.",
     cta: "Open",
     href: "/games/wojna/",
-    image: "/media/whatsnew/slide.jpg",
+    image: "/media/whatsnew/wno.jpg",
     tag: "HOT"
   },
   {
@@ -29,7 +29,7 @@ window.PP_WHATS_NEW = [
     subtitle: "Director system + jedna sekcja facility. Teaser soon.",
     cta: "Read",
     href: "/devlog/aliens-slice.html",
-    image: "/media/whatsnew/slide.jpg",
+    image: "/media/whatsnew/Aliens.jpg",
     tag: "DEV"
   }
 ];
