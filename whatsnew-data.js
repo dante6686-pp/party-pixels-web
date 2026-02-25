@@ -2,7 +2,7 @@
 window.PP_WHATS_NEW = [
   {
     title: "WOJNA NA OSIEDLU — Duel link playtest",
-    subtitle: "Szybkie 1v1 przez link. MVP w drodze.",
+    subtitle: "1v1 card batlle coming soon.",
     cta: "Open",
     href: "/games/wojna/",
     image: "/media/whatsnew/wno.jpg",
@@ -10,7 +10,7 @@ window.PP_WHATS_NEW = [
   },
   {
     title: "Vent Your Hate — update",
-    subtitle: "Nowe UX + lepsze flow. Wylej jad szybciej.",
+    subtitle: "New UX + better flow.",
     cta: "Try",
     href: "/games/vent-your-hate/",
     image: "/media/whatsnew/slide.jpg",
@@ -18,7 +18,7 @@ window.PP_WHATS_NEW = [
   },
   {
     title: "Party Pixels Profiles",
-    subtitle: "Sort by newest + poprawki mobile.",
+    subtitle: "Sort by newest + mobile dixes.",
     cta: "View",
     href: "/profile.html",
     image: "/media/whatsnew/profile.jpg",
@@ -26,7 +26,7 @@ window.PP_WHATS_NEW = [
   },
   {
     title: "Aliens — vertical slice in progress",
-    subtitle: "Director system + jedna sekcja facility. Teaser soon.",
+    subtitle: "sci fi horror. Teaser soon.",
     cta: "Read",
     href: "/devlog/aliens-slice.html",
     image: "/media/whatsnew/Aliens.jpg",
