@@ -39,14 +39,17 @@
       const tag = esc(item.tag || "");
 
       return `
-        <a class="pp-update" href="${href}">
-          <div>
-            <div class="pp-update__title">${title}</div>
-            <div class="pp-update__sub">${sub}</div>
-          </div>
-          ${tag ? `<div class="pp-update__tag">${tag}</div>` : ``}
-        </a>
-      `;
+  <a class="pp-update" href="${href}">
+    <div class="pp-update__thumb" style="background-image:url('${esc(item.image || "")}')"></div>
+
+    <div class="pp-update__content">
+      <div class="pp-update__title">${title}</div>
+      <div class="pp-update__sub">${sub}</div>
+    </div>
+
+    ${tag ? `<div class="pp-update__tag">${tag}</div>` : ``}
+  </a>
+`;
     }).join("");
   }
 
