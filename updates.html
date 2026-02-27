@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Party Pixels – Updates</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="pp-main.css">
+  <style>
+    .pp-updates-page { max-width: 980px; margin: 0 auto; padding: 18px 14px 40px; }
+    .pp-updates-page h1 { margin: 10px 0 6px; }
+    .pp-updates-page .sub { opacity: .75; margin: 0 0 14px; }
+
+    .pp-updates__list { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+    .pp-update {
+      display:flex; align-items:center; gap:12px;
+      padding:12px 14px; border-radius:16px; text-decoration:none;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .pp-update:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.10); }
+    .pp-update__title { font-weight: 900; line-height: 1.2; }
+    .pp-update__sub { opacity: .75; font-size: .95rem; margin-top: 2px; }
+    .pp-update__tag {
+      margin-left:auto; font-size:.8rem; opacity:.85;
+      padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+
+    .pp-pager {
+      display:flex; justify-content:center; align-items:center; gap:8px;
+      margin-top:16px; flex-wrap: wrap;
+    }
+    .pp-pager button, .pp-pager a {
+      padding:8px 12px; border-radius:999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: inherit; cursor:pointer; text-decoration:none;
+      font-weight: 800;
+    }
+    .pp-pager button[disabled] { opacity: .4; cursor: default; }
+    .pp-pager .is-active {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.22);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <main class="pp-updates-page">
+    <a href="/" class="pp-btn">← Back to hub</a>
+    <h1>Updates</h1>
+    <p class="sub" id="ppUpdatesSummary"></p>
+
+    <div class="pp-updates__list" id="ppUpdatesAll"></div>
+    <div class="pp-pager" id="ppPager"></div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script>
+    function loadPart(id, file) {
+      fetch(file)
+        .then(res => res.text())
+        .then(html => { document.getElementById(id).innerHTML = html; })
+        .catch(err => console.error(`Load error in ${file}:`, err));
+    }
+    loadPart("header", "/header.html");
+    loadPart("footer", "/footer.html");
+  </script>
+
+  <script src="whatsnew-data.js"></script>
+  <script src="updates.js"></script>
+</body>
+</html>
