@@ -8,37 +8,127 @@
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612"
      crossorigin="anonymous"></script>
-  
+
+  <style>
+    /* Page-local: banner swap + updates log */
+    .pp-banner {
+      text-align: center;
+      margin: 0 0 25px;
+    }
+    .pp-banner__img {
+      width: 100%;
+      max-width: 1200px;
+      border-radius: 18px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .pp-updates {
+      margin-top: 40px;
+    }
+    .pp-updates__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .pp-updates__head h2 {
+      margin: 0;
+    }
+    .pp-updates__meta {
+      opacity: 0.75;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+    .pp-updates__list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pp-update {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      text-decoration: none;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .pp-update:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.10);
+    }
+    .pp-update__title {
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .pp-update__sub {
+      opacity: 0.75;
+      font-size: 0.95rem;
+      margin-top: 2px;
+    }
+    .pp-update__tag {
+      margin-left: auto;
+      font-size: 0.8rem;
+      opacity: 0.8;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 560px) {
+      .pp-update {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .pp-update__tag {
+        margin-left: 0;
+      }
+      .pp-updates__meta {
+        display: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <div class="page">
 
     <!-- Header Top Bar -->
     <div id="header"></div>
-    
-    <!-- BANNER -->
-<div style="text-align:center; margin-bottom:25px;">
-  <img src="PPWT-banner-4.jpg" 
-       alt="Web Toys Banner"
-       style="max-width:100%; border-radius:18px; box-shadow:0 0 20px rgba(0,0,0,0.4);">
-</div>
 
+    <!-- BANNER: mobile vs desktop -->
+    <div class="pp-banner" aria-label="Web Toys Banner">
+      <picture>
+        <!-- DESKTOP banner (podmień nazwę pliku na swoją) -->
+        <source media="(min-width: 980px)" srcset="PPWT-banner-desktop.jpg">
+        <!-- MOBILE banner (ten, który masz teraz) -->
+        <img class="pp-banner__img" src="PPWT-banner-4.jpg" alt="Web Toys Banner">
+      </picture>
+    </div>
+
+    <!-- WHAT'S NEW (slider shows only last 4 entries) -->
     <section class="pp-whatsnew" aria-label="What's New">
-  <div class="pp-whatsnew__head">
-    <h2>What’s new</h2>
-    <div class="pp-whatsnew__dots" id="ppWhatsNewDots" aria-hidden="true"></div>
-  </div>
+      <div class="pp-whatsnew__head">
+        <h2>What’s new</h2>
+        <div class="pp-whatsnew__dots" id="ppWhatsNewDots" aria-hidden="true"></div>
+      </div>
 
-  <div class="pp-whatsnew__viewport" id="ppWhatsNewViewport" tabindex="0">
-    <div class="pp-whatsnew__track" id="ppWhatsNewTrack"></div>
-  </div>
+      <div class="pp-whatsnew__viewport" id="ppWhatsNewViewport" tabindex="0">
+        <div class="pp-whatsnew__track" id="ppWhatsNewTrack"></div>
+      </div>
 
-  <div class="pp-whatsnew__controls">
-    <button class="pp-whatsnew__btn" id="ppWhatsNewPrev" type="button" aria-label="Previous">‹</button>
-    <button class="pp-whatsnew__btn" id="ppWhatsNewNext" type="button" aria-label="Next">›</button>
-  </div>
+      <div class="pp-whatsnew__controls">
+        <button class="pp-whatsnew__btn" id="ppWhatsNewPrev" type="button" aria-label="Previous">‹</button>
+        <button class="pp-whatsnew__btn" id="ppWhatsNewNext" type="button" aria-label="Next">›</button>
+      </div>
     </section>
-    
+
     <!-- HERO -->
     <section class="hero">
       <div class="hero-kicker">tiny experiments · browser only · no install</div>
@@ -49,29 +139,28 @@
       </p>
 
       <section class="pp-intro">
-  <h2 class="pp-intro-title">What is Party Pixels?</h2>
+        <h2 class="pp-intro-title">What is Party Pixels?</h2>
 
-  <p>
-    Party Pixels is an independent web project focused on small, experimental
-    browser games and interactive toys. Each web toy is designed to be simple,
-    fast to load, and fun to play — no installs, no downloads, just instant
-    interaction in your browser.
-  </p>
+        <p>
+          Party Pixels is an independent web project focused on small, experimental
+          browser games and interactive toys. Each web toy is designed to be simple,
+          fast to load, and fun to play — no installs, no downloads, just instant
+          interaction in your browser.
+        </p>
 
-  <p>
-    The project combines mini games, playful generators, and lightweight
-    experiments created for entertainment, curiosity, and casual play.
-    Some toys include global leaderboards, user profiles, and optional
-    accounts to track progress across different games.
-  </p>
+        <p>
+          The project combines mini games, playful generators, and lightweight
+          experiments created for entertainment, curiosity, and casual play.
+          Some toys include global leaderboards, user profiles, and optional
+          accounts to track progress across different games.
+        </p>
 
-  <p>
-    Party Pixels is an ongoing experiment in building interactive content for
-    the web — created by an indie developer, constantly evolving, and open to
-    new ideas.
-  </p>
-</section>
-
+        <p>
+          Party Pixels is an ongoing experiment in building interactive content for
+          the web — created by an indie developer, constantly evolving, and open to
+          new ideas.
+        </p>
+      </section>
 
       <div class="hero-strip">
         <div class="badge">
@@ -94,58 +183,77 @@
         <span>Pick a toy and dive in.</span>
       </div>
     </section>
-  <div class="pp-spacer"></div>
-      <!-- sort filter -->
-      <div class="toy-controls">
-  <div class="toy-filter-group">
-    <button class="toy-filter-btn is-active" data-filter="all">All</button>
-    <button class="toy-filter-btn" data-filter="game">Games</button>
-    <button class="toy-filter-btn" data-filter="generator">Generators</button>
-  </div>
-<div class="pp-spacer"></div>
-  <div class="toy-sort-group">
-    <label for="toy-sort" class="toy-sort-label">Sort by</label>
-    <select id="toy-sort" class="toy-sort-select">
-      <option value="date">Date added (newest)</option>
-      <option value="alpha">Title (A–Z)</option>
-    </select>
-  </div>
-</div>
-<div class="pp-spacer-lg"></div>
-<div class="pp-spacer-lg"></div>
-      <!-- grid -->
-<div class="grid" id="toy-grid"></div>
 
-  <!-- Footer -->
-  <div id="footer"></div>
+    <div class="pp-spacer"></div>
+
+    <!-- sort filter -->
+    <div class="toy-controls">
+      <div class="toy-filter-group">
+        <button class="toy-filter-btn is-active" data-filter="all">All</button>
+        <button class="toy-filter-btn" data-filter="game">Games</button>
+        <button class="toy-filter-btn" data-filter="generator">Generators</button>
+      </div>
+
+      <div class="pp-spacer"></div>
+
+      <div class="toy-sort-group">
+        <label for="toy-sort" class="toy-sort-label">Sort by</label>
+        <select id="toy-sort" class="toy-sort-select">
+          <option value="date">Date added (newest)</option>
+          <option value="alpha">Title (A–Z)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pp-spacer-lg"></div>
+    <div class="pp-spacer-lg"></div>
+
+    <!-- grid -->
+    <div class="grid" id="toy-grid"></div>
+
+    <!-- UPDATES / CHANGELOG (near the end) -->
+    <section class="pp-updates" aria-label="Updates log">
+      <div class="pp-updates__head">
+        <h2>Updates</h2>
+        <div class="pp-updates__meta" id="ppUpdatesMeta"></div>
+      </div>
+
+      <div class="pp-updates__list" id="ppUpdatesLog"></div>
+    </section>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+  </div>
 
   <!-- User authentication/login -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
 
   <!-- Load page elements -->
-<script>
-  function loadPart(id, file) {
-    fetch(file)
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById(id).innerHTML = html;
-      })
-      .catch(err => console.error(`Load error in ${file}:`, err));
-  }
+  <script>
+    function loadPart(id, file) {
+      fetch(file)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById(id).innerHTML = html;
+        })
+        .catch(err => console.error(`Load error in ${file}:`, err));
+    }
 
-  loadPart("header", "/header.html");
-  loadPart("footer", "/footer.html");
-</script>
+    loadPart("header", "/header.html");
+    loadPart("footer", "/footer.html");
+  </script>
 
-<!-- PayPal.me Link-->
-<script src="/tipjar.js"></script>
-        
-<!-- rendering web toy cars from json -->
-<script src="/pp-toys-render.js"></script>
+  <!-- PayPal.me Link-->
+  <script src="/tipjar.js"></script>
 
-<script src="whatsnew-data.js"></script>
-<script src="whatsnew.js"></script>
-  
+  <!-- rendering web toy cards from json -->
+  <script src="/pp-toys-render.js"></script>
+
+  <!-- What's new data + slider -->
+  <script src="whatsnew-data.js"></script>
+  <script src="whatsnew.js"></script>
+
 </body>
 </html>
