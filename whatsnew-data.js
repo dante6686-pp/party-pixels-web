@@ -2,7 +2,7 @@
 window.PP_WHATS_NEW = [
   {
     title: "War On The Block — Duel link playtest",
-    subtitle: "Card batlle game in development.",
+    subtitle: "Card battle game in development.",
     cta: "View more",
     href: "/games/wojna/",
     image: "/media/whatsnew/wno.jpg",
