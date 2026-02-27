@@ -1,3 +1,36 @@
+/* Updates log – small square thumbnail */
+.pp-update {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pp-update__thumb {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid rgba(255,255,255,0.08);
+  background-color: rgba(255,255,255,0.05);
+}
+
+.pp-update__content {
+  min-width: 0;
+}
+
+.pp-update__title {
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.pp-update__sub {
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin-top: 2px;
+}
 .pp-btn{
   display:inline-block;
   padding:10px 14px;
