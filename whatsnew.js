@@ -34,21 +34,25 @@
     const items = ALL.slice(0, HOME_UPDATES_LIMIT);
 
     updatesLog.innerHTML = items.map(item => {
-      const title = escapeHtml(item.title);
-      const sub = escapeHtml(item.subtitle || "");
-      const href = escapeAttr(item.href || "#");
-      const tag = item.tag ? `<div class="pp-update__tag">${escapeHtml(item.tag)}</div>` : "";
+  const title = escapeHtml(item.title);
+  const sub = escapeHtml(item.subtitle || "");
+  const href = escapeAttr(item.href || "#");
+  const img = escapeAttr(item.image || "");
+  const tag = item.tag ? `<div class="pp-update__tag">${escapeHtml(item.tag)}</div>` : "";
 
-      return `
-        <a class="pp-update" href="${href}">
-          <div>
-            <div class="pp-update__title">${title}</div>
-            <div class="pp-update__sub">${sub}</div>
-          </div>
-          ${tag}
-        </a>
-      `;
-    }).join("");
+  return `
+    <a class="pp-update" href="${href}">
+      <div class="pp-update__thumb" style="background-image:url('${img}')"></div>
+
+      <div class="pp-update__content">
+        <div class="pp-update__title">${title}</div>
+        <div class="pp-update__sub">${sub}</div>
+      </div>
+
+      ${tag}
+    </a>
+  `;
+}).join("");
   }
 
   renderUpdatesLog();
