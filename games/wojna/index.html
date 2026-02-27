@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>War On The Block – Coming Soon | Party Pixels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="War On The Block is a gritty, cartoon-chaos brawler about neighborhood beef, dumb decisions, and loud nights. Coming soon.">
+  <link rel="stylesheet" href="/pp-main.css">
+
+  <!-- AdSense (keep if you use it sitewide) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612"
+     crossorigin="anonymous"></script>
+
+  <style>
+    /* Small page-local additions (keeps pp-main.css intact) */
+    .wotb-hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      padding: 26px;
+      box-shadow: 0 0 22px rgba(0,0,0,0.35);
+      background: radial-gradient(1200px 500px at 15% 0%, rgba(255,255,255,0.09), transparent 60%),
+                  radial-gradient(900px 500px at 85% 20%, rgba(255,255,255,0.06), transparent 55%),
+                  linear-gradient(135deg, rgba(20,20,30,0.9), rgba(10,10,18,0.92));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .wotb-hero-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+    }
+
+    @media (max-width: 860px) {
+      .wotb-hero-grid { grid-template-columns: 1fr; }
+    }
+
+    .wotb-kicker {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+    .wotb-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .wotb-title {
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1.05;
+      margin: 8px 0 10px;
+    }
+
+    .wotb-sub {
+      max-width: 62ch;
+      opacity: 0.92;
+      margin: 0 0 14px;
+    }
+
+    .wotb-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      align-items: center;
+    }
+
+    .wotb-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.09);
+      color: inherit;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.25);
+    }
+    .wotb-btn:hover { transform: translateY(-1px); }
+    .wotb-btn:active { transform: translateY(0px); }
+
+    .wotb-btn-primary {
+      background: linear-gradient(135deg, rgba(255, 90, 160, 0.35), rgba(120, 200, 255, 0.22));
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .wotb-card {
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 0 18px rgba(0,0,0,0.22);
+    }
+
+    .wotb-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 860px) {
+      .wotb-mini-grid { grid-template-columns: 1fr; }
+    }
+
+    .wotb-stat {
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .wotb-stat b { display: block; margin-bottom: 4px; }
+    .wotb-stat span { opacity: 0.9; }
+
+    .wotb-media-box {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+      box-shadow: 0 0 18px rgba(0,0,0,0.22);
+    }
+    .wotb-media-box img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .wotb-media-caption {
+      padding: 12px 14px;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .wotb-section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 26px 0 10px;
+    }
+
+    .wotb-section-head h2 { margin: 0; }
+    .wotb-muted { opacity: 0.85; }
+
+    .wotb-feature-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 860px) {
+      .wotb-feature-list { grid-template-columns: 1fr; }
+    }
+
+    .wotb-feature {
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .wotb-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    @media (max-width: 860px) {
+      .wotb-gallery { grid-template-columns: 1fr; }
+    }
+
+    .wotb-shot {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      aspect-ratio: 4 / 3;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      opacity: 0.85;
+    }
+    .wotb-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .wotb-faq details {
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      margin-bottom: 10px;
+    }
+    .wotb-faq summary {
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .wotb-faq p { margin: 10px 0 0; opacity: 0.92; }
+
+    .wotb-note {
+      font-size: 13px;
+      opacity: 0.78;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- Header -->
+    <div id="header"></div>
+
+    <!-- TOP SPACER -->
+    <div class="pp-spacer"></div>
+
+    <!-- HERO / ANNOUNCEMENT -->
+    <section class="wotb-hero" aria-label="War On The Block announcement">
+      <div class="wotb-hero-grid">
+        <div>
+          <div class="wotb-kicker">
+            <span class="wotb-pill">Party Pixels · Game</span>
+            <span class="wotb-pill">Announcement</span>
+            <span class="wotb-pill">Coming Soon</span>
+          </div>
+
+          <h1 class="wotb-title">War On The Block</h1>
+          <p class="wotb-sub">
+            A gritty cartoon-chaos brawler about neighborhood beef, dumb decisions,
+            and loud nights. No heroes. Just vibes. And consequences.
+          </p>
+
+          <div class="wotb-cta-row">
+            <a class="wotb-btn wotb-btn-primary" href="#screens">
+              👀 See visuals
+            </a>
+            <a class="wotb-btn" href="#about">
+              📼 What is it?
+            </a>
+            <button class="wotb-btn" id="wotbCopyLink" type="button">
+              🔗 Copy page link
+            </button>
+          </div>
+
+          <div class="wotb-mini-grid">
+            <div class="wotb-stat">
+              <b>Genre</b>
+              <span>Arcade brawler / chaos comedy</span>
+            </div>
+            <div class="wotb-stat">
+              <b>Platform</b>
+              <span>PC (first). Maybe more later.</span>
+            </div>
+            <div class="wotb-stat">
+              <b>Status</b>
+              <span>In development · announcement phase</span>
+            </div>
+          </div>
+
+          <div class="wotb-note">
+            This page is a teaser. Everything here can change. Especially the amount of chaos.
+          </div>
+        </div>
+
+        <!-- Key Art / Poster -->
+        <div class="wotb-media-box" aria-label="Key art">
+          <!-- Replace with your main key art (prefer 1200px wide) -->
+          <img src="/media/wotb-keyart.jpg" alt="War On The Block key art (placeholder)">
+          <div class="wotb-media-caption">
+            Key art placeholder → put your best “War On The Block” splash/poster here.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="pp-spacer-lg"></div>
+
+    <!-- ABOUT -->
+    <section id="about" class="wotb-card">
+      <div class="wotb-section-head">
+        <h2>What is War On The Block?</h2>
+        <span class="wotb-muted">short pitch</span>
+      </div>
+
+      <p class="wotb-muted" style="margin-top:0;">
+        You’re in a rough neighborhood where every tiny beef escalates into a full-blown war.
+        The vibe is gritty-but-cartoon, like a comic panel that got too real at 23:40.
+        Expect shouting, questionable plans, improvised “weapons”, and problems that only get worse.
+      </p>
+
+      <div class="wotb-feature-list">
+        <div class="wotb-feature">
+          <b>Comic-panel energy</b><br>
+          Thick outlines, expressive faces, loud speech bubbles, and that “block drama” flavor.
+        </div>
+        <div class="wotb-feature">
+          <b>Chaos-first gameplay</b><br>
+          Fast encounters, dumb surprises, and “that should not have worked… but it did.”
+        </div>
+        <div class="wotb-feature">
+          <b>Short sessions, big moments</b><br>
+          Quick bursts of action designed to be replayed and clipped.
+        </div>
+        <div class="wotb-feature">
+          <b>Neighborhood cast</b><br>
+          Memorable weirdos, rival crews, and a whole lot of shouting.
+        </div>
+      </div>
+    </section>
+
+    <div class="pp-spacer-lg"></div>
+
+    <!-- VISUALS -->
+    <section id="screens">
+      <div class="wotb-section-head">
+        <h2>Visuals</h2>
+        <span class="wotb-muted">concept panels & style</span>
+      </div>
+
+      <!-- Two big comic panels -->
+      <div class="wotb-feature-list">
+        <div class="wotb-media-box">
+          <img src="/media/wotb-comic-panel-01.png" alt="War On The Block comic panel 01 (placeholder)">
+          <div class="wotb-media-caption">Panel 01 placeholder → drop your “POJEBIE!” style panel here.</div>
+        </div>
+
+        <div class="wotb-media-box">
+          <img src="/media/wotb-comic-panel-02.png" alt="War On The Block comic panel 02 (placeholder)">
+          <div class="wotb-media-caption">Panel 02 placeholder → drop your “WRRAAA!” style panel here.</div>
+        </div>
+      </div>
+
+      <div class="pp-spacer"></div>
+
+      <!-- Screenshot / art gallery -->
+      <div class="wotb-gallery">
+        <div class="wotb-shot">
+          <img src="/media/wotb-shot-01.jpg" alt="War On The Block screenshot 01 (placeholder)">
+        </div>
+        <div class="wotb-shot">
+          <img src="/media/wotb-shot-02.jpg" alt="War On The Block screenshot 02 (placeholder)">
+        </div>
+        <div class="wotb-shot">
+          <img src="/media/wotb-shot-03.jpg" alt="War On The Block screenshot 03 (placeholder)">
+        </div>
+      </div>
+
+      <div class="wotb-note">
+        Tip: keep your images in <b>/media/</b> to match Party Pixels conventions.
+      </div>
+    </section>
+
+    <div class="pp-spacer-lg"></div>
+
+    <!-- CTA / FOLLOW -->
+    <section class="wotb-card">
+      <div class="wotb-section-head">
+        <h2>Get updates</h2>
+        <span class="wotb-muted">no spam, just drops</span>
+      </div>
+
+      <p class="wotb-muted" style="margin-top:0;">
+        Want a ping when the first build / trailer / demo drops?
+        For now this is “manual mode” (no backend). Use the button below to copy a shareable teaser line.
+      </p>
+
+      <div class="wotb-cta-row">
+        <button class="wotb-btn wotb-btn-primary" id="wotbCopyTeaser" type="button">
+          📣 Copy teaser text
+        </button>
+        <a class="wotb-btn" href="/index.html">
+          🏠 Back to Party Pixels hub
+        </a>
+      </div>
+
+      <div class="wotb-note" id="wotbCopyStatus" aria-live="polite"></div>
+    </section>
+
+    <div class="pp-spacer-lg"></div>
+
+    <!-- FAQ -->
+    <section class="wotb-faq">
+      <div class="wotb-section-head">
+        <h2>FAQ</h2>
+        <span class="wotb-muted">quick answers</span>
+      </div>
+
+      <details>
+        <summary>Is it a serious game?</summary>
+        <p>
+          The world is gritty, but the energy is chaotic and comedic. Think “street drama” with comic-panel exaggeration.
+        </p>
+      </details>
+
+      <details>
+        <summary>When is it coming out?</summary>
+        <p>
+          Not announcing a date yet. This page is a teaser while the style and core loop get locked in.
+        </p>
+      </details>
+
+      <details>
+        <summary>Will it be on Party Pixels?</summary>
+        <p>
+          The landing page is on Party Pixels. The game itself may ship as a downloadable release later (PC first).
+        </p>
+      </details>
+    </section>
+
+    <div class="pp-spacer-lg"></div>
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+    <!-- Auth (safe to include if the site uses it globally) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/pp-auth.js"></script>
+
+    <!-- Load header/footer -->
+    <script>
+      function loadPart(id, file) {
+        fetch(file)
+          .then(res => res.text())
+          .then(html => { document.getElementById(id).innerHTML = html; })
+          .catch(err => console.error(`Load error in ${file}:`, err));
+      }
+      loadPart("header", "/header.html");
+      loadPart("footer", "/footer.html");
+    </script>
+
+    <!-- PayPal tip jar (if you use it sitewide) -->
+    <script src="/tipjar.js"></script>
+
+    <script>
+      const statusEl = document.getElementById("wotbCopyStatus");
+
+      function setStatus(msg) {
+        if (!statusEl) return;
+        statusEl.textContent = msg;
+        setTimeout(() => { statusEl.textContent = ""; }, 2200);
+      }
+
+      async function copyText(txt) {
+        try {
+          await navigator.clipboard.writeText(txt);
+          setStatus("Copied. Spread the chaos. ✅");
+        } catch (e) {
+          console.warn("Clipboard failed:", e);
+          setStatus("Copy failed (browser blocked clipboard). Try manual copy. ⚠️");
+        }
+      }
+
+      document.getElementById("wotbCopyLink")?.addEventListener("click", () => {
+        copyText(window.location.href);
+      });
+
+      document.getElementById("wotbCopyTeaser")?.addEventListener("click", () => {
+        const teaser =
+`War On The Block (coming soon) — a gritty cartoon-chaos brawler about neighborhood beef and loud nights.
+Teaser page: ${window.location.href}`;
+        copyText(teaser);
+      });
+    </script>
+
+  </div>
+</body>
+</html>
