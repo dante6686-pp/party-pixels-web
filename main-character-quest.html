@@ -331,6 +331,29 @@ const roles = {
   ]
 };
 
+    const plotTwists = [
+  "The audience did not expect this.",
+  "Your side characters are slightly concerned.",
+  "This was not in the script.",
+  "Even the narrator sounds confused.",
+  "The soundtrack just got louder.",
+  "A random side quest has appeared.",
+  "The internet is watching.",
+  "Your lore just expanded unexpectedly.",
+  "Someone in the background is taking notes.",
+  "Your arc just became canon.",
+  "A mysterious rival has appeared somewhere.",
+  "Your decisions have unlocked a hidden storyline.",
+  "The plot thickens slightly.",
+  "Your destiny has been marked with a glowing quest icon.",
+  "A suspicious NPC is now following you.",
+  "Your character development increased by +1.",
+  "The story engine is trying to keep up.",
+  "The audience is now emotionally invested.",
+  "Your reputation stat just changed.",
+  "This may affect the next episode."
+];
+
     function updateVibeLabel() {
       const value = Number(vibeRange.value);
       vibeValue.textContent = vibeLabels[value] || 'Chaotic';
@@ -352,11 +375,12 @@ const roles = {
       }
 
       return {
-        role: selected.role,
-        flavor: selected.flavor.replaceAll('{name}', name),
-        drama: drama.label,
-        share: `My internet storyline role is: ${selected.role} — according to Party Pixels.`
-      };
+  role: selected.role,
+  flavor: selected.flavor.replaceAll('{name}', name),
+  drama: drama.label,
+  twist: plotTwists[Math.floor(Math.random() * plotTwists.length)],
+  share: `My internet storyline role is: ${selected.role} — according to Party Pixels.`
+};
     }
 
     function analyze() {
@@ -372,7 +396,7 @@ const roles = {
         const result = pickRole();
         statusBadge.textContent = 'Analysis complete';
         roleTitle.textContent = result.role;
-        flavorText.textContent = result.flavor;
+        flavorText.textContent = result.flavor + " " + result.twist;
         dramaText.textContent = `Plot drama level: ${result.drama}`;
         dramaValue.textContent = result.drama;
         shareText.textContent = result.share;
