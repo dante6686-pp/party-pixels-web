@@ -190,7 +190,7 @@
 
 <section class="mcq-hero">
   <div class="mcq-cover">
-    <img src="/media/main-character-quest-splash.png" alt="Main Character Quest cover art">
+    <img src="/media/main-character-quest-cover.jpg" alt="Main Character Quest cover art">
   </div>
 
   <div class="mcq-panel">
@@ -201,25 +201,22 @@
           <input id="playerName" class="mcq-input" type="text" maxlength="24" placeholder="Type your name...">
         </div>
 
-        <div class="mcq-field">
-          <label for="vibeSelect">Current vibe</label>
-          <select id="vibeSelect" class="mcq-select">
-            <option value="wholesome">Wholesome</option>
-            <option value="chaotic" selected>Chaotic</option>
-            <option value="villain">Villain</option>
-            <option value="tired">Tired</option>
-            <option value="delusional">Delusional</option>
-          </select>
+        <div class="mcq-field mcq-range-wrap">
+          <label for="vibeRange">Current vibe</label>
+          <input id="vibeRange" class="mcq-range" type="range" min="0" max="4" step="1" value="1">
+          <div class="mcq-range-meta">
+            <span>Wholesome</span>
+            <strong id="vibeValue" class="mcq-range-value">Chaotic</strong>
+            <span>Delusional</span>
+          </div>
         </div>
       </div>
 
       <div class="mcq-field mcq-range-wrap">
-        <label for="dramaRange">Plot drama level</label>
-        <input id="dramaRange" class="mcq-range" type="range" min="0" max="100" value="68">
+        <label>Plot drama level</label>
         <div class="mcq-range-meta">
-          <span>Low stakes</span>
-          <strong id="dramaValue" class="mcq-range-value">Chaotic</strong>
-          <span>Season finale</span>
+          <span>Auto-detected during analysis</span>
+          <strong id="dramaValue" class="mcq-range-value">Unknown</strong>
         </div>
       </div>
 
@@ -234,6 +231,7 @@
       <div id="statusBadge" class="mcq-status">Awaiting analysis</div>
       <h2 id="roleTitle" class="mcq-role">Unknown Internet Creature</h2>
       <p id="flavorText" class="mcq-flavor">Enter your name and let the fake internet oracle decide your destiny.</p>
+      <p id="dramaText" class="mcq-flavor">Plot drama level: Unknown</p>
       <p id="shareText" class="mcq-share">My internet storyline role is: Unknown Internet Creature — according to Party Pixels.</p>
     </div>
   </div>
@@ -255,8 +253,8 @@
     loadPart('footer', '/footer.html');
   </script>  <script src="/tipjar.js"></script>  <script>
     const playerName = document.getElementById('playerName');
-    const vibeSelect = document.getElementById('vibeSelect');
-    const dramaRange = document.getElementById('dramaRange');
+    const vibeRange = document.getElementById('vibeRange');
+    const vibeValue = document.getElementById('vibeValue');
     const dramaValue = document.getElementById('dramaValue');
     const analyzeBtn = document.getElementById('analyzeBtn');
     const rerollBtn = document.getElementById('rerollBtn');
@@ -264,14 +262,16 @@
     const statusBadge = document.getElementById('statusBadge');
     const roleTitle = document.getElementById('roleTitle');
     const flavorText = document.getElementById('flavorText');
+    const dramaText = document.getElementById('dramaText');
     const shareText = document.getElementById('shareText');
 
+    const vibeLabels = ['Wholesome', 'Chaotic', 'Villain', 'Tired', 'Delusional'];
+
     const dramaLabels = [
-      { max: 20, label: 'Sleepy' },
-      { max: 40, label: 'Mild' },
-      { max: 60, label: 'Suspicious' },
-      { max: 80, label: 'Chaotic' },
-      { max: 100, label: 'Season Finale' }
+      { key: 'low', label: 'Low' },
+      { key: 'medium', label: 'Medium' },
+      { key: 'high', label: 'High' },
+      { key: 'critical', label: 'Critical' }
     ];
 
     const roles = {
@@ -302,29 +302,30 @@
       ]
     };
 
-    function updateDramaLabel() {
-      const value = Number(dramaRange.value);
-      const label = dramaLabels.find(item => value <= item.max)?.label || 'Chaotic';
-      dramaValue.textContent = label;
+    function updateVibeLabel() {
+      const value = Number(vibeRange.value);
+      vibeValue.textContent = vibeLabels[value] || 'Chaotic';
     }
 
     function pickRole() {
-      const vibe = vibeSelect.value;
+      const vibeMap = ['wholesome', 'chaotic', 'villain', 'tired', 'delusional'];
+      const vibe = vibeMap[Number(vibeRange.value)] || 'chaotic';
       const name = playerName.value.trim() || 'You';
       const pool = roles[vibe] || roles.chaotic;
-      const drama = Number(dramaRange.value);
-      let index = Math.floor(Math.random() * pool.length);
+      const selected = pool[Math.floor(Math.random() * pool.length)];
+      let drama = dramaLabels[Math.floor(Math.random() * dramaLabels.length)];
 
-      if (drama > 78) index = pool.length - 1;
-      if (drama < 28) index = 0;
-      if (vibe === 'chaotic' && drama > 60) index = 1;
-      if (vibe === 'villain' && drama > 65) index = 0;
-      if (vibe === 'tired' && drama < 35) index = 0;
+      if (selected.role === 'Background NPC' || selected.role === 'Loyal Side Character') drama = dramaLabels[1];
+      if (selected.role === 'Main Character' || selected.role === 'Villain Arc' || selected.role === 'Rival Character') drama = dramaLabels[2];
+      if (selected.role === 'Secret Final Boss') drama = dramaLabels[3];
+      if (selected.role === 'Comic Relief' || selected.role === 'Chosen One?') {
+        drama = dramaLabels[Math.random() > 0.5 ? 1 : 2];
+      }
 
-      const selected = pool[index];
       return {
         role: selected.role,
         flavor: selected.flavor.replaceAll('{name}', name),
+        drama: drama.label,
         share: `My internet storyline role is: ${selected.role} — according to Party Pixels.`
       };
     }
@@ -334,6 +335,8 @@
       roleTitle.textContent = 'Analyzing...';
       flavorText.textContent = 'Consulting the meme archives and summoning fake internet science...';
       shareText.textContent = 'Preparing share text...';
+      dramaText.textContent = 'Plot drama level: Calculating...';
+      dramaValue.textContent = 'Scanning';
 
       window.clearTimeout(window.mcqTimer);
       window.mcqTimer = window.setTimeout(() => {
@@ -341,6 +344,8 @@
         statusBadge.textContent = 'Analysis complete';
         roleTitle.textContent = result.role;
         flavorText.textContent = result.flavor;
+        dramaText.textContent = `Plot drama level: ${result.drama}`;
+        dramaValue.textContent = result.drama;
         shareText.textContent = result.share;
       }, 900);
     }
@@ -357,8 +362,8 @@
     analyzeBtn.addEventListener('click', analyze);
     rerollBtn.addEventListener('click', analyze);
     shareBtn.addEventListener('click', copyShareText);
-    dramaRange.addEventListener('input', updateDramaLabel);
+    vibeRange.addEventListener('input', updateVibeLabel);
 
-    updateDramaLabel();
+    updateVibeLabel();
   </script></body>
 </html>
