@@ -3,567 +3,257 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Main Character Quest | Party Pixels</title>
-  <meta name="description" content="Find out your role in the internet storyline. Main character, NPC, villain arc, or secret final boss?">
-  <link rel="stylesheet" href="/styles.css">
-  <style>
-    :root {
-      --mcq-bg-1: #120f2c;
-      --mcq-bg-2: #231a52;
-      --mcq-panel: rgba(18, 15, 44, 0.76);
-      --mcq-border: rgba(255, 255, 255, 0.14);
-      --mcq-text: #f7f4ff;
-      --mcq-muted: #cbc2f5;
-      --mcq-accent: #8ef3ff;
-      --mcq-accent-2: #ff8dd8;
-      --mcq-success: #9dffb2;
-      --mcq-shadow: 0 16px 50px rgba(0, 0, 0, 0.35);
-      --mcq-radius: 24px;
-      --mcq-max: 1120px;
-    }* { box-sizing: border-box; }
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find out your role in the internet storyline. Main character, chaotic gremlin, or background NPC?">
+  <link rel="stylesheet" href="/pp-main.css">  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612"
+     crossorigin="anonymous"></script>  <style>
+    .mcq-hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
 
-body.mcq-page {
-  margin: 0;
-  color: var(--mcq-text);
-  background:
-    radial-gradient(circle at top left, rgba(255, 141, 216, 0.18), transparent 30%),
-    radial-gradient(circle at top right, rgba(142, 243, 255, 0.18), transparent 32%),
-    linear-gradient(180deg, var(--mcq-bg-2), var(--mcq-bg-1));
-  min-height: 100vh;
-}
+    .mcq-cover {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+      background: rgba(255,255,255,0.04);
+    }
 
-.mcq-shell {
-  width: min(calc(100% - 32px), var(--mcq-max));
-  margin: 0 auto;
-  padding: 28px 0 64px;
-}
+    .mcq-cover img {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
 
-.mcq-hero {
-  position: relative;
-  overflow: hidden;
-  border-radius: 32px;
-  min-height: 420px;
-  background:
-    linear-gradient(135deg, rgba(15, 11, 39, 0.4), rgba(15, 11, 39, 0.72)),
-    radial-gradient(circle at 15% 20%, rgba(255, 141, 216, 0.25), transparent 22%),
-    radial-gradient(circle at 82% 30%, rgba(142, 243, 255, 0.2), transparent 24%),
-    #1a1440;
-  border: 1px solid var(--mcq-border);
-  box-shadow: var(--mcq-shadow);
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 24px;
-  padding: 28px;
-  isolation: isolate;
-}
+    .mcq-panel {
+      border-radius: 18px;
+      padding: 14px;
+      background:
+        radial-gradient(circle at top, rgba(255, 92, 255, 0.12), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(92, 138, 255, 0.16), transparent 65%),
+        linear-gradient(145deg, rgba(10, 14, 35, 0.96), rgba(4, 5, 14, 0.98));
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
+    }
 
-.mcq-hero::after {
-  content: "";
-  position: absolute;
-  inset: auto -80px -120px auto;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.14), transparent 68%);
-  pointer-events: none;
-  z-index: -1;
-}
+    .mcq-form {
+      display: grid;
+      gap: 12px;
+    }
 
-.mcq-copy {
-  align-self: center;
-  display: grid;
-  gap: 16px;
-}
+    .mcq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
-.mcq-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--mcq-accent);
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 800;
-}
+    .mcq-field label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
 
-.mcq-copy h1 {
-  margin: 0;
-  font-size: clamp(2.4rem, 5vw, 4.6rem);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-}
+    .mcq-input,
+    .mcq-select,
+    .mcq-range {
+      width: 100%;
+    }
 
-.mcq-copy p {
-  margin: 0;
-  max-width: 56ch;
-  color: var(--mcq-muted);
-  font-size: 1.05rem;
-  line-height: 1.6;
-}
+    .mcq-input,
+    .mcq-select {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(90,94,170,0.8);
+      background: rgba(7,9,26,0.95);
+      color: var(--text);
+      font-size: 13px;
+    }
 
-.mcq-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 0;
-  margin: 8px 0 0;
-  list-style: none;
-}
+    .mcq-range-wrap {
+      display: grid;
+      gap: 6px;
+    }
 
-.mcq-badges li {
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--mcq-text);
-  font-weight: 700;
-  font-size: 0.92rem;
-}
+    .mcq-range-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
 
-.mcq-cover-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 360px;
-}
+    .mcq-range-value {
+      color: var(--text);
+      font-weight: 700;
+    }
 
-.mcq-cover-card {
-  position: relative;
-  width: min(100%, 360px);
-  aspect-ratio: 3 / 4;
-  border-radius: 28px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.12);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)),
-    #140f34;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.45);
-  transform: rotate(3deg);
-}
+    .mcq-btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-.mcq-cover-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+    .mcq-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 128, 210, 0.8);
+      background: radial-gradient(circle at top, rgba(255, 92, 255, 0.16), rgba(10, 11, 29, 0.98));
+      color: var(--text);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-.mcq-cover-fallback {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: end start;
-  padding: 20px;
-  background:
-    linear-gradient(180deg, rgba(10, 10, 30, 0.1), rgba(10, 10, 30, 0.78)),
-    radial-gradient(circle at 25% 25%, rgba(255, 141, 216, 0.45), transparent 24%),
-    radial-gradient(circle at 75% 20%, rgba(142, 243, 255, 0.42), transparent 20%),
-    linear-gradient(135deg, #3b257f 0%, #1b153e 100%);
-}
+    .mcq-btn.alt {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.14);
+    }
 
-.mcq-cover-fallback span {
-  display: inline-block;
-  max-width: 180px;
-  font-size: 2.1rem;
-  line-height: 0.9;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  text-shadow: 0 8px 30px rgba(0,0,0,0.4);
-}
+    .mcq-result {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
 
-.mcq-cover-tag {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(15, 11, 39, 0.78);
-  border: 1px solid rgba(255,255,255,0.14);
-  color: var(--mcq-accent);
-  font-weight: 800;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
+    .mcq-status {
+      display: inline-flex;
+      width: fit-content;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      border: 1px solid rgba(158, 161, 216, 0.55);
+      background: rgba(7, 9, 25, 0.95);
+    }
 
-.mcq-main {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 24px;
-  margin-top: 28px;
-}
+    .mcq-role {
+      margin: 0;
+      font-size: clamp(22px, 4vw, 34px);
+    }
 
-.mcq-panel {
-  background: var(--mcq-panel);
-  border: 1px solid var(--mcq-border);
-  border-radius: var(--mcq-radius);
-  box-shadow: var(--mcq-shadow);
-  backdrop-filter: blur(10px);
-}
+    .mcq-flavor,
+    .mcq-share {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
 
-.mcq-form {
-  padding: 26px;
-  display: grid;
-  gap: 18px;
-}
+    .mcq-share {
+      color: var(--text);
+      opacity: 0.92;
+    }
 
-.mcq-form h2,
-.mcq-info h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  letter-spacing: -0.03em;
-}
+    @media (max-width: 780px) {
+      .mcq-hero,
+      .mcq-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style></head>
+<body>
+  <div class="page"><div id="header"></div>
 
-.mcq-form p,
-.mcq-info p {
-  margin: 0;
-  color: var(--mcq-muted);
-  line-height: 1.6;
-}
+<section class="hero">
+  <div class="hero-kicker">quiz · fake analysis · internet nonsense</div>
+  <h1 class="hero-title">Main Character Quest</h1>
+  <p class="hero-sub">
+    Type your name, pick your vibe, and find out your role in the internet storyline.
+  </p>
+  <div class="hero-strip">
+    <div class="badge"><span class="badge-dot"></span>Fast result</div>
+    <div class="badge">Shareable</div>
+    <div class="badge">Chaotic energy scan</div>
+  </div>
+</section>
 
-.mcq-field {
-  display: grid;
-  gap: 8px;
-}
+<section class="mcq-hero">
+  <div class="mcq-cover">
+    <img src="/media/main-character-quest-cover.jpg" alt="Main Character Quest cover art">
+  </div>
 
-.mcq-field label {
-  font-size: 0.9rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--mcq-accent);
-}
+  <div class="mcq-panel">
+    <div class="mcq-form">
+      <div class="mcq-grid">
+        <div class="mcq-field">
+          <label for="playerName">Your name</label>
+          <input id="playerName" class="mcq-input" type="text" maxlength="24" placeholder="Type your name...">
+        </div>
 
-.mcq-input,
-.mcq-select,
-.mcq-range {
-  width: 100%;
-}
-
-.mcq-input,
-.mcq-select {
-  appearance: none;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px;
-  background: rgba(255,255,255,0.07);
-  color: var(--mcq-text);
-  padding: 14px 16px;
-  font: inherit;
-  outline: none;
-  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
-}
-
-.mcq-input::placeholder {
-  color: rgba(247, 244, 255, 0.55);
-}
-
-.mcq-input:focus,
-.mcq-select:focus {
-  border-color: var(--mcq-accent);
-  background: rgba(255,255,255,0.1);
-  transform: translateY(-1px);
-}
-
-.mcq-range {
-  accent-color: var(--mcq-accent-2);
-  cursor: pointer;
-}
-
-.mcq-range-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  color: var(--mcq-muted);
-  font-size: 0.95rem;
-}
-
-.mcq-range-value {
-  color: var(--mcq-success);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.mcq-button {
-  appearance: none;
-  border: 0;
-  border-radius: 18px;
-  background: linear-gradient(135deg, var(--mcq-accent-2), var(--mcq-accent));
-  color: #17102f;
-  font: inherit;
-  font-weight: 900;
-  padding: 16px 18px;
-  cursor: pointer;
-  box-shadow: 0 16px 30px rgba(0,0,0,0.25);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
-}
-
-.mcq-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 22px 36px rgba(0,0,0,0.28);
-}
-
-.mcq-button:active {
-  transform: translateY(0);
-}
-
-.mcq-button.secondary {
-  background: rgba(255,255,255,0.08);
-  color: var(--mcq-text);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: none;
-}
-
-.mcq-result {
-  padding: 26px;
-  display: grid;
-  gap: 18px;
-  align-content: start;
-}
-
-.mcq-card {
-  border-radius: 22px;
-  padding: 22px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-  border: 1px solid rgba(255,255,255,0.09);
-  min-height: 250px;
-  display: grid;
-  gap: 14px;
-  align-content: start;
-}
-
-.mcq-status {
-  display: inline-flex;
-  width: fit-content;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(142, 243, 255, 0.12);
-  color: var(--mcq-accent);
-  border: 1px solid rgba(142, 243, 255, 0.18);
-  font-weight: 800;
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.mcq-role {
-  margin: 0;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-}
-
-.mcq-flavor,
-.mcq-share-text {
-  margin: 0;
-  color: var(--mcq-muted);
-  line-height: 1.65;
-  white-space: pre-line;
-}
-
-.mcq-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.mcq-info {
-  padding: 26px;
-  display: grid;
-  gap: 18px;
-}
-
-.mcq-list {
-  display: grid;
-  gap: 10px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.mcq-list li {
-  padding: 14px 16px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: var(--mcq-text);
-  line-height: 1.55;
-}
-
-.mcq-small {
-  font-size: 0.92rem;
-  color: var(--mcq-muted);
-}
-
-.mcq-footer {
-  margin-top: 22px;
-  text-align: center;
-  color: var(--mcq-muted);
-  font-size: 0.92rem;
-}
-
-@media (max-width: 920px) {
-  .mcq-hero,
-  .mcq-main {
-    grid-template-columns: 1fr;
-  }
-
-  .mcq-cover-wrap {
-    order: -1;
-    min-height: unset;
-  }
-
-  .mcq-cover-card {
-    width: min(100%, 300px);
-    transform: rotate(0deg);
-  }
-}
-
-@media (max-width: 640px) {
-  .mcq-shell {
-    width: min(calc(100% - 20px), var(--mcq-max));
-    padding-top: 16px;
-  }
-
-  .mcq-hero,
-  .mcq-form,
-  .mcq-result,
-  .mcq-info {
-    padding: 18px;
-  }
-
-  .mcq-hero {
-    border-radius: 24px;
-    min-height: unset;
-  }
-
-  .mcq-cover-card {
-    width: min(100%, 250px);
-  }
-
-  .mcq-actions {
-    flex-direction: column;
-  }
-
-  .mcq-button {
-    width: 100%;
-  }
-}
-
-  </style>
-</head>
-<body class="mcq-page">
-  <main class="mcq-shell">
-    <section class="mcq-hero">
-      <div class="mcq-copy">
-        <div class="mcq-kicker">Party Pixels Web Toy</div>
-        <h1>Main Character Quest</h1>
-        <p>
-          Type your name, set your current vibe, and let the fake internet oracle decide whether you're the main character, comic relief, secret final boss, or a tragic background NPC.
-        </p>
-        <ul class="mcq-badges" aria-label="Game highlights">
-          <li>Fast result</li>
-          <li>Meme energy</li>
-          <li>Shareable role</li>
-          <li>Chaotic aura scan</li>
-        </ul>
-      </div><div class="mcq-cover-wrap">
-    <div class="mcq-cover-card" aria-label="Main Character Quest cover image">
-      <div class="mcq-cover-tag">Cover</div>
-      <!-- Replace this fallback block with an <img> when you have final cover art -->
-      <div class="mcq-cover-fallback">
-        <span>Main Character Quest</span>
+        <div class="mcq-field">
+          <label for="vibeSelect">Current vibe</label>
+          <select id="vibeSelect" class="mcq-select">
+            <option value="wholesome">Wholesome</option>
+            <option value="chaotic" selected>Chaotic</option>
+            <option value="villain">Villain</option>
+            <option value="tired">Tired</option>
+            <option value="delusional">Delusional</option>
+          </select>
+        </div>
       </div>
-      <!-- Example final image:
-      <img src="/media/main-character-quest-cover.png" alt="Main Character Quest cover art">
-      -->
+
+      <div class="mcq-field mcq-range-wrap">
+        <label for="dramaRange">Plot drama level</label>
+        <input id="dramaRange" class="mcq-range" type="range" min="0" max="100" value="68">
+        <div class="mcq-range-meta">
+          <span>Low stakes</span>
+          <strong id="dramaValue" class="mcq-range-value">Chaotic</strong>
+          <span>Season finale</span>
+        </div>
+      </div>
+
+      <div class="mcq-btn-row">
+        <button id="analyzeBtn" class="mcq-btn" type="button">Start analysis</button>
+        <button id="rerollBtn" class="mcq-btn alt" type="button">Reroll</button>
+        <button id="shareBtn" class="mcq-btn alt" type="button">Copy share text</button>
+      </div>
+    </div>
+
+    <div class="mcq-result" aria-live="polite">
+      <div id="statusBadge" class="mcq-status">Awaiting analysis</div>
+      <h2 id="roleTitle" class="mcq-role">Unknown Internet Creature</h2>
+      <p id="flavorText" class="mcq-flavor">Enter your name and let the fake internet oracle decide your destiny.</p>
+      <p id="shareText" class="mcq-share">My internet storyline role is: Unknown Internet Creature — according to Party Pixels.</p>
     </div>
   </div>
 </section>
 
-<section class="mcq-main">
-  <section class="mcq-panel mcq-form" aria-labelledby="mcq-form-title">
-    <h2 id="mcq-form-title">Start your analysis</h2>
-    <p>
-      This is not real science. It is much more powerful: fake internet science.
-    </p>
+<div id="footer"></div>
 
-    <div class="mcq-field">
-      <label for="playerName">Your name</label>
-      <input id="playerName" class="mcq-input" type="text" maxlength="24" placeholder="Type your name...">
-    </div>
+  </div>  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  <script src="/pp-auth.js"></script>  <script>
+    function loadPart(id, file) {
+      fetch(file)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById(id).innerHTML = html;
+        })
+        .catch(err => console.error(`Load error in ${file}:`, err));
+    }
 
-    <div class="mcq-field">
-      <label for="vibeSelect">Current vibe</label>
-      <select id="vibeSelect" class="mcq-select">
-        <option value="wholesome">Wholesome</option>
-        <option value="chaotic" selected>Chaotic</option>
-        <option value="villain">Villain</option>
-        <option value="tired">Tired</option>
-        <option value="delusional">Delusional</option>
-      </select>
-    </div>
-
-    <div class="mcq-field">
-      <label for="dramaRange">Plot drama level</label>
-      <input id="dramaRange" class="mcq-range" type="range" min="0" max="100" value="68">
-      <div class="mcq-range-meta">
-        <span>Low stakes</span>
-        <strong id="dramaValue" class="mcq-range-value">Chaotic</strong>
-        <span>Season finale</span>
-      </div>
-    </div>
-
-    <button id="analyzeBtn" class="mcq-button" type="button">Start Analysis</button>
-  </section>
-
-  <section class="mcq-panel mcq-result" aria-labelledby="mcq-result-title">
-    <h2 id="mcq-result-title">Your role</h2>
-    <p>Press the button and the quest scanner will assign your internet storyline role.</p>
-
-    <article class="mcq-card" aria-live="polite">
-      <div id="statusBadge" class="mcq-status">Awaiting analysis</div>
-      <h3 id="roleTitle" class="mcq-role">Unknown Internet Creature</h3>
-      <p id="flavorText" class="mcq-flavor">Enter your name, choose your vibe, and let the digital nonsense decide your destiny.</p>
-      <p id="shareText" class="mcq-share-text">My internet storyline role is: Unknown Internet Creature — according to Party Pixels.</p>
-    </article>
-
-    <div class="mcq-actions">
-      <button id="shareBtn" class="mcq-button secondary" type="button">Copy Share Text</button>
-      <button id="rerollBtn" class="mcq-button secondary" type="button">Reroll Fate</button>
-    </div>
-  </section>
-</section>
-
-<section class="mcq-panel mcq-info" aria-labelledby="mcq-about-title">
-  <h2 id="mcq-about-title">How it works</h2>
-  <p>
-    Main Character Quest reads your name, vibe, and current drama level, then pretends to perform an extremely serious aura scan.
-  </p>
-  <ul class="mcq-list">
-    <li><strong>Main Character:</strong> your life currently feels like a pilot episode with too much soundtrack.</li>
-    <li><strong>Comic Relief:</strong> the plot is shaky but at least you're making it funnier.</li>
-    <li><strong>Villain Arc:</strong> something happened and now you walk away from explosions emotionally.</li>
-    <li><strong>Final Boss:</strong> suspiciously calm, definitely hiding a second phase.</li>
-  </ul>
-  <p class="mcq-small">
-    Built for Party Pixels. Fake analysis. Real chaos.
-  </p>
-</section>
-
-<p class="mcq-footer">Main Character Quest • Party Pixels Web Toy</p>
-
-  </main>  <script>
+    loadPart('header', '/header.html');
+    loadPart('footer', '/footer.html');
+  </script>  <script src="/tipjar.js"></script>  <script>
     const playerName = document.getElementById('playerName');
     const vibeSelect = document.getElementById('vibeSelect');
     const dramaRange = document.getElementById('dramaRange');
@@ -586,74 +276,29 @@ body.mcq-page {
 
     const roles = {
       wholesome: [
-        {
-          role: 'Main Character',
-          flavor: '{name}, you radiate warm protagonist energy. People trust you even when the plot makes no sense.'
-        },
-        {
-          role: 'Loyal Side Character',
-          flavor: '{name}, you hold the team together while everyone else is busy becoming a problem.'
-        },
-        {
-          role: 'Comic Relief',
-          flavor: '{name}, the universe keeps throwing nonsense at you and somehow you make it charming.'
-        }
+        { role: 'Main Character', flavor: '{name}, you radiate warm protagonist energy. People trust you even when the plot makes no sense.' },
+        { role: 'Loyal Side Character', flavor: '{name}, you hold the team together while everyone else is busy becoming a problem.' },
+        { role: 'Comic Relief', flavor: '{name}, the universe keeps throwing nonsense at you and somehow you make it charming.' }
       ],
       chaotic: [
-        {
-          role: 'Main Character',
-          flavor: '{name}, your storyline is loud, impulsive, and weirdly cinematic. The audience is locked in.'
-        },
-        {
-          role: 'Secret Final Boss',
-          flavor: '{name}, you look friendly, but your theme music definitely starts with a distorted choir.'
-        },
-        {
-          role: 'Comic Relief',
-          flavor: '{name}, every scene gets 38% less stable the moment you appear.'
-        }
+        { role: 'Main Character', flavor: '{name}, your storyline is loud, impulsive, and weirdly cinematic. The audience is locked in.' },
+        { role: 'Secret Final Boss', flavor: '{name}, you look friendly, but your theme music definitely starts with a distorted choir.' },
+        { role: 'Comic Relief', flavor: '{name}, every scene gets 38% less stable the moment you appear.' }
       ],
       villain: [
-        {
-          role: 'Villain Arc',
-          flavor: '{name}, something happened. Now you deliver normal sentences like threats and stare at sunsets aggressively.'
-        },
-        {
-          role: 'Secret Final Boss',
-          flavor: '{name}, your aura says phase two unlocks after dramatic eye contact.'
-        },
-        {
-          role: 'Rival Character',
-          flavor: '{name}, you are not evil. You are just committed to being a problem with style.'
-        }
+        { role: 'Villain Arc', flavor: '{name}, something happened. Now you deliver normal sentences like threats and stare at sunsets aggressively.' },
+        { role: 'Secret Final Boss', flavor: '{name}, your aura says phase two unlocks after dramatic eye contact.' },
+        { role: 'Rival Character', flavor: '{name}, you are not evil. You are just committed to being a problem with style.' }
       ],
       tired: [
-        {
-          role: 'Background NPC',
-          flavor: '{name}, you are spiritually standing near a wall saying “rough week, huh?” and honestly that is powerful.'
-        },
-        {
-          role: 'Loyal Side Character',
-          flavor: '{name}, exhausted but dependable. You carry the plot while wishing nobody had noticed.'
-        },
-        {
-          role: 'Hidden Legend',
-          flavor: '{name}, you look tired now, but the lore says you become terrifying after one decent nap.'
-        }
+        { role: 'Background NPC', flavor: '{name}, you are spiritually standing near a wall saying rough week, huh? and honestly that is powerful.' },
+        { role: 'Loyal Side Character', flavor: '{name}, exhausted but dependable. You carry the plot while wishing nobody had noticed.' },
+        { role: 'Hidden Legend', flavor: '{name}, you look tired now, but the lore says you become terrifying after one decent nap.' }
       ],
       delusional: [
-        {
-          role: 'Main Character',
-          flavor: '{name}, reality may disagree with you, but your confidence already secured the opening credits.'
-        },
-        {
-          role: 'Chosen One?',
-          flavor: '{name}, there is no proof you were chosen, but that has never stopped you before.'
-        },
-        {
-          role: 'Secret Final Boss',
-          flavor: '{name}, the prophecy is fake, the sword is decorative, and yet somehow you are still winning.'
-        }
+        { role: 'Main Character', flavor: '{name}, reality may disagree with you, but your confidence already secured the opening credits.' },
+        { role: 'Chosen One?', flavor: '{name}, there is no proof you were chosen, but that has never stopped you before.' },
+        { role: 'Secret Final Boss', flavor: '{name}, the prophecy is fake, the sword is decorative, and yet somehow you are still winning.' }
       ]
     };
 
@@ -687,7 +332,7 @@ body.mcq-page {
     function analyze() {
       statusBadge.textContent = 'Scanning aura';
       roleTitle.textContent = 'Analyzing...';
-      flavorText.textContent = 'Consulting the meme archives, checking your digital footprint, and summoning fake internet science...';
+      flavorText.textContent = 'Consulting the meme archives and summoning fake internet science...';
       shareText.textContent = 'Preparing share text...';
 
       window.clearTimeout(window.mcqTimer);
@@ -697,7 +342,7 @@ body.mcq-page {
         roleTitle.textContent = result.role;
         flavorText.textContent = result.flavor;
         shareText.textContent = result.share;
-      }, 1100);
+      }, 900);
     }
 
     async function copyShareText() {
