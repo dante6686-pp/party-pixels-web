@@ -232,6 +232,7 @@
       <h2 id="roleTitle" class="mcq-role">Unknown Internet Creature</h2>
       <p id="flavorText" class="mcq-flavor">Enter your name and let the fake internet oracle decide your destiny.</p>
       <p id="dramaText" class="mcq-flavor">Plot drama level: Unknown</p>
+      <p id="energyText" class="mcq-flavor">Main Character Energy: --%</p>
       <p id="shareText" class="mcq-share">My internet storyline role is: Unknown Internet Creature — according to Party Pixels.</p>
     </div>
   </div>
@@ -263,6 +264,7 @@
     const roleTitle = document.getElementById('roleTitle');
     const flavorText = document.getElementById('flavorText');
     const dramaText = document.getElementById('dramaText');
+    const energyText = document.getElementById('energyText');
     const shareText = document.getElementById('shareText');
 
     const vibeLabels = ['Wholesome', 'Chaotic', 'Villain', 'Tired', 'Delusional'];
@@ -360,19 +362,63 @@ const roles = {
     }
 
     function pickRole() {
-      const vibeMap = ['wholesome', 'chaotic', 'villain', 'tired', 'delusional'];
-      const vibe = vibeMap[Number(vibeRange.value)] || 'chaotic';
-      const name = playerName.value.trim() || 'You';
-      const pool = roles[vibe] || roles.chaotic;
-      const selected = pool[Math.floor(Math.random() * pool.length)];
-      let drama = dramaLabels[Math.floor(Math.random() * dramaLabels.length)];
+  const vibeMap = ['wholesome', 'chaotic', 'villain', 'tired', 'delusional'];
+  const vibe = vibeMap[Number(vibeRange.value)] || 'chaotic';
+  const name = playerName.value.trim() || 'You';
+  const pool = roles[vibe] || roles.chaotic;
+  const selected = pool[Math.floor(Math.random() * pool.length)];
+  let drama = dramaLabels[Math.floor(Math.random() * dramaLabels.length)];
+  let energy = Math.floor(Math.random() * 101);
 
-      if (selected.role === 'Background NPC' || selected.role === 'Loyal Side Character') drama = dramaLabels[1];
-      if (selected.role === 'Main Character' || selected.role === 'Villain Arc' || selected.role === 'Rival Character') drama = dramaLabels[2];
-      if (selected.role === 'Secret Final Boss') drama = dramaLabels[3];
-      if (selected.role === 'Comic Relief' || selected.role === 'Chosen One?') {
-        drama = dramaLabels[Math.random() > 0.5 ? 1 : 2];
-      }
+  if (selected.role === 'Background NPC') {
+    drama = dramaLabels[1];
+    energy = 12 + Math.floor(Math.random() * 25);
+  }
+
+  if (selected.role === 'Loyal Side Character') {
+    drama = dramaLabels[1];
+    energy = 35 + Math.floor(Math.random() * 21);
+  }
+
+  if (selected.role === 'Main Character') {
+    drama = dramaLabels[2];
+    energy = 78 + Math.floor(Math.random() * 23);
+  }
+
+  if (selected.role === 'Villain Arc' || selected.role === 'Rival Character') {
+    drama = dramaLabels[2];
+    energy = 60 + Math.floor(Math.random() * 31);
+  }
+
+  if (selected.role === 'Secret Final Boss') {
+    drama = dramaLabels[3];
+    energy = 88 + Math.floor(Math.random() * 13);
+  }
+
+  if (selected.role === 'Comic Relief' || selected.role === 'Chosen One?') {
+    drama = dramaLabels[Math.random() > 0.5 ? 1 : 2];
+    energy = 50 + Math.floor(Math.random() * 36);
+  }
+
+  if (selected.role === 'Hidden Legend' || selected.role === 'Late Game Hero') {
+    drama = dramaLabels[2];
+    energy = 64 + Math.floor(Math.random() * 28);
+  }
+
+  if (selected.role === 'Self-Declared Hero' || selected.role === 'Prophecy Enthusiast') {
+    drama = dramaLabels[2];
+    energy = 72 + Math.floor(Math.random() * 24);
+  }
+
+  return {
+    role: selected.role,
+    flavor: selected.flavor.replaceAll('{name}', name),
+    drama: drama.label,
+    energy,
+    twist: plotTwists[Math.floor(Math.random() * plotTwists.length)],
+    share: `My internet storyline role is: ${selected.role} — Main Character Energy ${energy}% — according to Party Pixels.`
+  };
+}
 
       return {
   role: selected.role,
@@ -390,6 +436,7 @@ const roles = {
       shareText.textContent = 'Preparing share text...';
       dramaText.textContent = 'Plot drama level: Calculating...';
       dramaValue.textContent = 'Scanning';
+      energyText.textContent = 'Main Character Energy: Calculating...';
 
       window.clearTimeout(window.mcqTimer);
       window.mcqTimer = window.setTimeout(() => {
@@ -397,9 +444,10 @@ const roles = {
         statusBadge.textContent = 'Analysis complete';
         roleTitle.textContent = result.role;
         flavorText.textContent = result.flavor + " " + result.twist;
-        dramaText.textContent = `Plot drama level: ${result.drama}`;
-        dramaValue.textContent = result.drama;
-        shareText.textContent = result.share;
+dramaText.textContent = `Plot drama level: ${result.drama}`;
+energyText.textContent = `Main Character Energy: ${result.energy}%`;
+dramaValue.textContent = result.drama;
+shareText.textContent = result.share;
       }, 900);
     }
 
