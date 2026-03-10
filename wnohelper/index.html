@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -9,40 +10,12 @@
 <body>
 
 <header class="topbar">
-  <div class="logo">WNO HELPER</div>
-  <button id="resetBtn" class="hidden">Nowa gra</button>
+<div class="brand">WNO HELPER</div>
+<button id="resetBtn" class="btn">Nowa gra</button>
 </header>
 
-<main>
-
-<section id="setup">
-<h2>Start gry</h2>
-
-<label>Liczba graczy
-<select id="playerCount">
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4" selected>4</option>
-<option value="5">5</option>
-</select>
-</label>
-
-<label>Startowe HP
-<input id="startHP" type="number" value="12">
-</label>
-
-<div id="playerNames"></div>
-
-<button id="startBtn">Start gry</button>
-
-</section>
-
-
-<section id="game" class="hidden">
-
-<div class="status">
-<span>Runda <b id="round">1</b></span>
-<span>Tura: <b id="currentPlayer">—</b></span>
+<div class="panel">
+Runda <b id="round">1</b> • Tura: <b id="currentPlayer">—</b>
 </div>
 
 <div id="players" class="players"></div>
@@ -51,10 +24,6 @@
 <button id="nextTurn">Następny gracz</button>
 <button id="undo">Cofnij</button>
 </div>
-
-</section>
-
-</main>
 
 <script src="app.js"></script>
 </body>
