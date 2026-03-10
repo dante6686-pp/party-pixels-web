@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WNO Helper App</title>
+  <link rel="stylesheet" href="wno_helper_style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Party Pixels Helper</div>
+        <h1>WNO Helper App</h1>
+      </div>
+      <button id="resetAllBtn" class="ghost danger">Reset</button>
+    </header>
+
+    <main>
+      <section id="setupScreen" class="panel active">
+        <h2>Nowa gra</h2>
+        <p class="muted">Ustaw graczy i startowe HP.</p>
+
+        <div class="field-group">
+          <label for="playerCount">Liczba graczy</label>
+          <select id="playerCount">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="startingHp">Startowe HP</label>
+          <input id="startingHp" type="number" min="1" max="99" value="12" />
+        </div>
+
+        <div id="playerNameFields" class="player-name-fields"></div>
+
+        <div class="setup-actions">
+          <button id="startGameBtn" class="primary">Start gry</button>
+          <button id="loadSavedBtn" class="ghost">Wczytaj zapis</button>
+        </div>
+      </section>
+
+      <section id="gameScreen" class="panel hidden">
+        <div class="status-panel">
+          <div class="status-block">
+            <span class="status-label">Runda</span>
+            <strong id="roundValue">1</strong>
+          </div>
+          <div class="status-block wide">
+            <span class="status-label">Aktualny gracz</span>
+            <strong id="currentPlayerValue">—</strong>
+          </div>
+        </div>
+
+        <div id="turnBanner" class="turn-banner">
+          <div class="turn-banner-title">Normalna tura</div>
+          <div id="turnBannerText" class="turn-banner-text">Gracz może dobrać kartę, zagrać kartę i zaatakować.</div>
+        </div>
+
+        <div class="attack-panel">
+          <div>
+            <div class="status-label">Kogo zaatakowano w tej turze?</div>
+            <div class="muted small">To służy do zasady: po 2 atakach z rzędu na tego samego gracza, atakowany dobiera kartę.</div>
+          </div>
+          <div class="attack-controls">
+            <select id="attackTargetSelect"></select>
+            <button id="confirmAttackBtn" class="ghost">Zapisz atak</button>
+          </div>
+          <div id="attackResult" class="attack-result muted"></div>
+        </div>
+
+        <div id="playersContainer" class="players-grid"></div>
+
+        <div class="bottom-actions">
+          <button id="nextPlayerBtn" class="primary">Następny gracz</button>
+          <button id="backBtn" class="ghost">Cofnij turę</button>
+          <button id="newGameBtn" class="ghost">Nowa gra</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="playerCardTemplate">
+    <article class="player-card">
+      <div class="player-card-top">
+        <div>
+          <h3 class="player-name"></h3>
+          <div class="player-meta"></div>
+        </div>
+        <div class="badges">
+          <span class="badge active-badge hidden">TURA</span>
+          <span class="badge disgrace-badge hidden">HAŃBA</span>
+          <span class="badge out-badge hidden">ODPADŁ</span>
+        </div>
+      </div>
+
+      <div class="hp-row">
+        <button class="hp-btn minus">−</button>
+        <div class="hp-value-wrap">
+          <span class="status-label">HP</span>
+          <strong class="hp-value">12</strong>
+        </div>
+        <button class="hp-btn plus">+</button>
+      </div>
+
+      <div class="card-actions">
+        <button class="ghost disgrace-toggle">Przełącz Hańbę</button>
+      </div>
+
+      <div class="card-footer muted small"></div>
+    </article>
+  </template>
+
+  <script src="wno_helper_app.js"></script>
+</body>
+</html>
