@@ -1,5 +1,16 @@
 [
   {
+  "id": "main-character-quest",
+  "title": "Main Character Quest",
+  "type": "Web Toy",
+  "status": "live",
+  "desc": "Find out your role in the internet storyline. Main character, chaotic gremlin, or background NPC?",
+  "tags": ["quiz", "generator", "meme"],
+  "href": "/main-character-quest.html",
+  "thumb": "/media/main-character-quest-cover.jpg",
+  "added": "2026-03-10"
+  },
+  {
     "id": "noto",
     "title": "Night of the Oni",
     "type": "Game",
