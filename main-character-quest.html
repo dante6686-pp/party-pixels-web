@@ -274,33 +274,62 @@
       { key: 'critical', label: 'Critical' }
     ];
 
-    const roles = {
-      wholesome: [
-        { role: 'Main Character', flavor: '{name}, you radiate warm protagonist energy. People trust you even when the plot makes no sense.' },
-        { role: 'Loyal Side Character', flavor: '{name}, you hold the team together while everyone else is busy becoming a problem.' },
-        { role: 'Comic Relief', flavor: '{name}, the universe keeps throwing nonsense at you and somehow you make it charming.' }
-      ],
-      chaotic: [
-        { role: 'Main Character', flavor: '{name}, your storyline is loud, impulsive, and weirdly cinematic. The audience is locked in.' },
-        { role: 'Secret Final Boss', flavor: '{name}, you look friendly, but your theme music definitely starts with a distorted choir.' },
-        { role: 'Comic Relief', flavor: '{name}, every scene gets 38% less stable the moment you appear.' }
-      ],
-      villain: [
-        { role: 'Villain Arc', flavor: '{name}, something happened. Now you deliver normal sentences like threats and stare at sunsets aggressively.' },
-        { role: 'Secret Final Boss', flavor: '{name}, your aura says phase two unlocks after dramatic eye contact.' },
-        { role: 'Rival Character', flavor: '{name}, you are not evil. You are just committed to being a problem with style.' }
-      ],
-      tired: [
-        { role: 'Background NPC', flavor: '{name}, you are spiritually standing near a wall saying rough week, huh? and honestly that is powerful.' },
-        { role: 'Loyal Side Character', flavor: '{name}, exhausted but dependable. You carry the plot while wishing nobody had noticed.' },
-        { role: 'Hidden Legend', flavor: '{name}, you look tired now, but the lore says you become terrifying after one decent nap.' }
-      ],
-      delusional: [
-        { role: 'Main Character', flavor: '{name}, reality may disagree with you, but your confidence already secured the opening credits.' },
-        { role: 'Chosen One?', flavor: '{name}, there is no proof you were chosen, but that has never stopped you before.' },
-        { role: 'Secret Final Boss', flavor: '{name}, the prophecy is fake, the sword is decorative, and yet somehow you are still winning.' }
-      ]
-    };
+const roles = {
+  wholesome: [
+    { role: 'Main Character', flavor: '{name}, you radiate warm protagonist energy. People trust you even when the plot makes no sense.' },
+    { role: 'Loyal Side Character', flavor: '{name}, you hold the team together while everyone else is busy becoming a problem.' },
+    { role: 'Comic Relief', flavor: '{name}, the universe keeps throwing nonsense at you and somehow you make it charming.' },
+    { role: 'Hidden Legend', flavor: '{name}, people underestimate you, but the lore says you secretly carry the whole story.' },
+    { role: 'Mentor Character', flavor: '{name}, you are the calm voice before the chaos begins.' },
+    { role: 'Town Hero', flavor: '{name}, random NPCs trust you with side quests and emotional problems.' },
+    { role: 'Soft Protagonist', flavor: '{name}, your storyline is wholesome but suspiciously important.' },
+    { role: 'Unexpected Leader', flavor: '{name}, nobody planned for you to lead the quest, yet here we are.' }
+  ],
+
+  chaotic: [
+    { role: 'Main Character', flavor: '{name}, your storyline is loud, impulsive, and weirdly cinematic. The audience is locked in.' },
+    { role: 'Secret Final Boss', flavor: '{name}, you look friendly, but your theme music definitely starts with a distorted choir.' },
+    { role: 'Comic Relief', flavor: '{name}, every scene gets 38% less stable the moment you appear.' },
+    { role: 'Chaos Gremlin', flavor: '{name}, your main skill is turning calm situations into unforgettable disasters.' },
+    { role: 'Plot Accelerator', flavor: '{name}, whenever you show up the story suddenly moves twice as fast.' },
+    { role: 'Wild Card', flavor: '{name}, nobody knows what you will do next. Including you.' },
+    { role: 'Side Quest Generator', flavor: '{name}, every interaction with you somehow becomes a new mission.' },
+    { role: 'Glitch Character', flavor: '{name}, the narrative engine is not fully sure how to process you.' }
+  ],
+
+  villain: [
+    { role: 'Villain Arc', flavor: '{name}, something happened. Now you deliver normal sentences like threats and stare at sunsets aggressively.' },
+    { role: 'Secret Final Boss', flavor: '{name}, your aura says phase two unlocks after dramatic eye contact.' },
+    { role: 'Rival Character', flavor: '{name}, you are not evil. You are just committed to being a problem with style.' },
+    { role: 'Mastermind', flavor: '{name}, you have definitely been planning something three episodes ahead.' },
+    { role: 'Dark Protagonist', flavor: '{name}, technically you are the hero… but people are getting nervous.' },
+    { role: 'Antihero', flavor: '{name}, your methods are questionable but the results are suspiciously effective.' },
+    { role: 'Mysterious Stranger', flavor: '{name}, you appear, drop cryptic lines, and disappear again.' },
+    { role: 'Narrative Threat', flavor: '{name}, the story tension noticeably increases when you enter the room.' }
+  ],
+
+  tired: [
+    { role: 'Background NPC', flavor: '{name}, you are spiritually standing near a wall saying rough week, huh? and honestly that is powerful.' },
+    { role: 'Loyal Side Character', flavor: '{name}, exhausted but dependable. You carry the plot while wishing nobody had noticed.' },
+    { role: 'Hidden Legend', flavor: '{name}, you look tired now, but the lore says you become terrifying after one decent nap.' },
+    { role: 'Overworked Hero', flavor: '{name}, saving the world was not on your to-do list today.' },
+    { role: 'Quiet Survivor', flavor: '{name}, you are still here despite the plot doing its best to ruin your week.' },
+    { role: 'Reluctant Participant', flavor: '{name}, you did not sign up for this quest but apparently you are in it now.' },
+    { role: 'Undercover Protagonist', flavor: '{name}, you look like an NPC but the story secretly revolves around you.' },
+    { role: 'Late Game Hero', flavor: '{name}, you wake up halfway through the story and somehow save the day.' }
+  ],
+
+  delusional: [
+    { role: 'Main Character', flavor: '{name}, reality may disagree with you, but your confidence already secured the opening credits.' },
+    { role: 'Chosen One?', flavor: '{name}, there is no proof you were chosen, but that has never stopped you before.' },
+    { role: 'Secret Final Boss', flavor: '{name}, the prophecy is fake, the sword is decorative, and yet somehow you are still winning.' },
+    { role: 'Self-Declared Hero', flavor: '{name}, nobody confirmed your destiny but you are already giving speeches.' },
+    { role: 'Prophecy Enthusiast', flavor: '{name}, you read one mysterious scroll and immediately believed it was about you.' },
+    { role: 'Alternate Timeline Hero', flavor: '{name}, in some timeline you are definitely the main character.' },
+    { role: 'Narrative Bender', flavor: '{name}, you ignore reality and somehow the plot adapts anyway.' },
+    { role: 'Legend In Progress', flavor: '{name}, the story is not convinced yet, but you are extremely confident.' }
+  ]
+};
 
     function updateVibeLabel() {
       const value = Number(vibeRange.value);
