@@ -1,30 +1,73 @@
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WNO Helper</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WNO Helper</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="bg-noise"></div>
 
-<header class="topbar">
-<div class="brand">WNO HELPER</div>
-<button id="resetBtn" class="btn">Nowa gra</button>
-</header>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand">WNO HELPER</div>
+      <div class="brand-sub">helper app do Wojny Na Osiedlu</div>
+    </div>
+    <button id="resetBtn" class="btn btn-ghost hidden">Nowa gra</button>
+  </header>
 
-<div class="panel">
-Runda <b id="round">1</b> • Tura: <b id="currentPlayer">—</b>
-</div>
+  <main class="app">
+    <section id="setup" class="panel setup-panel">
+      <h1>Start gry</h1>
 
-<div id="players" class="players"></div>
+      <div class="setup-grid">
+        <label class="field">
+          <span>Liczba graczy</span>
+          <select id="playerCount">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+          </select>
+        </label>
 
-<div class="controls">
-<button id="nextTurn">Następny gracz</button>
-<button id="undo">Cofnij</button>
-</div>
+        <label class="field">
+          <span>Startowe HP</span>
+          <input id="startHP" type="number" min="1" max="99" value="12" />
+        </label>
+      </div>
 
-<script src="app.js"></script>
+      <div id="playerNames" class="name-fields"></div>
+
+      <button id="startBtn" class="btn btn-primary btn-big">Start gry</button>
+    </section>
+
+    <section id="game" class="hidden">
+      <section class="panel status-panel">
+        <div class="status-top">
+          <div class="status-pill">Runda <b id="round">1</b></div>
+          <div class="status-pill">Tura: <b id="currentPlayer">—</b></div>
+        </div>
+
+        <div id="turnHint" class="turn-hint">
+          <div class="turn-hint-icon">🎯</div>
+          <div>
+            <div class="turn-hint-title">Normalna tura</div>
+            <div class="turn-hint-text">Gracz może dobrać kartę, zagrać kartę i zaatakować.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="players" class="players"></section>
+
+      <section class="panel controls-panel">
+        <button id="nextTurn" class="btn btn-primary">Następny gracz</button>
+        <button id="undo" class="btn btn-secondary">Cofnij</button>
+      </section>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
