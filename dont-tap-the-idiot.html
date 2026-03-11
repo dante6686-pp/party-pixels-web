@@ -1,436 +1,337 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Don't Tap The Idiot | Party Pixels</title>
+  <meta
+    name="description"
+    content="Don't Tap The Idiot is a fast chaotic Party Pixels web toy. Tap every normal face. One idiot ends your run."
+  >
 
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Don't Tap The Idiot | Party Pixels</title>
-
-<meta
-name="description"
-content="Don't Tap The Idiot is a fast chaotic Party Pixels web toy. Tap every normal face. One idiot ends your run."
->
-
-<link rel="stylesheet" href="/pp-main.css">
-<link rel="stylesheet" href="tapidiot.css">
-
+  <link rel="stylesheet" href="/pp-main.css">
+  <link rel="stylesheet" href="tapidiot.css">
 </head>
 
-
 <body class="pp-toy-page">
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>DON'T TAP THE IDIOT</h1>
+        <p>Tap every normal face. One idiot ends your run.</p>
+      </div>
+
+      <div class="pill">
+        Score: <span id="score">0</span>
+      </div>
+
+      <div class="pill">
+        Best: <span id="best">0</span>
+      </div>
+
+      <div class="pill timer-pill">
+        Time: <span id="time">0.0</span>s
+      </div>
+    </header>
+
+    <section class="game">
+      <div id="flashGood" class="flash good"></div>
+      <div id="flashBad" class="flash bad"></div>
+
+      <div id="arena" class="arena"></div>
+
+      <div id="startOverlay" class="overlay">
+        <div class="panel">
+          <h2>Don't be an idiot.</h2>
+
+          <p>
+            Tap every normal face before time runs out.
+            Tap the idiot and your run ends instantly.
+          </p>
+
+          <div class="actions">
+            <button id="startBtn" class="btn primary">Start Game</button>
+          </div>
+
+          <div class="hint">
+            Safe = 🙂 😎 😁 😌 • Idiot = 🤪
+          </div>
+        </div>
+      </div>
+
+      <div id="gameOverOverlay" class="overlay" hidden>
+        <div class="panel">
+          <h2 id="gameOverTitle">Game Over</h2>
+          <p id="gameOverText">You tapped the idiot.</p>
+
+          <div class="actions">
+            <button id="restartBtn" class="btn primary">Play Again</button>
+            <button id="menuBtn" class="btn secondary">Menu</button>
+          </div>
+
+          <div class="hint">
+            Each cleared round adds more chaos.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Party Pixels Web Toy • Fast round • Dumb premise • Weirdly addictive
+    </div>
+  </main>
+
+  <script>
+    const arena = document.getElementById("arena");
+
+    const scoreEl = document.getElementById("score");
+    const bestEl = document.getElementById("best");
+    const timeEl = document.getElementById("time");
+
+    const startOverlay = document.getElementById("startOverlay");
+    const gameOverOverlay = document.getElementById("gameOverOverlay");
+
+    const startBtn = document.getElementById("startBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const menuBtn = document.getElementById("menuBtn");
+
+    const flashGood = document.getElementById("flashGood");
+    const flashBad = document.getElementById("flashBad");
+
+    const SAFE = ["🙂", "😎", "😁", "😌", "😐"];
+    const IDIOT = "🤪";
+
+    const IDIOT_MOVE_CHANCE = 0.25;
+    const IDIOT_MOVE_ANIM_MS = 180;
+
+    let score = 0;
+    let best = Number(localStorage.getItem("tapidiot-best") || 0);
+
+    let round = 0;
+    let roundActive = false;
+    let remainingSafe = 0;
+
+    let roundDeadline = 0;
+    let roundTimer = null;
+    let timerFrame = null;
+    let baseRoundTime = 0;
+
+    bestEl.textContent = best;
 
-<main class="app">
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
 
-<header class="topbar">
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
 
-<div class="brand">
-<h1>DON'T TAP THE IDIOT</h1>
-<p>Tap every normal face. One idiot ends your run.</p>
-</div>
+    function clearArena() {
+      arena.innerHTML = "";
+      clearTimeout(roundTimer);
+      cancelAnimationFrame(timerFrame);
 
-<div class="pill">
-Score: <span id="score">0</span>
-</div>
+      roundActive = false;
+      remainingSafe = 0;
+      roundDeadline = 0;
+      baseRoundTime = 0;
 
-<div class="pill">
-Best: <span id="best">0</span>
-</div>
+      timeEl.textContent = "0.0";
+    }
 
-<div class="pill timer-pill">
-Time: <span id="time">0.0</span>s
-</div>
+    function updateScore() {
+      scoreEl.textContent = score;
 
-</header>
+      if (score > best) {
+        best = score;
+        bestEl.textContent = best;
+        localStorage.setItem("tapidiot-best", String(best));
+      }
+    }
 
+    function showFlash(type) {
+      const el = type === "good" ? flashGood : flashBad;
+      el.classList.add("show");
 
+      setTimeout(() => {
+        el.classList.remove("show");
+      }, 120);
+    }
 
-<section class="game">
+    function getRoundConfig(level) {
+      const count = clamp(3 + Math.floor(level / 2), 3, 12);
+      const timeLimit = clamp(2400 - level * 80, 950, 2400);
+      return { count, timeLimit };
+    }
 
-<div id="flashGood" class="flash good"></div>
-<div id="flashBad" class="flash bad"></div>
+    function updateTimer() {
+      if (!roundActive) return;
 
-<div id="arena" class="arena"></div>
+      const remaining = Math.max(0, roundDeadline - performance.now());
+      timeEl.textContent = (remaining / 1000).toFixed(1);
 
+      if (remaining <= 0) {
+        endGame("Time ran out.", "Too slow.");
+        return;
+      }
 
+      timerFrame = requestAnimationFrame(updateTimer);
+    }
 
-<div id="startOverlay" class="overlay">
+    function startRoundTimer(duration) {
+      clearTimeout(roundTimer);
+      cancelAnimationFrame(timerFrame);
 
-<div class="panel">
+      baseRoundTime = duration;
+      roundDeadline = performance.now() + duration;
 
-<h2>Don't be an idiot.</h2>
+      roundTimer = setTimeout(() => {
+        if (!roundActive) return;
+        endGame("Time ran out.", "Too slow.");
+      }, duration);
 
-<p>
-Tap every normal face before time runs out.  
-Tap the idiot and your run ends instantly.
-</p>
+      updateTimer();
+    }
 
-<div class="actions">
+    function addBonusTime(ms) {
+      if (!roundActive) return;
 
-<button id="startBtn" class="btn primary">
-Start Game
-</button>
+      const now = performance.now();
+      const remaining = Math.max(0, roundDeadline - now);
+      const cap = baseRoundTime + 1200;
+      const next = Math.min(remaining + ms, cap);
 
-</div>
+      startRoundTimer(next);
+    }
 
-<div class="hint">
-Safe = 🙂 😎 😁 😌  
-Idiot = 🤪
-</div>
+    function getRandomArenaPosition(size) {
+      const rect = arena.getBoundingClientRect();
+      const pad = 10;
 
-</div>
+      return {
+        left: rand(pad, Math.max(pad, rect.width - size - pad)),
+        top: rand(pad, Math.max(pad, rect.height - size - pad))
+      };
+    }
 
-</div>
+    function maybeMoveIdiot() {
+      if (Math.random() > IDIOT_MOVE_CHANCE) return;
 
+      const idiot = document.querySelector(".character.idiot");
+      if (!idiot) return;
 
+      const size = idiot.offsetWidth || 92;
+      const nextPos = getRandomArenaPosition(size);
 
+      idiot.style.transition =
+        `left ${IDIOT_MOVE_ANIM_MS}ms ease, top ${IDIOT_MOVE_ANIM_MS}ms ease, transform 0.08s ease, opacity 0.25s ease`;
 
-<div id="gameOverOverlay" class="overlay" hidden>
+      idiot.style.left = nextPos.left + "px";
+      idiot.style.top = nextPos.top + "px";
+    }
 
-<div class="panel">
+    function spawnRound() {
+      clearArena();
 
-<h2 id="gameOverTitle">
-Game Over
-</h2>
+      round += 1;
+      roundActive = true;
 
-<p id="gameOverText">
-You tapped the idiot.
-</p>
+      const { count, timeLimit } = getRoundConfig(round);
+      const idiotIndex = Math.floor(Math.random() * count);
 
-<div class="actions">
+      remainingSafe = count - 1;
 
-<button id="restartBtn" class="btn primary">
-Play Again
-</button>
+      const mobileSize = window.innerWidth <= 700 ? 76 : 92;
+      const size = mobileSize;
 
-<button id="menuBtn" class="btn secondary">
-Menu
-</button>
+      for (let i = 0; i < count; i++) {
+        const isIdiot = i === idiotIndex;
+        const btn = document.createElement("button");
+        const pos = getRandomArenaPosition(size);
 
-</div>
+        btn.type = "button";
+        btn.className = "character " + (isIdiot ? "idiot" : "safe");
+        btn.style.left = pos.left + "px";
+        btn.style.top = pos.top + "px";
+        btn.setAttribute("aria-label", isIdiot ? "Idiot" : "Safe character");
 
-<div class="hint">
-Each cleared round adds more chaos.
-</div>
+        btn.innerHTML = `<span class="emoji-face">${
+          isIdiot ? IDIOT : SAFE[Math.floor(Math.random() * SAFE.length)]
+        }</span>`;
 
-</div>
+        if (isIdiot) {
+          btn.style.transition =
+            `left ${IDIOT_MOVE_ANIM_MS}ms ease, top ${IDIOT_MOVE_ANIM_MS}ms ease, transform 0.08s ease, opacity 0.25s ease`;
+        }
 
-</div>
+        btn.onclick = () => {
+          if (!roundActive) return;
 
-</section>
+          if (isIdiot) {
+            showFlash("bad");
+            btn.classList.add("gone");
+            endGame("You tapped the idiot.");
+            return;
+          }
 
+          if (btn.dataset.done === "1") return;
 
+          btn.dataset.done = "1";
+          btn.classList.add("gone");
 
-<div class="footer-note">
-Party Pixels Web Toy • Fast round • Dumb premise • Weirdly addictive
-</div>
+          score += 1;
+          remainingSafe -= 1;
 
-</main>
+          updateScore();
+          addBonusTime(320);
+          maybeMoveIdiot();
+          showFlash("good");
 
+          if (remainingSafe <= 0) {
+            roundActive = false;
+            setTimeout(spawnRound, 300);
+          }
+        };
 
+        arena.appendChild(btn);
+      }
 
-<script>
+      startRoundTimer(timeLimit);
+    }
 
-const arena = document.getElementById("arena")
+    function startGame() {
+      score = 0;
+      round = 0;
 
-const scoreEl = document.getElementById("score")
-const bestEl = document.getElementById("best")
-const timeEl = document.getElementById("time")
+      updateScore();
 
-const startOverlay = document.getElementById("startOverlay")
-const gameOverOverlay = document.getElementById("gameOverOverlay")
+      startOverlay.hidden = true;
+      gameOverOverlay.hidden = true;
 
-const startBtn = document.getElementById("startBtn")
-const restartBtn = document.getElementById("restartBtn")
-const menuBtn = document.getElementById("menuBtn")
+      spawnRound();
+    }
 
-const flashGood = document.getElementById("flashGood")
-const flashBad = document.getElementById("flashBad")
+    function endGame(text, title = "Game Over") {
+      roundActive = false;
 
+      clearTimeout(roundTimer);
+      cancelAnimationFrame(timerFrame);
 
-const SAFE = ["🙂","😎","😁","😌","😐"]
-const IDIOT = "🤪"
+      document.getElementById("gameOverTitle").textContent = title;
+      document.getElementById("gameOverText").textContent = text + " Score: " + score;
 
+      gameOverOverlay.hidden = false;
+    }
 
-let score = 0
-let best = Number(localStorage.getItem("tapidiot-best") || 0)
+    function goMenu() {
+      clearArena();
+      gameOverOverlay.hidden = true;
+      startOverlay.hidden = false;
+    }
 
-let round = 0
-let roundActive = false
-
-let remainingSafe = 0
-
-let roundDeadline = 0
-let roundTimer = null
-let timerFrame = null
-let baseRoundTime = 0
-
-
-bestEl.textContent = best
-
-
-
-function rand(min,max){
-return Math.random()*(max-min)+min
-}
-
-function clamp(v,min,max){
-return Math.max(min,Math.min(max,v))
-}
-
-
-
-function clearArena(){
-
-arena.innerHTML=""
-
-clearTimeout(roundTimer)
-cancelAnimationFrame(timerFrame)
-
-roundActive=false
-remainingSafe=0
-
-timeEl.textContent="0.0"
-
-}
-
-
-
-function updateScore(){
-
-scoreEl.textContent=score
-
-if(score>best){
-best=score
-bestEl.textContent=best
-localStorage.setItem("tapidiot-best",best)
-}
-
-}
-
-
-
-function showFlash(type){
-
-const el = type==="good" ? flashGood : flashBad
-
-el.classList.add("show")
-
-setTimeout(()=>{
-el.classList.remove("show")
-},120)
-
-}
-
-
-
-function getRoundConfig(level){
-
-const count = clamp(3 + Math.floor(level/2),3,12)
-
-const timeLimit = clamp(2400 - level*80,950,2400)
-
-return {count,timeLimit}
-
-}
-
-
-
-function updateTimer(){
-
-if(!roundActive)return
-
-const remaining = Math.max(0,roundDeadline-performance.now())
-
-timeEl.textContent=(remaining/1000).toFixed(1)
-
-if(remaining<=0){
-
-endGame("Time ran out.","Too slow.")
-
-return
-}
-
-timerFrame=requestAnimationFrame(updateTimer)
-
-}
-
-
-
-function startRoundTimer(duration){
-
-clearTimeout(roundTimer)
-cancelAnimationFrame(timerFrame)
-
-baseRoundTime=duration
-roundDeadline=performance.now()+duration
-
-roundTimer=setTimeout(()=>{
-
-if(!roundActive)return
-
-endGame("Time ran out.","Too slow.")
-
-},duration)
-
-updateTimer()
-
-}
-
-
-
-function addBonusTime(ms){
-
-if(!roundActive)return
-
-const now=performance.now()
-
-const remaining=Math.max(0,roundDeadline-now)
-
-const cap=baseRoundTime+1200
-
-const next=Math.min(remaining+ms,cap)
-
-startRoundTimer(next)
-
-}
-
-
-
-function spawnRound(){
-
-clearArena()
-
-round++
-roundActive=true
-
-const {count,timeLimit}=getRoundConfig(round)
-
-const rect=arena.getBoundingClientRect()
-
-const size=92
-const pad=10
-
-const idiotIndex=Math.floor(Math.random()*count)
-
-remainingSafe=count-1
-
-for(let i=0;i<count;i++){
-
-const isIdiot=i===idiotIndex
-
-const btn=document.createElement("button")
-
-btn.className="character "+(isIdiot?"idiot":"safe")
-
-btn.innerHTML=isIdiot?IDIOT:SAFE[Math.floor(Math.random()*SAFE.length)]
-
-btn.style.left=rand(pad,rect.width-size-pad)+"px"
-btn.style.top=rand(pad,rect.height-size-pad)+"px"
-
-
-btn.onclick=()=>{
-
-if(!roundActive)return
-
-
-if(isIdiot){
-
-showFlash("bad")
-
-btn.classList.add("gone")
-
-endGame("You tapped the idiot.")
-
-return
-}
-
-
-if(btn.dataset.done)return
-
-btn.dataset.done=1
-
-btn.classList.add("gone")
-
-score++
-remainingSafe--
-
-updateScore()
-
-addBonusTime(320)
-
-showFlash("good")
-
-
-if(remainingSafe<=0){
-
-roundActive=false
-
-setTimeout(spawnRound,300)
-
-}
-
-}
-
-arena.appendChild(btn)
-
-}
-
-startRoundTimer(timeLimit)
-
-}
-
-
-
-function startGame(){
-
-score=0
-round=0
-
-updateScore()
-
-startOverlay.hidden=true
-gameOverOverlay.hidden=true
-
-spawnRound()
-
-}
-
-
-
-function endGame(text,title="Game Over"){
-
-roundActive=false
-
-clearTimeout(roundTimer)
-cancelAnimationFrame(timerFrame)
-
-document.getElementById("gameOverTitle").textContent=title
-document.getElementById("gameOverText").textContent=text+" Score: "+score
-
-gameOverOverlay.hidden=false
-
-}
-
-
-
-function goMenu(){
-
-clearArena()
-
-gameOverOverlay.hidden=true
-startOverlay.hidden=false
-
-}
-
-
-
-startBtn.onclick=startGame
-restartBtn.onclick=startGame
-menuBtn.onclick=goMenu
-
-</script>
-
-
+    startBtn.onclick = startGame;
+    restartBtn.onclick = startGame;
+    menuBtn.onclick = goMenu;
+  </script>
 </body>
 </html>
