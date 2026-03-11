@@ -53,7 +53,7 @@
             <button id="startBtn" class="btn primary">Start Game</button>
           </div>
 
-          <div class="hint">
+          <div class="hint" style="font.size: 15px;">
             Safe = 🙂 😎 😁 😌 • Idiot = 🤪
           </div>
         </div>
@@ -98,9 +98,15 @@
     const flashGood = document.getElementById("flashGood");
     const flashBad = document.getElementById("flashBad");
 
-    const SAFE = ["🙂", "😎", "😁", "😌", "😐"];
-    const IDIOT = "🤪";
+    const SAFE = [
+"/media/tapidiot/safe1.png",
+"/media/tapidiot/safe2.png",
+"/media/tapidiot/safe3.png",
+"/media/tapidiot/safe4.png",
+"/media/tapidiot/safe5.png"
+]
 
+const IDIOT = "/media/tapidiot/idiot.png"
     const IDIOT_MOVE_CHANCE = 0.25;
     const IDIOT_MOVE_ANIM_MS = 180;
 
