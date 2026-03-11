@@ -2,10 +2,10 @@
 window.PP_WHATS_NEW = [
   {
     title: "Main Character Quest",
-    subtitle: "Card battle game in development.",
+    subtitle: "Find out if you're the main character in this life.",
     cta: "View",
     href: "main-character-quest.html",
-    image: "/media/whatsnew/wno.jpg",
+    image: "/media/main-character-quest-splash.png",
     tag: "HOT"
   },
   {
