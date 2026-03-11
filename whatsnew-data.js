@@ -1,6 +1,14 @@
 // /js/whatsnew-data.js
 window.PP_WHATS_NEW = [
   {
+    title: "Main Character Quest",
+    subtitle: "Card battle game in development.",
+    cta: "View",
+    href: "main-character-quest.html",
+    image: "/media/whatsnew/wno.jpg",
+    tag: "HOT"
+  },
+  {
     title: "War On The Block — Duel link playtest",
     subtitle: "Card battle game in development.",
     cta: "View more",
