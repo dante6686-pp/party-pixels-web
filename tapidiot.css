@@ -1,6 +1,6 @@
 .character-img {
-width: 80%;
-height: 80%;
+width: 100%;
+height: 100%;
 object-fit: contain;
 pointer-events: none;
 }
@@ -80,7 +80,7 @@ pointer-events: none;
 
 .character {
   position: absolute;
-  width: 92px;
+  width: 110px;
   aspect-ratio: 1;
   border: 0;
   border-radius: 24px;
@@ -217,7 +217,7 @@ pointer-events: none;
 
   .character {
     width: 76px;
-    font-size: 36px;
+    font-size: 20px;
     border-radius: 20px;
   }
 
