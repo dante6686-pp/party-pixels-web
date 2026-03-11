@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -43,7 +44,6 @@
       <div id="startOverlay" class="overlay">
         <div class="panel">
           <h2>Don't be an idiot.</h2>
-
           <p>
             Tap every normal face before time runs out.
             Tap the idiot and your run ends instantly.
@@ -53,8 +53,8 @@
             <button id="startBtn" class="btn primary">Start Game</button>
           </div>
 
-          <div class="hint" style="font.size: 15px;">
-            Safe = 🙂 😎 😁 😌 • Idiot = 🤪
+          <div class="hint">
+            Tap everyone except the idiot.
           </div>
         </div>
       </div>
@@ -91,6 +91,9 @@
     const startOverlay = document.getElementById("startOverlay");
     const gameOverOverlay = document.getElementById("gameOverOverlay");
 
+    const gameOverTitleEl = document.getElementById("gameOverTitle");
+    const gameOverTextEl = document.getElementById("gameOverText");
+
     const startBtn = document.getElementById("startBtn");
     const restartBtn = document.getElementById("restartBtn");
     const menuBtn = document.getElementById("menuBtn");
@@ -99,16 +102,18 @@
     const flashBad = document.getElementById("flashBad");
 
     const SAFE = [
-"/media/tapidiot/safe1.png",
-"/media/tapidiot/safe2.png",
-"/media/tapidiot/safe3.png",
-"/media/tapidiot/safe4.png",
-"/media/tapidiot/safe5.png"
-]
+      "/media/tapidiot/safe1.png",
+      "/media/tapidiot/safe2.png",
+      "/media/tapidiot/safe3.png",
+      "/media/tapidiot/safe4.png",
+      "/media/tapidiot/safe5.png"
+    ];
 
-const IDIOT = "/media/tapidiot/idiot.png"
+    const IDIOT = "/media/tapidiot/idiot.png";
+
     const IDIOT_MOVE_CHANCE = 0.25;
     const IDIOT_MOVE_ANIM_MS = 180;
+    const BONUS_TIME_MS = 320;
 
     let score = 0;
     let best = Number(localStorage.getItem("tapidiot-best") || 0);
@@ -122,7 +127,7 @@ const IDIOT = "/media/tapidiot/idiot.png"
     let timerFrame = null;
     let baseRoundTime = 0;
 
-    bestEl.textContent = best;
+    bestEl.textContent = String(best);
 
     function rand(min, max) {
       return Math.random() * (max - min) + min;
@@ -146,11 +151,11 @@ const IDIOT = "/media/tapidiot/idiot.png"
     }
 
     function updateScore() {
-      scoreEl.textContent = score;
+      scoreEl.textContent = String(score);
 
       if (score > best) {
         best = score;
-        bestEl.textContent = best;
+        bestEl.textContent = String(best);
         localStorage.setItem("tapidiot-best", String(best));
       }
     }
@@ -236,6 +241,15 @@ const IDIOT = "/media/tapidiot/idiot.png"
       idiot.style.top = nextPos.top + "px";
     }
 
+    function createCharacterImage(src, alt) {
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = alt;
+      img.className = "character-img";
+      img.draggable = false;
+      return img;
+    }
+
     function spawnRound() {
       clearArena();
 
@@ -247,13 +261,25 @@ const IDIOT = "/media/tapidiot/idiot.png"
 
       remainingSafe = count - 1;
 
-      const mobileSize = window.innerWidth <= 700 ? 76 : 92;
-      const size = mobileSize;
+      const size = window.innerWidth <= 700 ? 76 : 92;
+      const positions = [];
 
       for (let i = 0; i < count; i++) {
         const isIdiot = i === idiotIndex;
         const btn = document.createElement("button");
-        const pos = getRandomArenaPosition(size);
+
+        let pos;
+        let tries = 0;
+
+        do {
+          pos = getRandomArenaPosition(size);
+          tries += 1;
+        } while (
+          positions.some(p => Math.hypot(p.left - pos.left, p.top - pos.top) < size * 0.82) &&
+          tries < 80
+        );
+
+        positions.push(pos);
 
         btn.type = "button";
         btn.className = "character " + (isIdiot ? "idiot" : "safe");
@@ -261,16 +287,19 @@ const IDIOT = "/media/tapidiot/idiot.png"
         btn.style.top = pos.top + "px";
         btn.setAttribute("aria-label", isIdiot ? "Idiot" : "Safe character");
 
-        btn.innerHTML = `<span class="emoji-face">${
-          isIdiot ? IDIOT : SAFE[Math.floor(Math.random() * SAFE.length)]
-        }</span>`;
+        const imagePath = isIdiot
+          ? IDIOT
+          : SAFE[Math.floor(Math.random() * SAFE.length)];
+
+        const img = createCharacterImage(imagePath, isIdiot ? "Idiot" : "Safe character");
+        btn.appendChild(img);
 
         if (isIdiot) {
           btn.style.transition =
             `left ${IDIOT_MOVE_ANIM_MS}ms ease, top ${IDIOT_MOVE_ANIM_MS}ms ease, transform 0.08s ease, opacity 0.25s ease`;
         }
 
-        btn.onclick = () => {
+        btn.addEventListener("click", () => {
           if (!roundActive) return;
 
           if (isIdiot) {
@@ -289,7 +318,7 @@ const IDIOT = "/media/tapidiot/idiot.png"
           remainingSafe -= 1;
 
           updateScore();
-          addBonusTime(320);
+          addBonusTime(BONUS_TIME_MS);
           maybeMoveIdiot();
           showFlash("good");
 
@@ -297,7 +326,7 @@ const IDIOT = "/media/tapidiot/idiot.png"
             roundActive = false;
             setTimeout(spawnRound, 300);
           }
-        };
+        });
 
         arena.appendChild(btn);
       }
@@ -323,8 +352,8 @@ const IDIOT = "/media/tapidiot/idiot.png"
       clearTimeout(roundTimer);
       cancelAnimationFrame(timerFrame);
 
-      document.getElementById("gameOverTitle").textContent = title;
-      document.getElementById("gameOverText").textContent = text + " Score: " + score;
+      gameOverTitleEl.textContent = title;
+      gameOverTextEl.textContent = text + " Score: " + score + ".";
 
       gameOverOverlay.hidden = false;
     }
@@ -335,9 +364,9 @@ const IDIOT = "/media/tapidiot/idiot.png"
       startOverlay.hidden = false;
     }
 
-    startBtn.onclick = startGame;
-    restartBtn.onclick = startGame;
-    menuBtn.onclick = goMenu;
+    startBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", startGame);
+    menuBtn.addEventListener("click", goMenu);
   </script>
 </body>
 </html>
