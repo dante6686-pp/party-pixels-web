@@ -94,10 +94,10 @@
 }
 
 .character.idiot {
-  background: linear-gradient(180deg, rgba(255,107,138,0.30), rgba(255,107,138,0.12));
-  border: 1px solid rgba(255,107,138,0.30);
+  background: linear-gradient(180deg, rgba(255,107,138,0.34), rgba(255,107,138,0.14));
+  border: 1px solid rgba(255,107,138,0.34);
+  transition: left 0.18s ease, top 0.18s ease, transform 0.08s ease, opacity 0.25s ease;
 }
-
 .character:active {
   transform: scale(0.94);
 }
