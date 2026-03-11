@@ -87,7 +87,7 @@ pointer-events: none;
   cursor: pointer;
   display: grid;
   place-items: center;
-  font-size: 42px;
+  font-size: 0px;
   user-select: none;
   touch-action: manipulation;
   box-shadow: 0 10px 22px rgba(0,0,0,0.26);
@@ -216,7 +216,7 @@ pointer-events: none;
   }
 
   .character {
-    width: 76px;
+    width: 90px;
     font-size: 20px;
     border-radius: 20px;
   }
