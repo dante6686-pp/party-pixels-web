@@ -1,4 +1,4 @@
-
+dont-tap-the-idiot.html
 <!doctype html>
 <html lang="en">
 <head>
@@ -36,10 +36,10 @@
     </header>
 
     <section class="game">
-      <div id="flashGood" class="flash good"></div>
-      <div id="flashBad" class="flash bad"></div>
-
-      <div id="arena" class="arena"></div>
+      <div id="arena" class="arena">
+        <div id="flashGood" class="flash good"></div>
+        <div id="flashBad" class="flash bad"></div>
+      </div>
 
       <div id="startOverlay" class="overlay">
         <div class="panel">
@@ -138,7 +138,8 @@
     }
 
     function clearArena() {
-      arena.innerHTML = "";
+      arena.querySelectorAll(".character").forEach(el => el.remove());
+
       clearTimeout(roundTimer);
       cancelAnimationFrame(timerFrame);
 
@@ -146,6 +147,9 @@
       remainingSafe = 0;
       roundDeadline = 0;
       baseRoundTime = 0;
+
+      flashGood.classList.remove("show");
+      flashBad.classList.remove("show");
 
       timeEl.textContent = "0.0";
     }
