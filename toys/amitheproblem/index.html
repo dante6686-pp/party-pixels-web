@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Am I the Problem? | Party Pixels</title>
+  <meta
+    name="description"
+    content="Take the Am I the Problem? quiz and find out whether you're harmless, mildly annoying, or a full social catastrophe."
+  />
+  <meta property="og:title" content="Am I the Problem? | Party Pixels" />
+  <meta
+    property="og:description"
+    content="A fake-serious chaos personality test for friendships, relationships, and group chats."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://partypixels.com/media/og-am-i-the-problem.jpg" />
+  <meta property="og:url" content="https://partypixels.com/am-i-the-problem/" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="site-logo" href="/">
+        <span class="logo-dot"></span>
+        <span>Party Pixels</span>
+      </a>
+
+      <nav class="header-actions" aria-label="Account">
+        <a class="header-link" href="/index.html">Home</a>
+        <a class="header-btn" href="/account.html">Login / Account</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page-main">
+    <section class="hero card">
+      <div class="hero-copy">
+        <p class="eyebrow">Party Pixels • Personality Test</p>
+        <h1>Am I the Problem?</h1>
+        <p class="hero-text">
+          A fake-serious chaos test for people who are probably innocent.
+          Or at least entertaining enough to be forgiven.
+        </p>
+
+        <div class="hero-tags">
+          <span>10 questions</span>
+          <span>Fast result</span>
+          <span>Shareable chaos</span>
+        </div>
+
+        <button id="startBtn" class="btn btn-primary">Start the test</button>
+      </div>
+
+      <div class="hero-side">
+        <div class="hero-badge">
+          <span class="hero-badge-label">Possible verdict</span>
+          <strong>Walking Disaster</strong>
+          <p>Group chats recover from you in phases.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="quizCard" class="card quiz-card hidden">
+      <div class="quiz-top">
+        <div>
+          <p class="mini-label">Question</p>
+          <h2 id="questionNumber">1 / 10</h2>
+        </div>
+
+        <div class="progress-wrap" aria-hidden="true">
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="questionText" class="question-text"></h3>
+
+      <div id="answers" class="answers"></div>
+
+      <div class="quiz-bottom">
+        <button id="backBtn" class="btn btn-ghost" disabled>Back</button>
+      </div>
+    </section>
+
+    <section id="resultCard" class="card result-card hidden">
+      <p class="eyebrow">Your Result</p>
+      <h2 id="resultTitle"></h2>
+      <p id="resultSubtitle" class="result-subtitle"></p>
+
+      <div class="score-line">
+        Chaos score: <span id="scoreText"></span>
+      </div>
+
+      <div class="result-box">
+        <p id="resultDescription"></p>
+      </div>
+
+      <div class="result-actions">
+        <button id="restartBtn" class="btn btn-primary">Try again</button>
+        <button id="copyBtn" class="btn btn-ghost">Copy result</button>
+      </div>
+
+      <div class="share-card">
+        <p class="share-title">Shareable result text</p>
+        <textarea id="shareText" readonly></textarea>
+      </div>
+    </section>
+
+    <section class="card seo-card">
+      <div class="section-head">
+        <p class="eyebrow">About this test</p>
+        <h2>Are you harmless or are you the issue?</h2>
+      </div>
+
+      <p>
+        <strong>Am I the Problem?</strong> is a funny personality quiz that gives
+        you a fake-serious verdict on your drama level in friendships,
+        relationships, work chats, and random online nonsense.
+      </p>
+
+      <p>
+        It is not science. It is judgment. Extremely stylish judgment.
+      </p>
+
+      <div class="seo-grid">
+        <article class="seo-box">
+          <h3>How it works</h3>
+          <p>
+            Answer 10 multiple-choice questions. Each answer adds to your chaos
+            score. The higher your score, the more likely it is that people have
+            at least one story about you.
+          </p>
+        </article>
+
+        <article class="seo-box">
+          <h3>Who this is for</h3>
+          <p>
+            People with group chats, exes, strong opinions, bad timing, or a
+            suspicious history of hearing “bro, relax.”
+          </p>
+        </article>
+
+        <article class="seo-box">
+          <h3>Why people love tests like this</h3>
+          <p>
+            Because everyone wants confirmation that they are either perfectly
+            innocent or a charismatic disaster with great comedic timing.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card related-card">
+      <div class="section-head">
+        <p class="eyebrow">Try also</p>
+        <h2>More Party Pixels chaos</h2>
+      </div>
+
+      <div class="related-grid">
+        <a class="related-item" href="/are-you-the-annoying-friend/">
+          <h3>Are You the Annoying Friend?</h3>
+          <p>Find out whether you're lovable, loud, or legally exhausting.</p>
+        </a>
+
+        <a class="related-item" href="/toxic-relationship-test/">
+          <h3>Toxic Relationship Test</h3>
+          <p>Romance, bad choices, and emotional side quests.</p>
+        </a>
+
+        <a class="related-item" href="/friend-group-chaos-test/">
+          <h3>Friend Group Chaos Test</h3>
+          <p>Discover your exact role in the social collapse.</p>
+        </a>
+
+        <a class="related-item" href="/drama-generator/">
+          <h3>Drama Generator</h3>
+          <p>Instant fake conflict for people who don't have enough already.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© Party Pixels</p>
+      <div class="footer-links">
+        <a href="/index.html">Home</a>
+        <a href="/games.html">Games</a>
+        <a href="/account.html">Account</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js.js"></script>
+</body>
+</html>
