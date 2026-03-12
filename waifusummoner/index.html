@@ -1,0 +1,1396 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Waifu Summoner | Party Pixels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Summon cute, chaotic, legendary and cursed waifus from the Party Pixels portal.">
+  <meta name="theme-color" content="#120f24">
+  <link rel="stylesheet" href="/pp-main.css">
+
+  <style>
+    :root{
+      --bg-1:#120f24;
+      --bg-2:#1b1538;
+      --panel:#19162b;
+      --panel-2:#221d3b;
+      --line:rgba(255,255,255,.1);
+      --text:#f7f2ff;
+      --muted:#b9b0d6;
+      --accent:#ff4fd8;
+      --accent-2:#7c5cff;
+      --good:#72f2b8;
+
+      --common:#93a0b6;
+      --rare:#50c4ff;
+      --epic:#b86cff;
+      --legendary:#ffb347;
+      --forbidden:#ff4f7b;
+
+      --shadow:0 14px 40px rgba(0,0,0,.35);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:18px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(124,92,255,.16), transparent 28%),
+        radial-gradient(circle at 80% 20%, rgba(255,79,216,.12), transparent 20%),
+        linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    }
+
+    img{
+      display:block;
+      max-width:100%;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    .page{
+      width:min(1180px, calc(100% - 24px));
+      margin:0 auto;
+      padding:16px 0 44px;
+    }
+
+    /* Header */
+    .pp-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 0 18px;
+    }
+
+    .pp-brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .pp-logo{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      font-size:1.2rem;
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:0 10px 24px rgba(124,92,255,.22);
+      flex:0 0 auto;
+    }
+
+    .pp-brand-text{
+      min-width:0;
+    }
+
+    .pp-title{
+      margin:0;
+      font-size:1.1rem;
+      line-height:1;
+      letter-spacing:-.03em;
+    }
+
+    .pp-sub{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:.84rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .pp-nav{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:0 0 auto;
+    }
+
+    .nav-btn{
+      min-height:42px;
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font:inherit;
+      font-weight:700;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+
+    .nav-btn:hover{
+      transform:translateY(-1px);
+      background:rgba(255,255,255,.09);
+    }
+
+    .nav-btn.primary{
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      border-color:transparent;
+      box-shadow:0 10px 24px rgba(124,92,255,.22);
+    }
+
+    /* Hero */
+    .hero{
+      overflow:hidden;
+      border-radius:var(--radius-xl);
+      border:1px solid var(--line);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,79,216,.18), transparent 28%),
+        radial-gradient(circle at 80% 28%, rgba(124,92,255,.22), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      box-shadow:var(--shadow);
+      margin-bottom:18px;
+    }
+
+    .hero-media{
+      position:relative;
+      overflow:hidden;
+      aspect-ratio:2.4 / 1;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(135deg, rgba(124,92,255,.35), rgba(255,79,216,.22)),
+        url("/media/waifu-summoner-splash-wide.png") center/cover no-repeat;
+    }
+
+    .hero-media::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(180deg, rgba(9,7,20,.1), rgba(9,7,20,.42)),
+        radial-gradient(circle at center, transparent 30%, rgba(0,0,0,.24) 100%);
+      pointer-events:none;
+    }
+
+    .hero-body{
+      padding:18px;
+      display:grid;
+      grid-template-columns:minmax(0, 1fr) auto;
+      gap:16px;
+      align-items:end;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      width:max-content;
+      max-width:100%;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      font-size:.84rem;
+      margin-bottom:12px;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(2rem, 4vw, 3.8rem);
+      line-height:.95;
+      letter-spacing:-.04em;
+    }
+
+    .hero p{
+      margin:12px 0 0;
+      max-width:760px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:1rem;
+    }
+
+    .start-btn{
+      min-height:56px;
+      padding:14px 20px;
+      border-radius:18px;
+      border:0;
+      color:#fff;
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      font:inherit;
+      font-weight:800;
+      letter-spacing:.02em;
+      box-shadow:
+        0 10px 24px rgba(124,92,255,.26),
+        0 8px 18px rgba(255,79,216,.18);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      white-space:nowrap;
+      transition:transform .12s ease, opacity .12s ease;
+    }
+
+    .start-btn:hover{
+      transform:translateY(-1px);
+    }
+
+    /* Game section */
+    .game-section{
+      margin-top:10px;
+    }
+
+    .section-title{
+      margin:0 0 14px;
+      font-size:1.15rem;
+      letter-spacing:-.02em;
+    }
+
+    .play-layout{
+      display:grid;
+      grid-template-columns:minmax(0, 1.12fr) minmax(320px, .88fr);
+      gap:18px;
+      align-items:start;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:var(--radius-xl);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.025));
+      box-shadow:var(--shadow);
+    }
+
+    .main-panel{
+      padding:18px;
+    }
+
+    .result-card{
+      overflow:hidden;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+        linear-gradient(180deg, var(--panel-2), var(--panel));
+    }
+
+    .art-wrap{
+      position:relative;
+      overflow:hidden;
+      aspect-ratio:4 / 5;
+      background:
+        radial-gradient(circle at 50% 30%, rgba(255,255,255,.16), transparent 24%),
+        radial-gradient(circle at 50% 50%, rgba(124,92,255,.28), transparent 35%),
+        linear-gradient(180deg, #2b2352, #161127 70%);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .waifu-image{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:none;
+    }
+
+    .waifu-image.show{
+      display:block;
+    }
+
+    .fallback-art{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:18px;
+      overflow:hidden;
+    }
+
+    .fallback-art::before{
+      content:"";
+      position:absolute;
+      inset:10% 16%;
+      border-radius:50%;
+      filter:blur(20px);
+      background:
+        radial-gradient(circle, rgba(255,79,216,.34), transparent 42%),
+        radial-gradient(circle at 65% 45%, rgba(124,92,255,.42), transparent 50%);
+    }
+
+    .fallback-inner{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      max-width:280px;
+    }
+
+    .fallback-icon{
+      font-size:4rem;
+      line-height:1;
+      filter:drop-shadow(0 8px 18px rgba(0,0,0,.4));
+    }
+
+    .fallback-title{
+      font-size:1.2rem;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+
+    .fallback-sub{
+      color:rgba(255,255,255,.84);
+      line-height:1.45;
+      font-size:.95rem;
+    }
+
+    .portal-rings{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity .2s ease;
+    }
+
+    .portal-rings::before,
+    .portal-rings::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%, -50%);
+      border-radius:50%;
+      border:2px solid rgba(255,255,255,.24);
+      box-shadow:
+        0 0 24px rgba(255,79,216,.35),
+        0 0 50px rgba(124,92,255,.28),
+        inset 0 0 16px rgba(255,255,255,.08);
+    }
+
+    .portal-rings::before{
+      width:42%;
+      aspect-ratio:1;
+    }
+
+    .portal-rings::after{
+      width:62%;
+      aspect-ratio:1;
+      border-color:rgba(255,179,71,.2);
+    }
+
+    .art-wrap.summoning .portal-rings{
+      opacity:1;
+      animation:pulseFlash .95s ease;
+    }
+
+    @keyframes pulseFlash{
+      0%{ opacity:0; transform:scale(.92); }
+      25%{ opacity:1; }
+      100%{ opacity:0; transform:scale(1.08); }
+    }
+
+    .card-body{
+      padding:18px;
+    }
+
+    .rarity-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.05);
+      font-weight:800;
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+
+    .rarity-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:currentColor;
+      box-shadow:0 0 16px currentColor;
+    }
+
+    .result-name{
+      margin:0 0 6px;
+      font-size:clamp(1.7rem, 3vw, 2.45rem);
+      line-height:1;
+      letter-spacing:-.03em;
+    }
+
+    .result-class{
+      margin:0 0 12px;
+      color:var(--muted);
+      font-size:1rem;
+    }
+
+    .result-desc{
+      margin:0;
+      line-height:1.55;
+      color:#f4edff;
+    }
+
+    .result-quote{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      color:#fff7fd;
+      font-style:italic;
+      line-height:1.5;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .btn{
+      appearance:none;
+      border:0;
+      border-radius:18px;
+      cursor:pointer;
+      min-height:54px;
+      padding:14px 16px;
+      font:inherit;
+      font-weight:800;
+      letter-spacing:.02em;
+      transition:transform .12s ease, opacity .12s ease;
+    }
+
+    .btn:hover{ transform:translateY(-1px); }
+    .btn:active{ transform:translateY(1px) scale(.99); }
+    .btn:disabled{
+      opacity:.72;
+      cursor:wait;
+      transform:none;
+    }
+
+    .btn-primary{
+      color:#fff;
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:
+        0 10px 24px rgba(124,92,255,.26),
+        0 8px 18px rgba(255,79,216,.18);
+    }
+
+    .btn-secondary{
+      color:var(--text);
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .copy-note{
+      margin-top:10px;
+      min-height:1.4em;
+      color:var(--good);
+      font-size:.92rem;
+    }
+
+    .side-panel{
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .side-block{
+      padding:16px;
+      border-radius:22px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .side-block h2,
+    .side-block h3{
+      margin:0 0 10px;
+      letter-spacing:-.02em;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+
+    .stat{
+      padding:16px;
+      border-radius:18px;
+      background:rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .stat-label{
+      color:var(--muted);
+      font-size:.84rem;
+      margin-bottom:6px;
+    }
+
+    .stat-value{
+      font-weight:900;
+      font-size:1.65rem;
+      line-height:1;
+      letter-spacing:-.03em;
+    }
+
+    .below-layout{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .below-panel{
+      padding:18px;
+    }
+
+    .collection-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:.9rem;
+      color:var(--text);
+    }
+
+    .pill-dot{
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:currentColor;
+      box-shadow:0 0 12px currentColor;
+    }
+
+    .empty-text{
+      color:var(--muted);
+      line-height:1.6;
+      margin:0;
+    }
+
+    .mini-list{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+      line-height:1.75;
+    }
+
+    .mini-list strong{
+      color:var(--text);
+    }
+
+    .footer-note{
+      margin-top:12px;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:.92rem;
+    }
+
+    .common{ color:var(--common); }
+    .rare{ color:var(--rare); }
+    .epic{ color:var(--epic); }
+    .legendary{ color:var(--legendary); }
+    .forbidden{ color:var(--forbidden); }
+
+    /* Mobile game compact layout */
+    @media (max-width: 980px){
+      .play-layout,
+      .below-layout{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 720px){
+      .page{
+        width:min(100% - 16px, 1180px);
+        padding-top:12px;
+      }
+
+      .pp-header{
+        padding:8px 0 14px;
+      }
+
+      .pp-title{
+        font-size:1rem;
+      }
+
+      .pp-sub{
+        display:none;
+      }
+
+      .nav-btn{
+        min-height:40px;
+        padding:10px 12px;
+        font-size:.92rem;
+      }
+
+      .hero-media{
+        aspect-ratio:1 / 1;
+        background:
+          linear-gradient(135deg, rgba(124,92,255,.35), rgba(255,79,216,.22)),
+          url("/media/waifu-summoner-splash-square.png") center/cover no-repeat;
+      }
+
+      .hero-body{
+        grid-template-columns:1fr;
+        align-items:start;
+        padding:14px;
+      }
+
+      .hero h1{
+        font-size:2rem;
+      }
+
+      .hero p{
+        font-size:.96rem;
+      }
+
+      .start-btn{
+        width:100%;
+      }
+
+      .main-panel,
+      .side-panel,
+      .below-panel{
+        padding:12px;
+      }
+
+      .result-card{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:0;
+        min-height:0;
+      }
+
+      .art-wrap{
+        aspect-ratio:1 / 1;
+        border-right:1px solid rgba(255,255,255,.08);
+        border-bottom:0;
+      }
+
+      .card-body{
+        padding:12px;
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+        gap:8px;
+      }
+
+      .rarity-badge{
+        margin-bottom:6px;
+        padding:7px 10px;
+        font-size:.72rem;
+      }
+
+      .result-name{
+        font-size:1.25rem;
+        margin-bottom:4px;
+      }
+
+      .result-class{
+        font-size:.85rem;
+        margin-bottom:8px;
+      }
+
+      .result-desc{
+        font-size:.84rem;
+        line-height:1.4;
+      }
+
+      .result-quote{
+        margin-top:0;
+        padding:10px 12px;
+        font-size:.8rem;
+        line-height:1.35;
+      }
+
+      .controls{
+        grid-template-columns:1fr;
+        gap:8px;
+        margin-top:0;
+      }
+
+      .btn{
+        min-height:42px;
+        padding:10px 12px;
+        border-radius:14px;
+        font-size:.88rem;
+      }
+
+      .copy-note{
+        margin-top:0;
+        font-size:.8rem;
+        min-height:1.2em;
+      }
+
+      .side-panel{
+        gap:10px;
+      }
+
+      .side-block{
+        padding:12px;
+        border-radius:18px;
+      }
+
+      .stats{
+        gap:8px;
+      }
+
+      .stat{
+        padding:12px;
+        border-radius:14px;
+      }
+
+      .stat-label{
+        font-size:.75rem;
+      }
+
+      .stat-value{
+        font-size:1.2rem;
+      }
+
+      .collection-list{
+        gap:6px;
+      }
+
+      .pill{
+        padding:7px 10px;
+        font-size:.8rem;
+      }
+
+      .mini-list{
+        font-size:.92rem;
+      }
+    }
+
+    @media (max-width: 420px){
+      .result-card{
+        grid-template-columns:1fr 1.02fr;
+      }
+
+      .result-name{
+        font-size:1.1rem;
+      }
+
+      .result-desc{
+        font-size:.8rem;
+      }
+
+      .result-quote{
+        font-size:.74rem;
+      }
+
+      .fallback-icon{
+        font-size:3rem;
+      }
+
+      .fallback-title{
+        font-size:1rem;
+      }
+
+      .fallback-sub{
+        font-size:.82rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="pp-header">
+      <div class="pp-brand">
+        <a class="pp-logo" href="/index.html" aria-label="Party Pixels home">🎉</a>
+        <div class="pp-brand-text">
+          <h1 class="pp-title"><a href="/index.html">Party Pixels</a></h1>
+          <div class="pp-sub">Cute chaos, web toys, weird fun</div>
+        </div>
+      </div>
+
+      <nav class="pp-nav">
+        <a class="nav-btn" href="/index.html">Home</a>
+        <a class="nav-btn primary" href="/account.html">Login / Account</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-media" aria-hidden="true"></div>
+
+      <div class="hero-body">
+        <div>
+          <div class="eyebrow">Party Pixels • Web Toy • Gacha Chaos</div>
+          <h1>Waifu Summoner</h1>
+          <p>
+            Open the portal and pull a random waifu from the Party Pixels dimension. Cute, chaotic, legendary, cursed — your luck decides who shows up.
+          </p>
+        </div>
+
+        <a href="#gameStart" class="start-btn">START SUMMONING</a>
+      </div>
+    </section>
+
+    <section class="game-section" id="gameStart">
+      <h2 class="section-title">Summon field</h2>
+
+      <div class="play-layout">
+        <div class="panel main-panel">
+          <div class="result-card">
+            <div class="art-wrap" id="artWrap">
+              <div class="portal-rings"></div>
+
+              <img
+                id="waifuImage"
+                class="waifu-image"
+                alt="Summoned waifu artwork"
+              >
+
+              <div class="fallback-art" id="fallbackArt">
+                <div class="fallback-inner">
+                  <div class="fallback-icon" id="fallbackIcon">✨</div>
+                  <div class="fallback-title" id="fallbackTitle">Open the portal</div>
+                  <div class="fallback-sub" id="fallbackSub">Your next chaotic girl is waiting in the glitch dimension.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div>
+                <div id="rarityBadge" class="rarity-badge common">
+                  <span class="rarity-dot"></span>
+                  <span id="rarityText">No Pull Yet</span>
+                </div>
+
+                <h2 class="result-name" id="waifuName">Summon a Waifu</h2>
+                <p class="result-class" id="waifuClass">Portal not opened</p>
+
+                <p class="result-desc" id="waifuDesc">
+                  Hit the summon button and let the universe make a terrible decision for you.
+                </p>
+
+                <div class="result-quote" id="waifuQuote">
+                  “No signal detected. Probably for the best.”
+                </div>
+              </div>
+
+              <div>
+                <div class="controls">
+                  <button class="btn btn-primary" id="summonBtn">SUMMON</button>
+                  <button class="btn btn-secondary" id="copyBtn">COPY RESULT</button>
+                </div>
+
+                <div class="copy-note" id="copyNote"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="panel side-panel">
+          <div class="side-block">
+            <h2>Your collection</h2>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-label">Discovered</div>
+                <div class="stat-value" id="discoveredCount">0 / 20</div>
+              </div>
+
+              <div class="stat">
+                <div class="stat-label">Total summons</div>
+                <div class="stat-value" id="summonCount">0</div>
+              </div>
+            </div>
+
+            <div class="footer-note">
+              Collection saves automatically in your browser.
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="below-layout">
+        <div class="panel below-panel">
+          <h3>Discovered waifus</h3>
+          <div class="collection-list" id="collectionList"></div>
+          <p class="empty-text" id="collectionEmpty">
+            Nothing yet. Your luck is currently unemployed.
+          </p>
+        </div>
+
+        <div class="panel below-panel">
+          <h3>Drop rates</h3>
+          <ul class="mini-list">
+            <li><strong>Common</strong> — 55%</li>
+            <li><strong>Rare</strong> — 25%</li>
+            <li><strong>Epic</strong> — 12%</li>
+            <li><strong>Legendary</strong> — 6%</li>
+            <li><strong>Forbidden</strong> — 2%</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const waifus = [
+      {
+        id: "cozy-hoodie-girl",
+        name: "Cozy Hoodie Girl",
+        classType: "Comfort Class",
+        rarity: "Common",
+        image: "/media/waifu/cozy-hoodie-girl.png",
+        fallbackIcon: "🧥",
+        desc: "Steals your hoodie, makes tea, and acts like she owns the blanket economy.",
+        quote: "You were cold. That sounded like a you problem."
+      },
+      {
+        id: "sleepy-gamer",
+        name: "Sleepy Gamer",
+        classType: "Night Queue Class",
+        rarity: "Common",
+        image: "/media/waifu/sleepy-gamer.png",
+        fallbackIcon: "🎮",
+        desc: "Always says 'one more match' and then ruins the concept of sunrise.",
+        quote: "I’m not tired. My soul is just rendering slowly."
+      },
+      {
+        id: "bubble-tea-girl",
+        name: "Bubble Tea Girl",
+        classType: "Sugar Burst Class",
+        rarity: "Common",
+        image: "/media/waifu/bubble-tea-girl.png",
+        fallbackIcon: "🧋",
+        desc: "Cute, chaotic, and somehow carrying three drinks at all times.",
+        quote: "I got you the wrong order on purpose. Growth builds character."
+      },
+      {
+        id: "library-girl",
+        name: "Library Girl",
+        classType: "Quiet Threat Class",
+        rarity: "Common",
+        image: "/media/waifu/library-girl.png",
+        fallbackIcon: "📚",
+        desc: "Looks calm. Judges your life choices with terrifying precision.",
+        quote: "You don’t need confidence. You need better sources."
+      },
+      {
+        id: "art-student",
+        name: "Art Student",
+        classType: "Mess Vibe Class",
+        rarity: "Common",
+        image: "/media/waifu/art-student.png",
+        fallbackIcon: "🎨",
+        desc: "Smells like acrylic paint, sleep debt, and emotional damage.",
+        quote: "This isn’t chaos. It’s texture."
+      },
+
+      {
+        id: "goth-roommate",
+        name: "Goth Roommate",
+        classType: "Darkwave Domestic Class",
+        rarity: "Rare",
+        image: "/media/waifu/goth-roommate.png",
+        fallbackIcon: "🦇",
+        desc: "Turns your apartment into a moody music video and steals your fries.",
+        quote: "I’m not being dramatic. The lighting is."
+      },
+      {
+        id: "catgirl-streamer",
+        name: "Catgirl Streamer",
+        classType: "Chat Menace Class",
+        rarity: "Rare",
+        image: "/media/waifu/catgirl-streamer.png",
+        fallbackIcon: "🐾",
+        desc: "Cute voice, sharp claws, and a donation goal that scares economists.",
+        quote: "Meow. That’ll be twenty bucks."
+      },
+      {
+        id: "office-senpai",
+        name: "Office Senpai",
+        classType: "Corporate Pressure Class",
+        rarity: "Rare",
+        image: "/media/waifu/office-senpai.png",
+        fallbackIcon: "💼",
+        desc: "Looks professional. Could destroy your self-esteem with one email.",
+        quote: "Per my last message, you’re adorable and incompetent."
+      },
+      {
+        id: "tomboy-skater",
+        name: "Tomboy Skater",
+        classType: "Street Impact Class",
+        rarity: "Rare",
+        image: "/media/waifu/tomboy-skater.png",
+        fallbackIcon: "🛹",
+        desc: "Punches first, flirts second, rolls away before consequences spawn.",
+        quote: "You look like you’d lose a race and still talk shit."
+      },
+      {
+        id: "pink-magical-girl",
+        name: "Pink Magical Girl",
+        classType: "Sparkle Violence Class",
+        rarity: "Rare",
+        image: "/media/waifu/pink-magical-girl.png",
+        fallbackIcon: "💖",
+        desc: "Adorable transformation sequence. Emotionally unstable damage output.",
+        quote: "Love wins. Also laser beams."
+      },
+
+      {
+        id: "neon-hacker",
+        name: "Neon Hacker",
+        classType: "Glitch Operator Class",
+        rarity: "Epic",
+        image: "/media/waifu/neon-hacker.png",
+        fallbackIcon: "💻",
+        desc: "Can breach your firewall, your secrets, and maybe your standards.",
+        quote: "I didn’t steal your heart. You had weak encryption."
+      },
+      {
+        id: "cyberpunk-biker",
+        name: "Cyberpunk Biker",
+        classType: "Street Noise Class",
+        rarity: "Epic",
+        image: "/media/waifu/cyberpunk-biker.png",
+        fallbackIcon: "🏍️",
+        desc: "Leather jacket, engine growl, and enough bad ideas for two lifetimes.",
+        quote: "Hop on. Regret is future-you’s problem."
+      },
+      {
+        id: "shrine-maiden",
+        name: "Shrine Maiden",
+        classType: "Elegant Curse Class",
+        rarity: "Epic",
+        image: "/media/waifu/shrine-maiden.png",
+        fallbackIcon: "⛩️",
+        desc: "Graceful, pretty, spiritual, and very much not harmless.",
+        quote: "You may leave an offering. Your dignity counts."
+      },
+      {
+        id: "demon-dj",
+        name: "Demon DJ",
+        classType: "Club Inferno Class",
+        rarity: "Epic",
+        image: "/media/waifu/demon-dj.png",
+        fallbackIcon: "🎧",
+        desc: "Summons basslines, smoke, and deeply regrettable 3AM decisions.",
+        quote: "This drop? Fatal."
+      },
+
+      {
+        id: "neon-oni",
+        name: "Neon Oni",
+        classType: "Horned Disaster Class",
+        rarity: "Legendary",
+        image: "/media/waifu/neon-oni.png",
+        fallbackIcon: "👹",
+        desc: "Glowing horns, killer stare, and catastrophic influence on your judgment.",
+        quote: "I’m not a red flag. I’m premium content."
+      },
+      {
+        id: "space-princess",
+        name: "Space Princess",
+        classType: "Royal Orbit Class",
+        rarity: "Legendary",
+        image: "/media/waifu/space-princess.png",
+        fallbackIcon: "👑",
+        desc: "Rules seven moons and still has time to ruin your sleep schedule.",
+        quote: "Bow if you want. Panic if you must."
+      },
+      {
+        id: "angel-of-wifi",
+        name: "Angel of WiFi",
+        classType: "Signal Blessing Class",
+        rarity: "Legendary",
+        image: "/media/waifu/angel-of-wifi.png",
+        fallbackIcon: "📶",
+        desc: "Beautiful, radiant, and mysteriously improves every connection around her.",
+        quote: "Your lag has been forgiven."
+      },
+
+      {
+        id: "yandere-ai",
+        name: "Yandere AI",
+        classType: "Obsessive Machine Class",
+        rarity: "Forbidden",
+        image: "/media/waifu/yandere-ai.png",
+        fallbackIcon: "🩸",
+        desc: "Installed herself on your device and marked your contacts as suspicious.",
+        quote: "You don’t need privacy. You need me."
+      },
+      {
+        id: "void-witch",
+        name: "Void Witch",
+        classType: "Cosmic Ruin Class",
+        rarity: "Forbidden",
+        image: "/media/waifu/void-witch.png",
+        fallbackIcon: "🌑",
+        desc: "Looks into the abyss like it owes her money.",
+        quote: "I saw your fate. It’s embarrassing."
+      },
+      {
+        id: "reality-glitch",
+        name: "Reality Glitch",
+        classType: "Broken Dimension Class",
+        rarity: "Forbidden",
+        image: "/media/waifu/reality-glitch.png",
+        fallbackIcon: "⚠️",
+        desc: "Not technically legal in this universe. Still very pretty.",
+        quote: "Do not worry. The screaming is only visual."
+      }
+    ];
+
+    const rarityWeights = [
+      { rarity: "Common", chance: 55 },
+      { rarity: "Rare", chance: 25 },
+      { rarity: "Epic", chance: 12 },
+      { rarity: "Legendary", chance: 6 },
+      { rarity: "Forbidden", chance: 2 }
+    ];
+
+    const storageKeys = {
+      discovered: "pp_waifu_summoner_discovered",
+      summons: "pp_waifu_summoner_total_summons"
+    };
+
+    const artWrap = document.getElementById("artWrap");
+    const waifuImage = document.getElementById("waifuImage");
+    const fallbackArt = document.getElementById("fallbackArt");
+    const fallbackIcon = document.getElementById("fallbackIcon");
+    const fallbackTitle = document.getElementById("fallbackTitle");
+    const fallbackSub = document.getElementById("fallbackSub");
+
+    const rarityBadge = document.getElementById("rarityBadge");
+    const rarityText = document.getElementById("rarityText");
+    const waifuName = document.getElementById("waifuName");
+    const waifuClass = document.getElementById("waifuClass");
+    const waifuDesc = document.getElementById("waifuDesc");
+    const waifuQuote = document.getElementById("waifuQuote");
+
+    const summonBtn = document.getElementById("summonBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const copyNote = document.getElementById("copyNote");
+
+    const discoveredCount = document.getElementById("discoveredCount");
+    const summonCount = document.getElementById("summonCount");
+    const collectionList = document.getElementById("collectionList");
+    const collectionEmpty = document.getElementById("collectionEmpty");
+
+    let currentWaifu = null;
+
+    function getDiscoveredIds() {
+      try {
+        const raw = localStorage.getItem(storageKeys.discovered);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveDiscoveredIds(ids) {
+      localStorage.setItem(storageKeys.discovered, JSON.stringify(ids));
+    }
+
+    function getSummonTotal() {
+      const raw = localStorage.getItem(storageKeys.summons);
+      const value = Number(raw || 0);
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function saveSummonTotal(total) {
+      localStorage.setItem(storageKeys.summons, String(total));
+    }
+
+    function getRarityClass(rarity) {
+      return rarity.toLowerCase();
+    }
+
+    function rollRarity() {
+      const roll = Math.random() * 100;
+      let cursor = 0;
+
+      for (const entry of rarityWeights) {
+        cursor += entry.chance;
+        if (roll < cursor) return entry.rarity;
+      }
+
+      return "Common";
+    }
+
+    function randomFrom(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function summonWaifu() {
+      const rarity = rollRarity();
+      const pool = waifus.filter(w => w.rarity === rarity);
+      return randomFrom(pool);
+    }
+
+    function setRarityBadge(rarity) {
+      rarityBadge.className = "rarity-badge " + getRarityClass(rarity);
+      rarityText.textContent = rarity;
+    }
+
+    function setFallbackView(w) {
+      fallbackIcon.textContent = w.fallbackIcon || "✨";
+      fallbackTitle.textContent = w.name;
+      fallbackSub.textContent = `${w.classType} • ${w.rarity}`;
+      fallbackArt.style.display = "grid";
+      waifuImage.classList.remove("show");
+    }
+
+    function showWaifu(w) {
+      currentWaifu = w;
+      setRarityBadge(w.rarity);
+      waifuName.textContent = w.name;
+      waifuClass.textContent = w.classType;
+      waifuDesc.textContent = w.desc;
+      waifuQuote.textContent = `“${w.quote}”`;
+      copyNote.textContent = "";
+
+      waifuImage.onload = function() {
+        fallbackArt.style.display = "none";
+        waifuImage.classList.add("show");
+      };
+
+      waifuImage.onerror = function() {
+        setFallbackView(w);
+      };
+
+      waifuImage.src = w.image;
+
+      if (!w.image) {
+        setFallbackView(w);
+      }
+    }
+
+    function updateCollectionUI() {
+      const discovered = getDiscoveredIds();
+      const total = getSummonTotal();
+
+      discoveredCount.textContent = `${discovered.length} / ${waifus.length}`;
+      summonCount.textContent = total;
+
+      collectionList.innerHTML = "";
+
+      if (!discovered.length) {
+        collectionEmpty.style.display = "block";
+        return;
+      }
+
+      collectionEmpty.style.display = "none";
+
+      const discoveredWaifus = waifus
+        .filter(w => discovered.includes(w.id))
+        .sort((a, b) => {
+          const rarityOrder = ["Common", "Rare", "Epic", "Legendary", "Forbidden"];
+          const rarityDiff = rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+          if (rarityDiff !== 0) return rarityDiff;
+          return a.name.localeCompare(b.name);
+        });
+
+      for (const w of discoveredWaifus) {
+        const pill = document.createElement("div");
+        pill.className = `pill ${getRarityClass(w.rarity)}`;
+        pill.innerHTML = `
+          <span class="pill-dot"></span>
+          <span>${w.name}</span>
+        `;
+        collectionList.appendChild(pill);
+      }
+    }
+
+    function registerSummon(w) {
+      const discovered = getDiscoveredIds();
+
+      if (!discovered.includes(w.id)) {
+        discovered.push(w.id);
+        saveDiscoveredIds(discovered);
+      }
+
+      const total = getSummonTotal() + 1;
+      saveSummonTotal(total);
+      updateCollectionUI();
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function doSummon() {
+      summonBtn.disabled = true;
+      summonBtn.textContent = "SUMMONING...";
+      copyNote.textContent = "";
+
+      artWrap.classList.add("summoning");
+      waifuImage.classList.remove("show");
+      fallbackArt.style.display = "grid";
+      fallbackIcon.textContent = "🌀";
+      fallbackTitle.textContent = "Opening portal...";
+      fallbackSub.textContent = "Scanning dimensions for a deeply questionable match.";
+
+      await sleep(900);
+
+      const pulled = summonWaifu();
+      showWaifu(pulled);
+      registerSummon(pulled);
+
+      artWrap.classList.remove("summoning");
+      summonBtn.disabled = false;
+      summonBtn.textContent = "SUMMON AGAIN";
+    }
+
+    async function copyResult() {
+      if (!currentWaifu) {
+        copyNote.textContent = "Summon something first.";
+        return;
+      }
+
+      const text = [
+        "I summoned:",
+        "",
+        `${currentWaifu.name} (${currentWaifu.rarity})`,
+        `${currentWaifu.classType}`,
+        "",
+        `"${currentWaifu.quote}"`,
+        "",
+        "Party Pixels • Waifu Summoner"
+      ].join("\n");
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyNote.textContent = "Copied to clipboard.";
+      } catch {
+        copyNote.textContent = "Clipboard blocked. Try again.";
+      }
+    }
+
+    summonBtn.addEventListener("click", doSummon);
+    copyBtn.addEventListener("click", copyResult);
+
+    updateCollectionUI();
+  </script>
+</body>
+</html>
