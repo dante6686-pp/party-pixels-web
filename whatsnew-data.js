@@ -1,6 +1,14 @@
 // /js/whatsnew-data.js
 window.PP_WHATS_NEW = [
   {
+  title: "Don't Tap The Idiot",
+  subtitle: "Tap every normal face. One idiot ends your run.",
+  cta: "Play",
+  href: "dont-tap-the-idiot.html",
+  image: "/media/tapidiot-share.png",
+  tag: "NEW"
+},
+  {
     title: "Main Character Quest",
     subtitle: "Find out if you're the main character in this life.",
     cta: "View",
