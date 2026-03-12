@@ -1,5 +1,16 @@
 [
   {
+  "id": "dont-tap-the-idiot",
+  "title": "Don't Tap The Idiot",
+  "type": "Game",
+  "status": "live",
+  "desc": "A fast reflex game. Tap every normal character before time runs out. One idiot ends your run instantly.",
+  "tags": ["game", "reflex", "arcade"],
+  "href": "/dont-tap-the-idiot.html",
+  "thumb": "/media/tapidiot-share.png",
+  "added": "2026-03-12"
+},
+  {
   "id": "main-character-quest",
   "title": "Main Character Quest",
   "type": "Generator",
