@@ -113,7 +113,7 @@
 
     const IDIOT_MOVE_CHANCE = 0.25;
     const IDIOT_MOVE_ANIM_MS = 180;
-    const BONUS_TIME_MS = 320;
+    const BONUS_TIME_MS = 400;
 
     let score = 0;
     let best = Number(localStorage.getItem("tapidiot-best") || 0);
@@ -209,7 +209,7 @@
 
       const now = performance.now();
       const remaining = Math.max(0, roundDeadline - now);
-      const cap = baseRoundTime + 1200;
+      const cap = baseRoundTime + 2200;
       const next = Math.min(remaining + ms, cap);
 
       startRoundTimer(next);
