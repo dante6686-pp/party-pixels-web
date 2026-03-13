@@ -48,7 +48,7 @@ const quizzes = [
     estTime: "2 min"
   },
   {
-    id: "toxicity-check",
+    id: "toxity-check",
     title: "Toxicity Check",
     desc: "Are you healthy, messy, manipulative, or just accidentally impossible to deal with?",
     href: "/quiz/toxicity-check.html",
@@ -85,7 +85,7 @@ let activeTag = "all";
 let searchTerm = "";
 
 function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, (match) => {
+  return str.replace(/[&<>"']/g, (match) => {
     const map = {
       "&": "&amp;",
       "<": "&lt;",
@@ -229,3 +229,14 @@ if (searchInput) {
 }
 
 renderAll();
+
+function shuffleArray(array) {
+  const arr = [...array];
+
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+
+  return arr;
+}
