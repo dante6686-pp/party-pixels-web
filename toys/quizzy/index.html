@@ -1,1 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Quizzes | Party Pixels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta
+    name="description"
+    content="Explore weird, chaotic, funny personality quizzes on Party Pixels. Test your drama level, internet brainrot, friend group energy, and more."
+  >
 
+  <meta property="og:title" content="Party Pixels Quizzes">
+  <meta property="og:description" content="Funny, chaotic and weird quizzes you can play in your browser.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/media/quizzes-splash.png">
+  <meta property="og:url" content="https://partypixels.com/quizzes.html">
+
+  <link rel="stylesheet" href="/pp-main.css">
+  <link rel="stylesheet" href="/quizzes.css">
+</head>
+<body>
+  <!-- Shared header -->
+  <div id="site-header"></div>
+
+  <main class="quizzes-page">
+    <section class="quizzes-hero">
+      <div class="quizzes-hero__content">
+        <p class="eyebrow">PARTY PIXELS / QUIZZES</p>
+        <h1>Chaotic quizzes for mildly broken internet people.</h1>
+        <p class="hero-copy">
+          Personality tests, friend group nonsense, internet brainrot checks,
+          and other highly scientific ways to waste your time.
+        </p>
+
+        <div class="hero-actions">
+          <a class="pp-btn pp-btn--primary" href="#quiz-grid">Browse Quizzes</a>
+          <a class="pp-btn pp-btn--ghost" href="/index.html">Back Home</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat__value" id="quiz-count">0</span>
+            <span class="hero-stat__label">Quizzes</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat__value">100%</span>
+            <span class="hero-stat__label">Fake science</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat__value">∞</span>
+            <span class="hero-stat__label">Chaos potential</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quizzes-hero__art">
+        <img
+          src="/media/quizzes-splash.png"
+          alt="Party Pixels quizzes splash art"
+          loading="eager"
+        >
+      </div>
+    </section>
+
+    <section class="quizzes-toolbar">
+      <div class="toolbar-search">
+        <label class="sr-only" for="quiz-search">Search quizzes</label>
+        <input
+          id="quiz-search"
+          type="search"
+          placeholder="Search quizzes..."
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="toolbar-filters" id="tag-filters">
+        <button class="tag-filter is-active" data-tag="all" type="button">All</button>
+        <button class="tag-filter" data-tag="chaos" type="button">Chaos</button>
+        <button class="tag-filter" data-tag="friends" type="button">Friends</button>
+        <button class="tag-filter" data-tag="meme" type="button">Meme</button>
+        <button class="tag-filter" data-tag="dating" type="button">Dating</button>
+        <button class="tag-filter" data-tag="personality" type="button">Personality</button>
+      </div>
+    </section>
+
+    <section class="featured-quiz" id="featured-quiz">
+      <!-- Injected by JS -->
+    </section>
+
+    <section class="quiz-grid-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">BROWSE</p>
+          <h2>All Quizzes</h2>
+        </div>
+        <p class="section-subcopy" id="results-count">Showing 0 quizzes</p>
+      </div>
+
+      <div class="quiz-grid" id="quiz-grid">
+        <!-- Injected by JS -->
+      </div>
+
+      <div class="empty-state is-hidden" id="empty-state">
+        <h3>No quizzes found.</h3>
+        <p>Try another search or switch the filter. The chaos is still there somewhere.</p>
+      </div>
+    </section>
+
+    <section class="quizzes-info">
+      <div class="info-card">
+        <h3>What is this?</h3>
+        <p>
+          Party Pixels Quizzes is a growing collection of weird browser quizzes
+          about drama, internet poisoning, friendship disasters, and other very
+          important personality science.
+        </p>
+      </div>
+
+      <div class="info-card">
+        <h3>Why these quizzes?</h3>
+        <p>
+          Because people love learning uncomfortable truths about themselves,
+          then sending the result to friends for emotional damage.
+        </p>
+      </div>
+
+      <div class="info-card">
+        <h3>More coming soon</h3>
+        <p>
+          This section will keep expanding with new quizzes, result cards, more
+          categories, and eventually account-based collections and saved results.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Shared footer -->
+  <div id="site-footer"></div>
+
+  <script src="/site-shell.js"></script>
+  <script src="/quizzes.js"></script>
+</body>
+</html>
