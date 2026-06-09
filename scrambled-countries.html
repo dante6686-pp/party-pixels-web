@@ -4,9 +4,12 @@
   <meta charset="utf-8">
   <title>Scrambled Countries | Party Pixels</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Unscramble letters to guess the country. Play solo against the clock or challenge your friends!">
+  <meta name="description" content="Unscramble letters to find the correct country. Play solo against time or host a multiplayer party battle!">
   <link rel="stylesheet" href="/pp-main.css">
   
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612"
+     crossorigin="anonymous"></script>
+
   <style>
     /* Stylowanie w klimacie Party Pixels */
     .game-container {
@@ -14,7 +17,7 @@
       margin: 40px auto;
       padding: 24px;
       background: 
-        radial-gradient(circle at top, rgba(255, 92, 255, 0.1), transparent 60%),
+        radial-gradient(circle at top, rgba(255, 92, 255, 0.15), transparent 60%),
         linear-gradient(145deg, rgba(10, 14, 35, 0.98), rgba(4, 5, 14, 0.99));
       border: 1px solid rgba(124, 128, 210, 0.25);
       border-radius: 20px;
@@ -31,7 +34,7 @@
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       color: var(--text, #fff);
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 11px;
@@ -44,7 +47,17 @@
       border-color: #ff5cff;
     }
 
-    .game-screen { display: none; }
+    /* System zarządzania ekranami (Bezpieczny display) */
+    .screen-segment { 
+      display: none !important; 
+    }
+    .screen-segment.active-screen { 
+      display: grid !important; 
+    }
+    .screen-segment.active-screen.game-layout {
+      display: block !important;
+    }
+
     .hidden { display: none !important; }
 
     .setup-grid {
@@ -107,18 +120,18 @@
 
     /* Ekran Gry */
     .scrambled-box {
-      font-size: 36px;
+      font-size: 38px;
       font-weight: 900;
       letter-spacing: 0.15em;
       text-align: center;
-      margin: 20px 0;
+      margin: 25px 0;
       color: #fff;
       text-shadow: 0 0 15px rgba(255,255,255,0.4);
     }
 
     .timer-bar-container {
       background: rgba(255,255,255,0.1);
-      height: 6px;
+      height: 8px;
       border-radius: 999px;
       overflow: hidden;
       margin-bottom: 20px;
@@ -128,6 +141,7 @@
       height: 100%;
       width: 100%;
       transition: width 0.1s linear;
+      box-shadow: 0 0 8px #ff5cff;
     }
 
     .players-list {
@@ -151,6 +165,7 @@
       padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
+      font-weight: bold;
     }
 
     .badge-tier {
@@ -176,14 +191,12 @@
     </section>
 
     <div class="game-container">
-      <!-- Przełącznik języka -->
       <div class="lang-switcher">
         <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
         <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
       </div>
 
-      <!-- 1. EKRAN INSTALACJI (SETUP) -->
-      <div id="setupScreen" class="setup-grid">
+      <div id="setupScreen" class="screen-segment active-screen setup-grid">
         <div class="form-group">
           <label id="lblPlayers">Number of Players</label>
           <div class="btn-group">
@@ -210,8 +223,7 @@
         <button class="primary-btn" id="btnStart" onclick="startGame()">Start Game</button>
       </div>
 
-      <!-- 2. EKRAN ROZGRYWKI -->
-      <div id="gameScreen" class="game-screen">
+      <div id="gameScreen" class="screen-segment game-layout">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
           <span id="gameInfo" style="font-size: 13px; color: #8a8dad;">Word 1/3</span>
@@ -219,17 +231,14 @@
 
         <div id="scrambledWord" class="scrambled-box">XXXXXX</div>
 
-        <!-- Pasek czasu (Tylko dla 1 gracza) -->
         <div id="timerContainer" class="timer-bar-container">
           <div id="timerBar" class="timer-bar"></div>
         </div>
 
-        <!-- Tryb Single Player (Wpisywanie) -->
         <div id="singlePlayerInput" class="form-group">
           <input type="text" id="soloAnswer" class="game-input" placeholder="Type country name..." autocomplete="off">
         </div>
 
-        <!-- Tryb Multi Player (Lista graczy z punktami) -->
         <div id="multiPlayerList" class="players-list hidden"></div>
 
         <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
@@ -237,10 +246,9 @@
         </div>
       </div>
 
-      <!-- 3. EKRAN KOŃCOWY (WIN/OVER) -->
-      <div id="endScreen" class="game-screen" style="text-align: center;">
+      <div id="endScreen" class="screen-segment" style="text-align: center;">
         <h2 id="endTitle" style="font-size: 28px; margin-bottom: 10px;">Game Over</h2>
-        <p id="endResults" style="color: #8a8dad; margin-bottom: 20px;"></p>
+        <p id="endResults" style="color: #8a8dad; margin-bottom: 20px; font-size: 16px; line-height: 1.6;"></p>
         <button class="primary-btn" id="btnRestart" onclick="resetGame()">Play Again</button>
       </div>
     </div>
@@ -248,7 +256,9 @@
     <div id="footer"></div>
   </div>
 
-  <!-- Skrypty bazy Party Pixels -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+
   <script>
     function loadPart(id, file) {
       fetch(file)
@@ -260,9 +270,7 @@
     loadPart('footer', '/footer.html');
   </script>
 
-  <!-- LOGIKA GRY (JAVASCRIPT) -->
   <script>
-    // Słownik tłumaczeń podstawowych etykiet UI
     const i18n = {
       en: {
         players: "Number of Players", names: "Player Name(s)", target: "Points to Win",
@@ -278,7 +286,6 @@
       }
     };
 
-    // Baza słów podzielona na Trudność i Języki
     const database = {
       en: {
         easy: ["POLAND", "SPAIN", "ITALY", "BRAZIL", "FRANCE", "JAPAN", "CANADA", "EGYPT"],
@@ -292,14 +299,12 @@
       }
     };
 
-    // Stan gry
     let lang = 'en';
     let config = { players: 1, targetScore: 3, names: ["Player 1"] };
     let gameState = {
       scores: [0, 0, 0],
-      currentTier: 'easy', // easy, medium, hard
+      currentTier: 'easy',
       roundIndex: 0,
-      totalQuestionsInTier: 3, // Ile pytań na etap zanim skoczy trudność
       currentAnswer: "",
       timer: null,
       timeLeft: 100
@@ -310,7 +315,6 @@
       document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
       document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
       
-      // Aktualizacja interfejsu konfiguracji
       document.getElementById('lblPlayers').textContent = i18n[lang].players;
       document.getElementById('lblPlayerNames').textContent = i18n[lang].names;
       document.getElementById('lblTargetScore').textContent = i18n[lang].target;
@@ -352,7 +356,8 @@
     function startGame() {
       config.names = [];
       for(let i = 1; i <= config.players; i++) {
-        let val = document.getElementById(`p${i}Name`).value.trim();
+        let inputEl = document.getElementById(`p${i}Name`);
+        let val = inputEl ? inputEl.value.trim() : "";
         config.names.push(val || `Player ${i}`);
       }
 
@@ -360,8 +365,11 @@
       gameState.currentTier = 'easy';
       gameState.roundIndex = 0;
 
-      document.getElementById('setupScreen').classList.add('hidden');
-      document.getElementById('gameScreen').classList.remove('hidden');
+      // Zmiana aktywnych ekranów
+      document.getElementById('setupScreen').classList.remove('active-screen');
+      
+      const gameScreen = document.getElementById('gameScreen');
+      gameScreen.classList.add('active-screen');
 
       if(config.players > 1) {
         document.getElementById('timerContainer').classList.add('hidden');
@@ -378,7 +386,6 @@
     }
 
     function loadQuestion() {
-      // Sprawdzenie zmiany etapu (3 pytania na etap, trudny etap ma tylko 2 pytania dla dynamiki)
       let maxInTier = gameState.currentTier === 'hard' ? 2 : 3;
       if (gameState.roundIndex >= maxInTier) {
         gameState.roundIndex = 0;
@@ -387,20 +394,17 @@
         else { endByLimit(); return; }
       }
 
-      // Aktualizacja nagłówków etapu
       let tierTxt = i18n[lang].easy;
       if(gameState.currentTier === 'medium') tierTxt = i18n[lang].medium;
       if(gameState.currentTier === 'hard') tierTxt = i18n[lang].hard;
       document.getElementById('tierBadge').textContent = tierTxt;
       document.getElementById('gameInfo').textContent = `${i18n[lang].word} ${gameState.roundIndex + 1}/${maxInTier}`;
 
-      // Losowanie kraju z bazy danych
       let pool = database[lang][gameState.currentTier];
       let word = pool[Math.floor(Math.random() * pool.length)];
       gameState.currentAnswer = word;
       document.getElementById('scrambledWord').textContent = scramble(word);
 
-      // Reset pól tekstowych
       document.getElementById('soloAnswer').value = "";
 
       if (config.players === 1) {
@@ -412,9 +416,8 @@
 
     function startTimer() {
       clearInterval(gameState.timer);
-      // Czas zależny od wybranego celu punktowego i etapu (Etap 3 to szybsza runda)
       let baseSeconds = config.targetScore === 3 ? 20 : (config.targetScore === 5 ? 15 : 12);
-      if (gameState.currentTier === 'hard') baseSeconds = Math.round(baseSeconds * 0.6); // 40% mniej czasu
+      if (gameState.currentTier === 'hard') baseSeconds = Math.round(baseSeconds * 0.6);
 
       let duration = baseSeconds * 1000;
       let start = Date.now();
@@ -426,7 +429,7 @@
         if (progress <= 0) {
           clearInterval(gameState.timer);
           document.getElementById('timerBar').style.width = '0%';
-          nextWord(); // Czas minął, idziemy dalej
+          nextWord();
         } else {
           document.getElementById('timerBar').style.width = progress + '%';
         }
@@ -435,8 +438,10 @@
 
     function setupSoloInputListener() {
       const input = document.getElementById('soloAnswer');
-      input.replaceWith(input.cloneNode(true)); // Czyszczenie starych listenerów
-      document.getElementById('soloAnswer').addEventListener('input', (e) => {
+      const newInput = input.cloneNode(true);
+      input.parentNode.replaceChild(newInput, input);
+
+      newInput.addEventListener('input', (e) => {
         let val = e.target.value.trim().toUpperCase();
         if (val === gameState.currentAnswer) {
           clearInterval(gameState.timer);
@@ -448,6 +453,7 @@
           }
         }
       });
+      setTimeout(() => newInput.focus(), 50);
     }
 
     function renderMultiplayerList() {
@@ -478,7 +484,6 @@
     }
 
     function endByLimit() {
-      // Gra kończy się, gdy przejdziemy wszystkie słowa, a nikt nie zdobył limitu punktów
       clearInterval(gameState.timer);
       let maxScore = Math.max(...gameState.scores);
       let winIdx = gameState.scores.indexOf(maxScore);
@@ -487,8 +492,8 @@
 
     function endGame(winnerName) {
       clearInterval(gameState.timer);
-      document.getElementById('gameScreen').classList.add('hidden');
-      document.getElementById('endScreen').classList.remove('hidden');
+      document.getElementById('gameScreen').classList.remove('active-screen');
+      document.getElementById('endScreen').classList.add('active-screen');
 
       document.getElementById('endTitle').textContent = i18n[lang].win;
       
@@ -500,8 +505,8 @@
     }
 
     function resetGame() {
-      document.getElementById('endScreen').classList.add('hidden');
-      document.getElementById('setupScreen').classList.remove('hidden');
+      document.getElementById('endScreen').classList.remove('active-screen');
+      document.getElementById('setupScreen').classList.add('active-screen');
     }
   </script>
 </body>
