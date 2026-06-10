@@ -304,40 +304,6 @@
       color: #000;
       box-shadow: 0 0 15px #00f0ff;
     }
-
-    /* SEKRETPAD / PAYPAL SUPPORT WIDGET */
-    .pp-support-wrapper {
-      text-align: center;
-      margin: 40px auto 20px;
-    }
-
-    .pp-paypal-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 24px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(0, 240, 255, 0.2);
-      border-radius: 14px;
-      color: #8a8dad;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 700;
-      transition: all 0.3s ease;
-    }
-
-    .pp-paypal-btn:hover {
-      background: rgba(0, 240, 255, 0.08);
-      border-color: #00f0ff;
-      color: #fff;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-      transform: translateY(-1px);
-    }
-
-    .pp-paypal-btn span.heart {
-      color: #ff5cff;
-      text-shadow: 0 0 8px rgba(255, 92, 255, 0.6);
-    }
   </style>
 </head>
 
@@ -431,15 +397,7 @@
       </div>
     </div>
 
-    <!-- PAYPAL SUPPORT BUTTON -->
-    <div class="pp-support-wrapper">
-      <!-- Przycisk kieruje do Twojego domyślnego mechanizmu tipjar lub zewnętrznego PayPal linku -->
-      <a href="https://paypal.me/YOUR_PAYPAL_USERNAME" target="_blank" class="pp-paypal-btn" id="paypalTipBtn">
-        <span class="heart">❤</span> Support Party Pixels via PayPal
-      </a>
-    </div>
-
-    <!-- Footer (Ładowany dynamicznie z /footer.html) -->
+    <!-- Footer (Ładowany dynamicznie z /footer.html, zawiera już PayPal) -->
     <div id="footer"></div>
 
   </div>
@@ -459,7 +417,6 @@
         .catch(err => console.error(`Load error in ${file}:`, err));
     }
 
-    // Załaduj te same moduły, z których korzysta index.html
     loadPart("header", "/header.html");
     loadPart("footer", "/footer.html");
   </script>
@@ -494,14 +451,14 @@
         start: "Start Game", next: "Next Word", skip: "Skip Word", reveal: "Reveal Answer", 
         restart: "Play Again", easy: "Tier 1: Easy", medium: "Tier 2: Medium", 
         hard: "Tier 3: Hard (Fast)", word: "Word", win: "Victory!", over: "Game Over", 
-        placeholder: "Type country name...", score: "Score", support: "❤ Support Party Pixels via PayPal"
+        placeholder: "Type country name...", score: "Score"
       },
       pl: {
         players: "Liczba Graczy", names: "Imię Gracza (Graczy)", target: "Punkty do Wygranej",
         start: "Uruchom Grę", next: "Następne Słowo", skip: "Pomiń Słowo", reveal: "Sprawdź Odpowiedź", 
         restart: "Zagraj Ponownie", easy: "Etap 1: Łatwy", medium: "Etap 2: Średni", 
         hard: "Etap 3: Trudny (Szybka runda)", word: "Słowo", win: "Zwycięstwo!", over: "Koniec Czasu!", 
-        placeholder: "Wpisz nazwę kraju...", score: "Wynik", support: "❤ Wesprzyj Party Pixels przez PayPal"
+        placeholder: "Wpisz nazwę kraju...", score: "Wynik"
       }
     };
 
@@ -567,7 +524,6 @@
       document.getElementById('btnRestart').textContent = i18n[lang].restart;
       document.getElementById('btnReveal').textContent = i18n[lang].reveal;
       document.getElementById('soloAnswer').placeholder = i18n[lang].placeholder;
-      document.getElementById('paypalTipBtn').innerHTML = i18n[lang].support;
       
       if (document.getElementById('gameScreen').classList.contains('active-screen')) {
         document.getElementById('btnNext').textContent = config.players === 1 ? i18n[lang].skip : i18n[lang].next;
@@ -654,7 +610,6 @@
       gameState.inputFrozen = false;
       gameState.scoredPlayers = []; 
       
-      // CAŁKOWICIE PRZEBUDOWANE SKALOWANIE: Dzielimy rozgrywkę na 3 równe progi matematyczne
       let dynamicInterval = config.targetScore / 3;
       if (gameState.roundIndex < dynamicInterval) {
         gameState.currentTier = 'easy';
@@ -867,7 +822,6 @@
       document.getElementById('setupScreen').classList.add('active-screen');
     }
 
-    // Inicjalizacja domyślnego języka
     setLanguage('en');
   </script>
 </body>
