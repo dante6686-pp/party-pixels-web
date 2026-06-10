@@ -310,17 +310,8 @@
 <body>
   <div class="page">
 
-    <!-- Header Top Bar (Ładowany dynamicznie z /header.html) -->
-    <div id="header"></div>
+    <div id="header" style="margin-bottom: 40px;"></div>
 
-    <!-- TYTUŁ SEKCJI GRY -->
-    <section class="hero" style="text-align: center; margin-top: 30px; margin-bottom: 10px;">
-      <div class="hero-kicker">mini-games · geography challenge · indie made</div>
-      <h1 class="hero-title" style="margin-bottom: 5px;">Scrambled Countries</h1>
-      <p class="hero-sub" style="margin-top: 0;">Hosted by: Pixel Buddy</p>
-    </section>
-
-    <!-- KONTENER ROZGRYWKI -->
     <div class="game-layout">
       <div class="game-container">
         
@@ -329,14 +320,18 @@
           <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
         </div>
 
-        <!-- SEKCJA HOSTA -->
         <div class="host-section">
           <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
           <div id="buddyBubble" class="speech-bubble">System online. Ready to play?</div>
         </div>
 
-        <!-- EKRAN KONFIGURACJI -->
-        <div id="setupScreen" class="screen-segment active-screen setup-grid">
+        <div id="introScreen" class="screen-segment active-screen" style="text-align: center;">
+          <div id="rulesWrapper" style="background: rgba(0,0,0,0.25); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 25px; text-align: left; line-height: 1.6; color: #8a8dad; font-size: 14px;">
+            </div>
+          <button class="primary-btn" id="btnBegin" onclick="showSetupScreen()">Begin Game</button>
+        </div>
+
+        <div id="setupScreen" class="screen-segment setup-grid">
           <div class="form-group">
             <label id="lblPlayers">Number of Players</label>
             <div class="btn-group">
@@ -363,7 +358,6 @@
           <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Start Game</button>
         </div>
 
-        <!-- EKRAN GRY -->
         <div id="gameScreen" class="screen-segment">
           <div class="game-header">
             <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
@@ -388,7 +382,6 @@
           </div>
         </div>
 
-        <!-- EKRAN KOŃCOWY -->
         <div id="endScreen" class="screen-segment" style="text-align: center;">
           <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff5cff;">Game Over</h2>
           <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
@@ -397,16 +390,13 @@
       </div>
     </div>
 
-    <!-- Footer (Ładowany dynamicznie z /footer.html, zawiera już PayPal) -->
-    <div id="footer"></div>
+    <div id="footer" style="margin-top: 40px;"></div>
 
   </div>
 
-  <!-- Skrypty uwierzytelniania użytkowników z pliku głównego -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
 
-  <!-- UNIFIKACJA STRUKTURY - Ładowanie nagłówka i stopki Party Pixels -->
   <script>
     function loadPart(id, file) {
       fetch(file)
@@ -421,10 +411,8 @@
     loadPart("footer", "/footer.html");
   </script>
 
-  <!-- Skrypt obsługi skarbonki / napiwków -->
   <script src="/tipjar.js"></script>
 
-  <!-- LOGIKA SILNIKA GRY -->
   <script>
     const buddyQuotes = {
       en: {
@@ -447,6 +435,8 @@
 
     const i18n = {
       en: {
+        begin: "Begin Game",
+        rules: "<b style='color:#00f0ff; font-size:16px; display:block; margin-bottom:10px;'>How to Play:</b>1. Rearrange the scrambled letters to guess the correct country name.<br><br>2. <b>Solo Mode:</b> Type your answers directly into the box. You must submit before the countdown bar empties!<br><br>3. <b>Multiplayer Mode:</b> Play locally on one screen. Read the scrambled word, shout the answer, then click 'Reveal Answer' to award a point manually.<br><br>4. <b>Dynamic Scaling:</b> The closer you get to the target score, the higher the tier difficulty and the faster the clock ticks!",
         players: "Number of Players", names: "Player Name(s)", target: "Points to Win",
         start: "Start Game", next: "Next Word", skip: "Skip Word", reveal: "Reveal Answer", 
         restart: "Play Again", easy: "Tier 1: Easy", medium: "Tier 2: Medium", 
@@ -454,6 +444,8 @@
         placeholder: "Type country name...", score: "Score"
       },
       pl: {
+        begin: "Rozpocznij Grę",
+        rules: "<b style='color:#00f0ff; font-size:16px; display:block; margin-bottom:10px;'>Zasady Gry:</b>1. Uporządkuj rozsypane litery, aby odgadnąć właściwą nazwę państwa.<br><br>2. <b>Tryb Solo:</b> Wpisuj odpowiedzi w okienko. Musisz trafić, zanim pasek czasu zejdzie do zera!<br><br>3. <b>Tryb Wielu Graczy:</b> Grajcie lokalnie przy jednym ekranie. Kto pierwszy odgadnie słowo na głos, zgłasza się, a host klika 'Sprawdź Odpowiedź' i ręcznie dodaje mu punkt.<br><br>4. <b>Skalowanie Trudności:</b> Im bliżej wygranej jesteście, tym trudniejsze dostaniecie państwa, a czas zacznie uciekać znacznie szybciej!",
         players: "Liczba Graczy", names: "Imię Gracza (Graczy)", target: "Punkty do Wygranej",
         start: "Uruchom Grę", next: "Następne Słowo", skip: "Pomiń Słowo", reveal: "Sprawdź Odpowiedź", 
         restart: "Zagraj Ponownie", easy: "Etap 1: Łatwy", medium: "Etap 2: Średni", 
@@ -517,6 +509,9 @@
       document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
       document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
       
+      // Tłumaczenie elementów Intro i Setup
+      document.getElementById('rulesWrapper').innerHTML = i18n[lang].rules;
+      document.getElementById('btnBegin').textContent = i18n[lang].begin;
       document.getElementById('lblPlayers').textContent = i18n[lang].players;
       document.getElementById('lblPlayerNames').textContent = i18n[lang].names;
       document.getElementById('lblTargetScore').textContent = i18n[lang].target;
@@ -530,6 +525,12 @@
       }
       setBuddyState('welcome');
       if (config.players > 1) renderMultiplayerList();
+    }
+
+    function showSetupScreen() {
+      document.getElementById('introScreen').classList.remove('active-screen');
+      document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
+      setBuddyState('neutral');
     }
 
     function setPlayers(num) {
@@ -589,7 +590,7 @@
         hard: [...database[lang].hard]
       };
 
-      document.getElementById('setupScreen').classList.remove('active-screen');
+      document.getElementById('setupScreen').classList.remove('active-screen', 'setup-grid');
       document.getElementById('gameScreen').classList.add('active-screen');
 
       if(config.players > 1) {
@@ -819,9 +820,10 @@
     function resetGame() {
       setBuddyState('welcome');
       document.getElementById('endScreen').classList.remove('active-screen');
-      document.getElementById('setupScreen').classList.add('active-screen');
+      document.getElementById('introScreen').classList.add('active-screen');
     }
 
+    // Inicjalizacja języka na start
     setLanguage('en');
   </script>
 </body>
