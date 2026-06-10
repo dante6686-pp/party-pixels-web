@@ -261,16 +261,19 @@
           <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
         </div>
 
+        <!-- SEKCJA HOSTA -->
         <div class="host-section">
           <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
           <div id="buddyBubble" class="speech-bubble">System online. Ready to watch it blow?</div>
         </div>
 
+        <!-- EKRAN WSTĘPNY (ZASADY GRY) -->
         <div id="introScreen" class="screen-segment active-screen" style="text-align: center;">
           <div id="rulesWrapper" style="background: rgba(0,0,0,0.25); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 25px; text-align: left; line-height: 1.6; color: #8a8dad; font-size: 14px;"></div>
           <button class="primary-btn" id="btnBegin" onclick="showSetupScreen()">Begin Game</button>
         </div>
 
+        <!-- EKRAN KONFIGURACJI (SETUP) -->
         <div id="setupScreen" class="screen-segment setup-grid">
           <div class="form-group">
             <label id="lblPlayers">Number of Players</label>
@@ -278,6 +281,16 @@
               <button class="option-btn active" onclick="setPlayers(1)">1 (Solo)</button>
               <button class="option-btn" onclick="setPlayers(2)">2</button>
               <button class="option-btn" onclick="setPlayers(3)">3</button>
+            </div>
+          </div>
+
+          <!-- SELEKTOR TRUDNOŚCI (TYLKO DLA SOLO) -->
+          <div id="difficultyGroup" class="form-group">
+            <label id="lblDifficulty">Difficulty Level</label>
+            <div class="btn-group">
+              <button class="option-btn" onclick="setDifficulty('easy')">Easy</button>
+              <button class="option-btn active" onclick="setDifficulty('medium')">Medium</button>
+              <button class="option-btn" onclick="setDifficulty('hard')">Hard</button>
             </div>
           </div>
 
@@ -289,14 +302,16 @@
           <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Arm Bomb</button>
         </div>
 
+        <!-- EKRAN GRY -->
         <div id="gameScreen" class="screen-segment">
           <div class="game-header">
             <span id="gameModeBadge" class="badge-tier" style="border-color:#ff5cff; color:#ff5cff;">Solo Round</span>
-            <span id="gameScoreInfo" style="font-size: 13px; color: #8a8dad; font-weight: bold;">Score: 0</span>
+            <span id="gameScoreInfo" style="font-size: 13px; color: #8a8dad; font-weight: bold;">Score: 0 / 15</span>
           </div>
 
           <div id="turnNotice" class="turn-indicator hidden"></div>
 
+          <!-- PLANSZA GRY (3x3) -->
           <div class="memory-grid">
             <div class="memory-pad" data-id="0" onclick="handlePadClick(0)"></div>
             <div class="memory-pad" data-id="1" onclick="handlePadClick(1)"></div>
@@ -314,6 +329,7 @@
           </div>
         </div>
 
+        <!-- EKRAN KOŃCOWY -->
         <div id="endScreen" class="screen-segment" style="text-align: center;">
           <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff3366;">BOOM!</h2>
           <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
@@ -338,9 +354,13 @@
   </script>
   <script src="/tipjar.js"></script>
 
+  <!-- LOGIKA GRY PIXEL MEMORY BOMB + RETRO SYNTH AUDIO -->
   <script>
     // --- 8-BIT RETRO AUDIO SYNTHESIZER ---
     let audioCtx = null;
+
+    const diffLimits = { easy: 10, medium: 15, hard: 25 };
+    let currentDifficulty = 'medium';
 
     function initAudio() {
       if (!audioCtx) {
@@ -392,21 +412,23 @@
       initAudio();
       if (!audioCtx) return;
 
+      // 1. BASOWE TĄPNIĘCIE
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-      osc.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 0.6);
+      osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 1.2);
       
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+      gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
       
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.6);
+      osc.stop(audioCtx.currentTime + 1.2);
 
-      const bufferSize = audioCtx.sampleRate * 0.5;
+      // 2. FALA BIAŁEGO SZUMU
+      const bufferSize = audioCtx.sampleRate * 1.0;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
@@ -418,18 +440,41 @@
 
       const filter = audioCtx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(400, audioCtx.currentTime);
-      filter.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 0.5);
+      filter.frequency.setValueAtTime(600, audioCtx.currentTime);
+      filter.frequency.linearRampToValueAtTime(20, audioCtx.currentTime + 0.9);
 
       const noiseGain = audioCtx.createGain();
-      noiseGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+      noiseGain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
 
       noise.connect(filter);
       filter.connect(noiseGain);
       noiseGain.connect(audioCtx.destination);
       noise.start();
-      noise.stop(audioCtx.currentTime + 0.5);
+      noise.stop(audioCtx.currentTime + 1.0);
+    }
+
+    function playVictorySound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const melody = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50]; 
+      const timings = [0, 120, 240, 360, 480, 600];
+
+      melody.forEach((freq, index) => {
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.4);
+        }, timings[index]);
+      });
     }
 
     // --- LOGIKA SILNIKA GRY ---
@@ -440,7 +485,8 @@
         repeat: ["Your turn! Repeat the pattern.", "Input defusal code now!", "Don't mess this up."],
         happy: ["Flawless sync!", "Code match verified!", "Moving to the next stage..."],
         sad: ["BOOM! Sequence corrupted!", "Wrong button! Emergency alert!", "Explosion detected!"],
-        pass: ["Whew! Pass the screen over!", "Safe for now. Next victim please!", "Hand it over!"]
+        pass: ["Whew! Pass the screen over!", "Safe for now. Next victim please!", "Hand it over!"],
+        victory: ["Incredible! Bomb completely disarmed!", "You saved us! Pure genius!", "Defusal master!"]
       },
       pl: {
         welcome: ["System uzbrojony. Uważaj, gdzie klikasz!", "Gotowy na załadowanie sekwencji?", "Pamięć to klucz do przetrwania..."],
@@ -448,24 +494,29 @@
         repeat: ["Twoja kolej! Powtórz sekwencję.", "Wprowadź kod rozbrajający!", "Nie zepsuj tego."],
         happy: ["Idealna synchronizacja!", "Kod zweryfikowany pomyślnie!", "Przechodzimy na wyższy poziom..."],
         sad: ["BUM! Sekwencja przerwana!", "Zły przycisk! Awaria!", "Wykryto eksplozję!"],
-        pass: ["Uff! Podaj ekran dalej!", "Na razie czysto. Następny proszę!", "Przekaż urządzenie!"]
+        pass: ["Uff! Podaj ekran dalej!", "Na razie czysto. Następny proszę!", "Przekaż urządzenie!"],
+        victory: ["Niesamowite! Bomba całkowicie rozbrojona!", "Uratowałeś nas! Geniusz!", "Mistrz rozbrajania!"]
       }
     };
 
     const i18n = {
       en: {
         begin: "Begin Game",
-        rules: "<b style='color:#ff5cff; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Memorize the flashing sequence of pixel pads.<br><br>2. <b>Solo Mode:</b> The bomb will add one new flash every round. Replicate the code safely to secure a high score in your database!<br><br>3. <b>Multiplayer Mode:</b> Pass the screen around locally! Player 1 starts a sequence. Then they pass it to Player 2, who must replicate it and add ONE new flash at the end. The sequence keeps growing until someone triggers the explosion!",
+        rules: "<b style='color:#ff5cff; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Memorize the flashing sequence of pixel pads.<br><br>2. <b>Solo Mode:</b> Choose difficulty and repeat the code flawlessly to disarm the bomb completely and win!<br><br>3. <b>Multiplayer Mode:</b> Pass the screen around locally! Player 1 starts a sequence, then passes it to Player 2, who must replicate it and add ONE new flash at the end. The sequence keeps growing until someone triggers the explosion!",
         players: "Number of Players", names: "Player Name(s)", start: "Arm Bomb",
-        restart: "Try Again", score: "Score", round: "Round", soloBadge: "Solo Mode",
-        multiBadge: "Party Bomb", readyBtn: "Click when ready to watch!", turn: "Turn: "
+        restart: "Play Again", score: "Score", round: "Round", soloBadge: "Solo Mode",
+        multiBadge: "Party Bomb", readyBtn: "Click when ready to watch!", turn: "Turn: ",
+        winTitle: "BOMB DEFUSED! 🎉", difficulty: "Difficulty Level",
+        easy: "Easy", medium: "Medium", hard: "Hard"
       },
       pl: {
         begin: "Rozpocznij Grę",
-        rules: "<b style='color:#ff5cff; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Zapamiętaj sekwencję błysków pojawiających się na kafelkach.<br><br>2. <b>Tryb Solo:</b> W każdej rundzie bomba dodaje jeden nowy błysk do zapamiętania. Powtarzaj sekwencje bez błędu, by zdobyć rekord i zapisać go w bazie!<br><br>3. <b>Tryb Wielu Graczy (Imprezowy):</b> Przekazujcie sobie ekran! Gracz 1 klika sekwencję, po czym przekazuje urządzenie Graczowi 2. Tamten musi ją powtórzyć i dodać JEDEN własny błysk na końcu. Łańcuch rośnie, póki ktoś nie wybuchnie!",
+        rules: "<b style='color:#ff5cff; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Zapamiętaj sekwencję błysków pojawiających się na kafelkach.<br><br>2. <b>Tryb Solo:</b> Wybierz poziom trudności i powtórz sekwencję bez błędu, by całkowicie rozbroić bombę i wygrać!<br><br>3. <b>Tryb Wielu Graczy (Imprezowy):</b> Przekazujcie sobie ekran! Gracz 1 klika sekwencję, po czym przekazuje urządzenie Graczowi 2. Ten musi ją powtórzyć i dodać JEDEN własny błysk na końcu. Łańcuch rośnie, póki ktoś nie wybuchnie!",
         players: "Liczba Graczy", names: "Imię Gracza (Graczy)", start: "Uzbrój Bombę",
         restart: "Zagraj Ponownie", score: "Wynik", round: "Runda", soloBadge: "Tryb Solo",
-        multiBadge: "Bomba Imprezowa", readyBtn: "Kliknij, gdy jesteś gotowy oglądać!", turn: "Kolej: "
+        multiBadge: "Bomba Imprezowa", readyBtn: "Kliknij, gdy jesteś gotowy oglądać!", turn: "Kolej: ",
+        winTitle: "ROZBROJONA! 🎉", difficulty: "Poziom Trudności",
+        easy: "Łatwy", medium: "Średni", hard: "Trudny"
       }
     };
 
@@ -497,9 +548,17 @@
       document.getElementById('rulesWrapper').innerHTML = i18n[lang].rules;
       document.getElementById('btnBegin').textContent = i18n[lang].begin;
       document.getElementById('lblPlayers').textContent = i18n[lang].players;
+      document.getElementById('lblDifficulty').textContent = i18n[lang].difficulty;
       document.getElementById('lblPlayerNames').textContent = i18n[lang].names;
       document.getElementById('btnStart').textContent = i18n[lang].start;
       document.getElementById('btnRestart').textContent = i18n[lang].restart;
+      
+      // Update trudności tekstów przycisków
+      const diffBtns = document.querySelectorAll('#difficultyGroup .option-btn');
+      diffBtns[0].textContent = i18n[lang].easy;
+      diffBtns[1].textContent = i18n[lang].medium;
+      diffBtns[2].textContent = i18n[lang].hard;
+
       setBuddyState('welcome');
     }
 
@@ -513,11 +572,28 @@
       config.players = num;
       const btns = document.querySelectorAll('#setupScreen .form-group:nth-child(1) .option-btn');
       btns.forEach((b, i) => b.classList.toggle('active', i + 1 === num));
+      
+      // Ukryj/Pokaż poziom trudności – dla wielu graczy nie ma limitu wygranej
+      const diffGroup = document.getElementById('difficultyGroup');
+      if (num > 1) {
+        diffGroup.classList.add('hidden');
+      } else {
+        diffGroup.classList.remove('hidden');
+      }
+
       let html = '';
       for(let i = 1; i <= num; i++) {
         html += `<input type="text" id="p${i}Name" class="game-input" value="Player ${i}" style="margin-bottom:8px;">`;
       }
       document.getElementById('nameInputs').innerHTML = `<label>${i18n[lang].names}</label>` + html;
+    }
+
+    function setDifficulty(level) {
+      currentDifficulty = level;
+      const btns = document.querySelectorAll('#difficultyGroup .option-btn');
+      btns[0].classList.toggle('active', level === 'easy');
+      btns[1].classList.toggle('active', level === 'medium');
+      btns[2].classList.toggle('active', level === 'hard');
     }
 
     function startGame() {
@@ -536,7 +612,9 @@
       document.getElementById('gameScreen').classList.add('active-screen');
 
       if (config.players === 1) {
-        document.getElementById('gameModeBadge').textContent = i18n[lang].soloBadge;
+        let maxScore = diffLimits[currentDifficulty];
+        document.getElementById('gameModeBadge').textContent = `${i18n[lang].soloBadge} (${i18n[lang][currentDifficulty]})`;
+        document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: 0 / ${maxScore}`;
         document.getElementById('turnNotice').classList.add('hidden');
         document.getElementById('btnNextTurn').classList.add('hidden');
         addNewFlash();
@@ -598,7 +676,15 @@
 
         if (gameState.userSequence.length === gameState.sequence.length) {
           gameState.score++;
-          document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: ${gameState.score}`;
+          let maxScore = diffLimits[currentDifficulty];
+          document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: ${gameState.score} / ${maxScore}`;
+          
+          // WARUNEK WYGRANEJ SOLO ZALEŻNY OD TRUDNOŚCI
+          if (gameState.score >= maxScore) {
+            triggerVictorySolo();
+            return;
+          }
+
           setBuddyState('happy');
           playSuccessSound();
           setTimeout(() => {
@@ -679,9 +765,13 @@
         document.getElementById('gameScreen').classList.remove('active-screen');
         document.getElementById('endScreen').classList.add('active-screen');
         
+        document.getElementById('endTitle').textContent = "BOOM!";
+        document.getElementById('endTitle').style.color = "#ff3366";
+
         let resHtml = `
           <strong style="color: #ff5cff; font-size: 22px;">${config.names[0]}</strong><br>
-          ${i18n[lang].score}: <span style="color:#00f0ff; font-weight:bold;">${gameState.score}</span> pads defused.
+          Difficulty: <span style="color:#ff5cff; font-weight:bold;">${i18n[lang][currentDifficulty]}</span><br>
+          ${i18n[lang].score}: <span style="color:#00f0ff; font-weight:bold;">${gameState.score}</span> / ${diffLimits[currentDifficulty]}
         `;
         document.getElementById('endResults').innerHTML = resHtml;
       }, 1200);
@@ -696,6 +786,9 @@
         document.getElementById('gameScreen').classList.remove('active-screen');
         document.getElementById('endScreen').classList.add('active-screen');
         
+        document.getElementById('endTitle').textContent = "BOOM!";
+        document.getElementById('endTitle').style.color = "#ff3366";
+
         let loser = config.names[gameState.activePlayerIndex];
         let resHtml = `
           <strong style="color: #ff3366; font-size: 22px;">💥 ${loser} Blew Up!</strong><br><br>
@@ -703,6 +796,27 @@
         `;
         document.getElementById('endResults').innerHTML = resHtml;
       }, 1200);
+    }
+
+    function triggerVictorySolo() {
+      setBuddyState('victory');
+      playVictorySound();
+
+      setTimeout(() => {
+        document.getElementById('gameScreen').classList.remove('active-screen');
+        document.getElementById('endScreen').classList.add('active-screen');
+        
+        document.getElementById('endTitle').textContent = i18n[lang].winTitle;
+        document.getElementById('endTitle').style.color = "#00f0ff";
+
+        let resHtml = `
+          <strong style="color: #ff5cff; font-size: 22px;">🥇 ${config.names[0]}</strong><br><br>
+          Difficulty Mastered: <span style="color:#ff5cff; font-weight:bold;">${i18n[lang][currentDifficulty]}</span><br>
+          You successfully defused all <span style="color:#00f0ff; font-weight:bold;">${gameState.score}</span> stages!<br>
+          The pixel world is safe once again.
+        `;
+        document.getElementById('endResults').innerHTML = resHtml;
+      }, 1000);
     }
 
     function resetGame() {
