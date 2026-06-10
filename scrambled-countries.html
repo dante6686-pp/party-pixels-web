@@ -168,6 +168,7 @@
       border-radius: 12px;
     }
     
+    /* Zmodyfikowane przyciski punktacji */
     .score-btn {
       border: none;
       color: white;
@@ -278,6 +279,7 @@
 
     <div id="footer"></div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
 
@@ -397,6 +399,7 @@
       gameState.currentTier = 'easy';
       gameState.roundIndex = 0;
 
+      // Zmiana aktywnych ekranów
       document.getElementById('setupScreen').classList.remove('active-screen');
       document.getElementById('gameScreen').classList.add('active-screen');
 
