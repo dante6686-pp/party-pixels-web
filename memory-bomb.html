@@ -261,19 +261,16 @@
           <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
         </div>
 
-        <!-- SEKCJA HOSTA -->
         <div class="host-section">
           <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
           <div id="buddyBubble" class="speech-bubble">System online. Ready to watch it blow?</div>
         </div>
 
-        <!-- EKRAN WSTĘPNY (ZASADY GRY) -->
         <div id="introScreen" class="screen-segment active-screen" style="text-align: center;">
           <div id="rulesWrapper" style="background: rgba(0,0,0,0.25); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 25px; text-align: left; line-height: 1.6; color: #8a8dad; font-size: 14px;"></div>
           <button class="primary-btn" id="btnBegin" onclick="showSetupScreen()">Begin Game</button>
         </div>
 
-        <!-- EKRAN KONFIGURACJI (SETUP) -->
         <div id="setupScreen" class="screen-segment setup-grid">
           <div class="form-group">
             <label id="lblPlayers">Number of Players</label>
@@ -292,7 +289,6 @@
           <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Arm Bomb</button>
         </div>
 
-        <!-- EKRAN GRY -->
         <div id="gameScreen" class="screen-segment">
           <div class="game-header">
             <span id="gameModeBadge" class="badge-tier" style="border-color:#ff5cff; color:#ff5cff;">Solo Round</span>
@@ -301,7 +297,6 @@
 
           <div id="turnNotice" class="turn-indicator hidden"></div>
 
-          <!-- PLANSZA GRY (3x3) -->
           <div class="memory-grid">
             <div class="memory-pad" data-id="0" onclick="handlePadClick(0)"></div>
             <div class="memory-pad" data-id="1" onclick="handlePadClick(1)"></div>
@@ -319,7 +314,6 @@
           </div>
         </div>
 
-        <!-- EKRAN KOŃCOWY -->
         <div id="endScreen" class="screen-segment" style="text-align: center;">
           <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff3366;">BOOM!</h2>
           <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
@@ -344,8 +338,101 @@
   </script>
   <script src="/tipjar.js"></script>
 
-  <!-- LOGIKA GRY PIXEL MEMORY BOMB -->
   <script>
+    // --- 8-BIT RETRO AUDIO SYNTHESIZER ---
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playClickSound(padId) {
+      initAudio();
+      if (!audioCtx) return;
+      
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(300 + (padId * 50), audioCtx.currentTime); 
+      
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    function playSuccessSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const notes = [440, 554, 659, 880];
+      notes.forEach((freq, index) => {
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.2);
+        }, index * 80);
+      });
+    }
+
+    function playExplosionSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 0.6);
+      
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.6);
+
+      const bufferSize = audioCtx.sampleRate * 0.5;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+      filter.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 0.5);
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      noise.start();
+      noise.stop(audioCtx.currentTime + 0.5);
+    }
+
+    // --- LOGIKA SILNIKA GRY ---
     const buddyQuotes = {
       en: {
         welcome: ["System online. Watch your step!", "Ready to load the defusal patterns?", "Memory is key to survival..."],
@@ -375,7 +462,7 @@
       },
       pl: {
         begin: "Rozpocznij Grę",
-        rules: "<b style='color:#ff5cff; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Zapamiętaj sekwencję błysków pojawiających się na kafelkach.<br><br>2. <b>Tryb Solo:</b> W każdej rundzie bomba dodaje jeden nowy błysk do zapamiętania. Powtarzaj sekwencje bez błędu, by zdobyć rekord i zapisać go w bazie!<br><br>3. <b>Tryb Wielu Graczy (Imprezowy):</b> Przekazujcie sobie ekran! Gracz 1 klika sekwencję, po czym przekazuje urządzenie Graczowi 2. Ten musi ją powtórzyć i dodać JEDEN własny błysk na końcu. Łańcuch rośnie, póki ktoś nie wybuchnie!",
+        rules: "<b style='color:#ff5cff; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Zapamiętaj sekwencję błysków pojawiających się na kafelkach.<br><br>2. <b>Tryb Solo:</b> W każdej rundzie bomba dodaje jeden nowy błysk do zapamiętania. Powtarzaj sekwencje bez błędu, by zdobyć rekord i zapisać go w bazie!<br><br>3. <b>Tryb Wielu Graczy (Imprezowy):</b> Przekazujcie sobie ekran! Gracz 1 klika sekwencję, po czym przekazuje urządzenie Graczowi 2. Tamten musi ją powtórzyć i dodać JEDEN własny błysk na końcu. Łańcuch rośnie, póki ktoś nie wybuchnie!",
         players: "Liczba Graczy", names: "Imię Gracza (Graczy)", start: "Uzbrój Bombę",
         restart: "Zagraj Ponownie", score: "Wynik", round: "Runda", soloBadge: "Tryb Solo",
         multiBadge: "Bomba Imprezowa", readyBtn: "Kliknij, gdy jesteś gotowy oglądać!", turn: "Kolej: "
@@ -390,7 +477,7 @@
       score: 0,
       isPlayingSequence: false,
       activePlayerIndex: 0,
-      multiPhase: 'watch' // 'watch', 'input', 'pass'
+      multiPhase: 'watch'
     };
 
     function setBuddyState(state) {
@@ -417,6 +504,7 @@
     }
 
     function showSetupScreen() {
+      initAudio();
       document.getElementById('introScreen').classList.remove('active-screen');
       document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
     }
@@ -433,6 +521,7 @@
     }
 
     function startGame() {
+      initAudio();
       config.names = [];
       for(let i = 1; i <= config.players; i++) {
         let inputEl = document.getElementById(`p${i}Name`);
@@ -472,6 +561,7 @@
 
       const id = setInterval(() => {
         flashPad(gameState.sequence[i]);
+        playClickSound(gameState.sequence[i]);
         i++;
         if (i >= gameState.sequence.length) {
           clearInterval(id);
@@ -495,7 +585,6 @@
       if (gameState.isPlayingSequence || gameState.multiPhase === 'pass') return;
 
       if (config.players === 1) {
-        // --- LOGIKA SOLO ---
         gameState.userSequence.push(padId);
         const currentCheckIndex = gameState.userSequence.length - 1;
 
@@ -503,36 +592,39 @@
           triggerExplosionSolo();
           return;
         }
+        
         flashPad(padId);
+        playClickSound(padId);
 
         if (gameState.userSequence.length === gameState.sequence.length) {
           gameState.score++;
           document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: ${gameState.score}`;
           setBuddyState('happy');
+          playSuccessSound();
           setTimeout(() => {
             addNewFlash();
             playSequence();
-          }, 1000);
+          }, 1200);
         }
       } else {
-        // --- LOGIKA MULTIPLAYER (BOMBA PODAJ DALEJ) ---
         if (gameState.multiPhase === 'watch') return;
 
         if (gameState.multiPhase === 'input') {
           gameState.userSequence.push(padId);
           const currentCheckIndex = gameState.userSequence.length - 1;
 
-          // Sprawdzamy czy powtarza starą sekwencję bezbłędnie
           if (currentCheckIndex < gameState.sequence.length) {
             if (gameState.userSequence[currentCheckIndex] !== gameState.sequence[currentCheckIndex]) {
               triggerExplosionMulti();
               return;
             }
             flashPad(padId);
+            playClickSound(padId);
           } else {
-            // Gracz właśnie dodał swój własny, NOWY krok na końcu sekwencji!
             flashPad(padId);
-            gameState.sequence.push(padId); // Wpisujemy go jako oficjalną część bombowej sekwencji
+            playClickSound(padId);
+            
+            gameState.sequence.push(padId);
             gameState.score++;
             
             setBuddyState('pass');
@@ -542,7 +634,6 @@
             document.getElementById('btnNextTurn').classList.remove('hidden');
             document.getElementById('btnNextTurn').textContent = i18n[lang].readyBtn;
 
-            // Przełączamy gracza w kolejce
             gameState.activePlayerIndex = (gameState.activePlayerIndex + 1) % config.players;
           }
         }
@@ -558,16 +649,13 @@
       turnNotice.textContent = `${i18n[lang].turn} ${config.names[gameState.activePlayerIndex]}`;
 
       if (gameState.sequence.length === 0) {
-        // Pierwsza runda w ogóle - gracz po prostu klika pierwszy kafel od zera
         gameState.multiPhase = 'input';
         gameState.userSequence = [];
         setBuddyState('repeat');
       } else {
-        // Kolejne rundy - najpierw odtwarzamy to, co stworzyła ekipa
         gameState.multiPhase = 'watch';
         setTimeout(() => {
           playSequence();
-          // Po odegraniu sekwencji system włączy oczekiwanie na powtórzenie + 1 nowy krok
           setTimeout(() => {
             gameState.multiPhase = 'input';
             gameState.userSequence = [];
@@ -577,12 +665,14 @@
     }
 
     function startMultiNextTurn() {
+      initAudio();
       document.getElementById('btnNextTurn').classList.add('hidden');
       startMultiplayerRound();
     }
 
     function triggerExplosionSolo() {
       setBuddyState('sad');
+      playExplosionSound();
       for(let i=0; i<9; i++) flashPad(i, 'error-flash');
 
       setTimeout(() => {
@@ -599,6 +689,7 @@
 
     function triggerExplosionMulti() {
       setBuddyState('sad');
+      playExplosionSound();
       for(let i=0; i<9; i++) flashPad(i, 'error-flash');
 
       setTimeout(() => {
