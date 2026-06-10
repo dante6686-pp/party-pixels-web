@@ -4,86 +4,22 @@
   <meta charset="utf-8">
   <title>Scrambled Countries | Party Pixels</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Unscramble letters to find the correct country. Play solo against time or host a multiplayer party battle!">
   <link rel="stylesheet" href="/pp-main.css">
   
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612" crossorigin="anonymous"></script>
 
   <style>
-    :root {
-      --bg-dark: #0a0e23;
-      --bg-darker: #04050e;
-      --accent-magenta: #ff5cff;
-      --accent-cyan: #00f0ff;
-      --accent-purple: #7c80d2;
-      --text-main: #ffffff;
-      --text-muted: #8a8dad;
-    }
-
-    body {
-      background-color: var(--bg-darker);
-      color: var(--text-main);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .page {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* PARTY PIXELS STYLE COMPONENTS */
-    .pp-navbar {
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      padding: 20px 40px; 
-      background: rgba(4, 5, 14, 0.85); 
-      border-bottom: 1px solid rgba(0, 240, 255, 0.1); 
-      backdrop-filter: blur(10px);
-    }
-
-    .pp-logo {
-      font-weight: 900; 
-      font-size: 22px; 
-      letter-spacing: 2px; 
-      background: linear-gradient(45deg, var(--accent-cyan), var(--accent-magenta)); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-      text-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-    }
-
-    .pp-nav-links a {
-      color: var(--text-muted); 
-      text-decoration: none; 
-      font-weight: 600; 
-      font-size: 14px; 
-      margin-left: 20px;
-      transition: color 0.2s;
-    }
-
-    .pp-nav-links a:hover, .pp-nav-links a.active {
-      color: var(--accent-cyan);
-    }
-
-    .pp-footer {
-      margin-top: auto; 
-      padding: 30px; 
-      text-align: center; 
-      border-top: 1px solid rgba(124, 128, 210, 0.1); 
-      background: rgba(4, 5, 14, 0.9);
-    }
-
-    /* GAME CONTAINER */
-    .game-container {
+    /* Style dedykowane dla kontenera gry, zintegrowane z pp-main.css */
+    .game-layout {
       max-width: 650px;
       width: 100%;
       margin: 40px auto;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .game-container {
+      width: 100%;
       padding: 30px;
       box-sizing: border-box;
       background: 
@@ -104,7 +40,7 @@
     .lang-btn {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
-      color: var(--text-main);
+      color: #fff;
       padding: 6px 14px;
       border-radius: 8px;
       cursor: pointer;
@@ -115,9 +51,9 @@
     
     .lang-btn.active {
       background: rgba(0, 240, 255, 0.15);
-      color: var(--accent-cyan);
+      color: #00f0ff;
       box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-      border-color: var(--accent-cyan);
+      border-color: #00f0ff;
     }
 
     /* HOST SECTION (PIXEL BUDDY) */
@@ -146,10 +82,10 @@
     .speech-bubble {
       position: relative;
       background: rgba(18, 1, 54, 0.8);
-      border: 2px solid var(--accent-cyan);
+      border: 2px solid #00f0ff;
       border-radius: 12px;
       padding: 12px 20px;
-      color: var(--accent-cyan);
+      color: #00f0ff;
       font-family: 'Courier New', Courier, monospace;
       font-weight: bold;
       text-align: center;
@@ -169,10 +105,10 @@
       transform: translateX(-50%);
       border-width: 0 10px 10px 10px;
       border-style: solid;
-      border-color: transparent transparent var(--accent-cyan) transparent;
+      border-color: transparent transparent #00f0ff transparent;
     }
 
-    /* System zarządzania ekranami */
+    /* SYSTEM EKRANÓW */
     .screen-segment { display: none !important; animation: fadeIn 0.4s ease-out; }
     .screen-segment.active-screen { display: block !important; }
     .screen-segment.active-screen.setup-grid { display: grid !important; }
@@ -184,7 +120,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Formularze i przyciski */
+    /* FORMULARZE I PRZYCISKI */
     .form-group {
       display: flex;
       flex-direction: column;
@@ -193,7 +129,7 @@
 
     .form-group label {
       font-size: 12px;
-      color: var(--text-muted);
+      color: #8a8dad;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       font-weight: bold;
@@ -212,7 +148,7 @@
 
     .game-input:focus {
       outline: none;
-      border-color: var(--accent-cyan);
+      border-color: #00f0ff;
       box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
     }
 
@@ -232,12 +168,12 @@
     
     .option-btn.active {
       background: rgba(124, 128, 210, 0.2);
-      border-color: var(--accent-purple);
-      color: var(--accent-cyan);
+      border-color: #7c80d2;
+      color: #00f0ff;
     }
 
     .primary-btn {
-      background: linear-gradient(90deg, var(--accent-purple), var(--accent-magenta));
+      background: linear-gradient(90deg, #7c80d2, #ff5cff);
       color: #fff;
       border: none;
       padding: 16px;
@@ -261,7 +197,7 @@
       background: rgba(255,255,255,0.05); 
       box-shadow: none; 
       border: 1px solid rgba(255,255,255,0.2);
-      color: var(--text-muted);
+      color: #8a8dad;
     }
     
     .primary-btn.alt:hover {
@@ -269,7 +205,7 @@
       color: #fff;
     }
 
-    /* Ekran Gry */
+    /* MECHANIKA ROZGRYWKI */
     .game-header {
       display: flex; 
       justify-content: space-between; 
@@ -289,8 +225,8 @@
       font-weight: bold;
       text-transform: uppercase;
       background: rgba(0, 240, 255, 0.1);
-      border: 1px solid var(--accent-cyan);
-      color: var(--accent-cyan);
+      border: 1px solid #00f0ff;
+      color: #00f0ff;
     }
 
     .scrambled-box {
@@ -306,8 +242,8 @@
     }
     
     .scrambled-box.success {
-      color: var(--accent-cyan);
-      text-shadow: 0 0 20px var(--accent-cyan);
+      color: #00f0ff;
+      text-shadow: 0 0 20px #00f0ff;
       transform: scale(1.05);
     }
 
@@ -326,11 +262,11 @@
     }
     
     .timer-bar {
-      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+      background: linear-gradient(90deg, #00f0ff, #ff5cff);
       height: 100%;
       width: 100%;
       transition: width 0.1s linear;
-      box-shadow: 0 0 10px var(--accent-magenta);
+      box-shadow: 0 0 10px #ff5cff;
     }
 
     .players-list {
@@ -351,7 +287,7 @@
     }
     
     .score-btn {
-      background: var(--accent-purple);
+      background: #7c80d2;
       border: none;
       color: white;
       padding: 10px 16px;
@@ -364,117 +300,175 @@
     }
     
     .score-btn:hover {
-      background: var(--accent-cyan);
+      background: #00f0ff;
       color: #000;
-      box-shadow: 0 0 15px var(--accent-cyan);
+      box-shadow: 0 0 15px #00f0ff;
+    }
+
+    /* SEKRETPAD / PAYPAL SUPPORT WIDGET */
+    .pp-support-wrapper {
+      text-align: center;
+      margin: 40px auto 20px;
+    }
+
+    .pp-paypal-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 14px;
+      color: #8a8dad;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .pp-paypal-btn:hover {
+      background: rgba(0, 240, 255, 0.08);
+      border-color: #00f0ff;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .pp-paypal-btn span.heart {
+      color: #ff5cff;
+      text-shadow: 0 0 8px rgba(255, 92, 255, 0.6);
     }
   </style>
 </head>
+
 <body>
   <div class="page">
-    <div id="header">
-      <header class="pp-navbar">
-        <div class="pp-logo">PARTY PIXELS</div>
-        <nav class="pp-nav-links">
-          <a href="#" class="active">GAMES</a>
-          <a href="#">LEADERBOARDS</a>
-          <a href="#">COMMUNITY</a>
-        </nav>
-      </header>
-    </div>
 
-    <section class="hero" style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-      <h1 class="hero-title" style="color: #ff5cff; text-shadow: 0 0 10px rgba(255,92,255,0.5); margin: 0; font-size: 36px;">Scrambled Countries</h1>
-      <p class="hero-sub" style="color: #8a8dad; margin: 5px 0 0 0;">Host: Pixel Buddy</p>
+    <!-- Header Top Bar (Ładowany dynamicznie z /header.html) -->
+    <div id="header"></div>
+
+    <!-- TYTUŁ SEKCJI GRY -->
+    <section class="hero" style="text-align: center; margin-top: 30px; margin-bottom: 10px;">
+      <div class="hero-kicker">mini-games · geography challenge · indie made</div>
+      <h1 class="hero-title" style="margin-bottom: 5px;">Scrambled Countries</h1>
+      <p class="hero-sub" style="margin-top: 0;">Hosted by: Pixel Buddy</p>
     </section>
 
-    <div class="game-container">
-      
-      <div class="lang-switcher">
-        <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
-        <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
-      </div>
+    <!-- KONTENER ROZGRYWKI -->
+    <div class="game-layout">
+      <div class="game-container">
+        
+        <div class="lang-switcher">
+          <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+          <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
+        </div>
 
-      <div class="host-section">
-        <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
-        <div id="buddyBubble" class="speech-bubble">System online. Ready to play?</div>
-      </div>
+        <!-- SEKCJA HOSTA -->
+        <div class="host-section">
+          <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
+          <div id="buddyBubble" class="speech-bubble">System online. Ready to play?</div>
+        </div>
 
-      <div id="setupScreen" class="screen-segment active-screen setup-grid">
-        <div class="form-group">
-          <label id="lblPlayers">Number of Players</label>
-          <div class="btn-group">
-            <button class="option-btn active" onclick="setPlayers(1)">1</button>
-            <button class="option-btn" onclick="setPlayers(2)">2</button>
-            <button class="option-btn" onclick="setPlayers(3)">3</button>
+        <!-- EKRAN KONFIGURACJI -->
+        <div id="setupScreen" class="screen-segment active-screen setup-grid">
+          <div class="form-group">
+            <label id="lblPlayers">Number of Players</label>
+            <div class="btn-group">
+              <button class="option-btn active" onclick="setPlayers(1)">1</button>
+              <button class="option-btn" onclick="setPlayers(2)">2</button>
+              <button class="option-btn" onclick="setPlayers(3)">3</button>
+            </div>
+          </div>
+
+          <div id="nameInputs" class="form-group">
+            <label id="lblPlayerNames">Player Name</label>
+            <input type="text" id="p1Name" class="game-input" value="Player 1">
+          </div>
+
+          <div class="form-group">
+            <label id="lblTargetScore">Points to Win</label>
+            <div class="btn-group">
+              <button class="option-btn active" onclick="setTarget(3)">3</button>
+              <button class="option-btn" onclick="setTarget(5)">5</button>
+              <button class="option-btn" onclick="setTarget(10)">10</button>
+            </div>
+          </div>
+
+          <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Start Game</button>
+        </div>
+
+        <!-- EKRAN GRY -->
+        <div id="gameScreen" class="screen-segment">
+          <div class="game-header">
+            <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
+            <span id="gameInfo" style="font-size: 13px; color: #8a8dad; font-weight: bold;">Word 1</span>
+          </div>
+
+          <div id="scrambledWord" class="scrambled-box">XXXXXX</div>
+
+          <div id="timerContainer" class="timer-bar-container">
+            <div id="timerBar" class="timer-bar"></div>
+          </div>
+
+          <div id="singlePlayerInput" class="form-group">
+            <input type="text" id="soloAnswer" class="game-input" placeholder="Type country name..." autocomplete="off">
+          </div>
+
+          <div id="multiPlayerList" class="players-list hidden"></div>
+
+          <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
+            <button class="primary-btn hidden" id="btnReveal" onclick="revealAnswer()">Reveal Answer</button>
+            <button class="primary-btn alt" id="btnNext" onclick="skipOrNextWord()">Skip Word</button>
           </div>
         </div>
 
-        <div id="nameInputs" class="form-group">
-          <label id="lblPlayerNames">Player Name</label>
-          <input type="text" id="p1Name" class="game-input" value="Player 1">
+        <!-- EKRAN KOŃCOWY -->
+        <div id="endScreen" class="screen-segment" style="text-align: center;">
+          <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff5cff;">Game Over</h2>
+          <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
+          <button class="primary-btn" id="btnRestart" onclick="resetGame()">Play Again</button>
         </div>
-
-        <div class="form-group">
-          <label id="lblTargetScore">Points to Win</label>
-          <div class="btn-group">
-            <button class="option-btn active" onclick="setTarget(3)">3</button>
-            <button class="option-btn" onclick="setTarget(5)">5</button>
-            <button class="option-btn" onclick="setTarget(10)">10</button>
-          </div>
-        </div>
-
-        <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Start Game</button>
-      </div>
-
-      <div id="gameScreen" class="screen-segment">
-        <div class="game-header">
-          <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
-          <span id="gameInfo" style="font-size: 13px; color: var(--text-muted); font-weight: bold;">Word 1</span>
-        </div>
-
-        <div id="scrambledWord" class="scrambled-box">XXXXXX</div>
-
-        <div id="timerContainer" class="timer-bar-container">
-          <div id="timerBar" class="timer-bar"></div>
-        </div>
-
-        <div id="singlePlayerInput" class="form-group">
-          <input type="text" id="soloAnswer" class="game-input" placeholder="Type country name..." autocomplete="off">
-        </div>
-
-        <div id="multiPlayerList" class="players-list hidden"></div>
-
-        <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
-          <button class="primary-btn hidden" id="btnReveal" onclick="revealAnswer()">Reveal Answer</button>
-          <button class="primary-btn alt" id="btnNext" onclick="skipOrNextWord()">Skip Word</button>
-        </div>
-      </div>
-
-      <div id="endScreen" class="screen-segment" style="text-align: center;">
-        <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: var(--accent-magenta);">Game Over</h2>
-        <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
-        <button class="primary-btn" id="btnRestart" onclick="resetGame()">Play Again</button>
       </div>
     </div>
 
-    <div id="footer">
-      <footer class="pp-footer">
-        <p style="color: var(--text-muted); font-size: 13px; margin: 0;">&copy; 2026 Party Pixels. All arcade rights reserved.</p>
-        <div style="margin-top: 10px; display: flex; justify-content: center; gap: 15px; font-size: 12px;">
-          <a href="#" style="color: var(--accent-purple); text-decoration: none;">Terms of Service</a>
-          <span style="color: rgba(255,255,255,0.1)">|</span>
-          <a href="#" style="color: var(--accent-purple); text-decoration: none;">Privacy Policy</a>
-        </div>
-      </footer>
+    <!-- PAYPAL SUPPORT BUTTON -->
+    <div class="pp-support-wrapper">
+      <!-- Przycisk kieruje do Twojego domyślnego mechanizmu tipjar lub zewnętrznego PayPal linku -->
+      <a href="https://paypal.me/YOUR_PAYPAL_USERNAME" target="_blank" class="pp-paypal-btn" id="paypalTipBtn">
+        <span class="heart">❤</span> Support Party Pixels via PayPal
+      </a>
     </div>
+
+    <!-- Footer (Ładowany dynamicznie z /footer.html) -->
+    <div id="footer"></div>
+
   </div>
 
+  <!-- Skrypty uwierzytelniania użytkowników z pliku głównego -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/pp-auth.js"></script>
 
+  <!-- UNIFIKACJA STRUKTURY - Ładowanie nagłówka i stopki Party Pixels -->
   <script>
-    // --- DIALOGI PIXEL BUDDY'EGO ---
+    function loadPart(id, file) {
+      fetch(file)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById(id).innerHTML = html;
+        })
+        .catch(err => console.error(`Load error in ${file}:`, err));
+    }
+
+    // Załaduj te same moduły, z których korzysta index.html
+    loadPart("header", "/header.html");
+    loadPart("footer", "/footer.html");
+  </script>
+
+  <!-- Skrypt obsługi skarbonki / napiwków -->
+  <script src="/tipjar.js"></script>
+
+  <!-- LOGIKA SILNIKA GRY -->
+  <script>
     const buddyQuotes = {
       en: {
         welcome: ["System online. Ready to play?", "Let's crack some codes!", "I'm your host, Pixel Buddy!"],
@@ -494,25 +488,23 @@
       }
     };
 
-    // --- BAZA JĘZYKOWA INTERFEJSU ---
     const i18n = {
       en: {
         players: "Number of Players", names: "Player Name(s)", target: "Points to Win",
         start: "Start Game", next: "Next Word", skip: "Skip Word", reveal: "Reveal Answer", 
         restart: "Play Again", easy: "Tier 1: Easy", medium: "Tier 2: Medium", 
         hard: "Tier 3: Hard (Fast)", word: "Word", win: "Victory!", over: "Game Over", 
-        placeholder: "Type country name...", score: "Score"
+        placeholder: "Type country name...", score: "Score", support: "❤ Support Party Pixels via PayPal"
       },
       pl: {
         players: "Liczba Graczy", names: "Imię Gracza (Graczy)", target: "Punkty do Wygranej",
         start: "Uruchom Grę", next: "Następne Słowo", skip: "Pomiń Słowo", reveal: "Sprawdź Odpowiedź", 
         restart: "Zagraj Ponownie", easy: "Etap 1: Łatwy", medium: "Etap 2: Średni", 
         hard: "Etap 3: Trudny (Szybka runda)", word: "Słowo", win: "Zwycięstwo!", over: "Koniec Czasu!", 
-        placeholder: "Wpisz nazwę kraju...", score: "Wynik"
+        placeholder: "Wpisz nazwę kraju...", score: "Wynik", support: "❤ Wesprzyj Party Pixels przez PayPal"
       }
     };
 
-    // --- BAZA SŁÓW ---
     const database = {
       en: {
         easy: ["POLAND", "SPAIN", "ITALY", "BRAZIL", "FRANCE", "JAPAN", "CANADA", "EGYPT"],
@@ -575,6 +567,7 @@
       document.getElementById('btnRestart').textContent = i18n[lang].restart;
       document.getElementById('btnReveal').textContent = i18n[lang].reveal;
       document.getElementById('soloAnswer').placeholder = i18n[lang].placeholder;
+      document.getElementById('paypalTipBtn').innerHTML = i18n[lang].support;
       
       if (document.getElementById('gameScreen').classList.contains('active-screen')) {
         document.getElementById('btnNext').textContent = config.players === 1 ? i18n[lang].skip : i18n[lang].next;
@@ -605,7 +598,6 @@
     function scramble(word) {
       let scrambled = '';
       let attempts = 0;
-      
       while ((scrambled === '' || scrambled === word) && attempts < 20) {
         let arr = word.split('');
         for (let pass = 0; pass < 2; pass++) {
@@ -662,17 +654,16 @@
       gameState.inputFrozen = false;
       gameState.scoredPlayers = []; 
       
-      // POPRAWIONE: Matematyczne wyliczanie poziomu trudności dopasowane do "Points to Win"
-      let threshold = Math.ceil(config.targetScore / 3);
-      if (gameState.roundIndex < threshold) {
+      // CAŁKOWICIE PRZEBUDOWANE SKALOWANIE: Dzielimy rozgrywkę na 3 równe progi matematyczne
+      let dynamicInterval = config.targetScore / 3;
+      if (gameState.roundIndex < dynamicInterval) {
         gameState.currentTier = 'easy';
-      } else if (gameState.roundIndex < threshold * 2) {
+      } else if (gameState.roundIndex < dynamicInterval * 2) {
         gameState.currentTier = 'medium';
       } else {
         gameState.currentTier = 'hard';
       }
 
-      // Bezpiecznik: jeśli wybrana pula wyjątkowo wyschła, weź z innej dostępnej
       if (gameState.activePools[gameState.currentTier].length === 0) {
         if (gameState.activePools.easy.length > 0) gameState.currentTier = 'easy';
         else if (gameState.activePools.medium.length > 0) gameState.currentTier = 'medium';
@@ -745,7 +736,6 @@
 
       newInput.addEventListener('input', (e) => {
         if(gameState.inputFrozen) return;
-        
         let val = e.target.value.trim().toUpperCase();
         if (val === gameState.currentAnswer) {
           handleSoloSuccess();
@@ -775,7 +765,6 @@
       }, 2000);
     }
 
-    // Wywoływane przy skipie lub końcu czasu w solo
     function handleSoloFail() {
       gameState.inputFrozen = true;
       document.getElementById('soloAnswer').disabled = true;
@@ -815,7 +804,7 @@
         }
 
         card.innerHTML = `
-          <div><strong>${name}</strong> <span style="color:var(--text-muted); margin-left:10px;">${i18n[lang].score}: ${gameState.scores[idx]}</span></div>
+          <div><strong>${name}</strong> <span style="color:#8a8dad; margin-left:10px;">${i18n[lang].score}: ${gameState.scores[idx]}</span></div>
           ${actionBtn}
         `;
         list.appendChild(card);
@@ -824,16 +813,13 @@
 
     function revealAnswer() {
       gameState.multiPhase = 'revealed';
-      
       let wordBox = document.getElementById('scrambledWord');
       wordBox.textContent = gameState.currentAnswer;
       wordBox.classList.add('success');
 
       setBuddyState('thinking');
-
       document.getElementById('btnReveal').classList.add('hidden');
       document.getElementById('btnNext').classList.remove('hidden');
-      
       renderMultiplayerList();
     }
 
@@ -866,12 +852,11 @@
       
       document.getElementById('gameScreen').classList.remove('active-screen');
       document.getElementById('endScreen').classList.add('active-screen');
-
       document.getElementById('endTitle').textContent = i18n[lang].win;
       
-      let resHtml = `<strong style="color: var(--accent-cyan); font-size: 22px;">Winner: ${winnerName}</strong><br><br>`;
+      let resHtml = `<strong style="color: #00f0ff; font-size: 22px;">Winner: ${winnerName}</strong><br><br>`;
       config.names.forEach((name, idx) => {
-        resHtml += `${name}: <span style="color:var(--accent-magenta); font-weight:bold;">${gameState.scores[idx]}</span> pts<br>`;
+        resHtml += `${name}: <span style="color:#ff5cff; font-weight:bold;">${gameState.scores[idx]}</span> pts<br>`;
       });
       document.getElementById('endResults').innerHTML = resHtml;
     }
@@ -882,6 +867,7 @@
       document.getElementById('setupScreen').classList.add('active-screen');
     }
 
+    // Inicjalizacja domyślnego języka
     setLanguage('en');
   </script>
 </body>
