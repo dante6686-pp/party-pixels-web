@@ -261,19 +261,16 @@
           <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
         </div>
 
-        <!-- SEKCJA HOSTA -->
         <div class="host-section">
           <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
           <div id="buddyBubble" class="speech-bubble">System online. Ready to watch it blow?</div>
         </div>
 
-        <!-- EKRAN WSTĘPNY (ZASADY GRY) -->
         <div id="introScreen" class="screen-segment active-screen" style="text-align: center;">
           <div id="rulesWrapper" style="background: rgba(0,0,0,0.25); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 25px; text-align: left; line-height: 1.6; color: #8a8dad; font-size: 14px;"></div>
           <button class="primary-btn" id="btnBegin" onclick="showSetupScreen()">Begin Game</button>
         </div>
 
-        <!-- EKRAN KONFIGURACJI (SETUP) -->
         <div id="setupScreen" class="screen-segment setup-grid">
           <div class="form-group">
             <label id="lblPlayers">Number of Players</label>
@@ -284,7 +281,6 @@
             </div>
           </div>
 
-          <!-- SELEKTOR TRUDNOŚCI (TYLKO DLA SOLO) -->
           <div id="difficultyGroup" class="form-group">
             <label id="lblDifficulty">Difficulty Level</label>
             <div class="btn-group">
@@ -302,7 +298,6 @@
           <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Arm Bomb</button>
         </div>
 
-        <!-- EKRAN GRY -->
         <div id="gameScreen" class="screen-segment">
           <div class="game-header">
             <span id="gameModeBadge" class="badge-tier" style="border-color:#ff5cff; color:#ff5cff;">Solo Round</span>
@@ -311,7 +306,6 @@
 
           <div id="turnNotice" class="turn-indicator hidden"></div>
 
-          <!-- PLANSZA GRY (3x3) -->
           <div class="memory-grid">
             <div class="memory-pad" data-id="0" onclick="handlePadClick(0)"></div>
             <div class="memory-pad" data-id="1" onclick="handlePadClick(1)"></div>
@@ -329,7 +323,6 @@
           </div>
         </div>
 
-        <!-- EKRAN KOŃCOWY -->
         <div id="endScreen" class="screen-segment" style="text-align: center;">
           <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff3366;">BOOM!</h2>
           <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
@@ -354,7 +347,6 @@
   </script>
   <script src="/tipjar.js"></script>
 
-  <!-- LOGIKA GRY PIXEL MEMORY BOMB + RETRO SYNTH AUDIO -->
   <script>
     // --- 8-BIT RETRO AUDIO SYNTHESIZER ---
     let audioCtx = null;
@@ -366,6 +358,69 @@
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
+    }
+
+    // DEFAULT / MENU CLICK SOUND (Klasyczne wysokie piknięcie retro)
+    function playMenuClickSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08);
+    }
+
+    // BEGIN GAME BUTTON SOUND (Wznoszące się podwójne piknięcie)
+    function playBeginGameSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const notes = [400, 800];
+      notes.forEach((freq, index) => {
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.12);
+        }, index * 60);
+      });
+    }
+
+    // ARM BOMB BUTTON SOUND (Uzbrojenie bomby - niepokojący, opadający alarm)
+    function playArmBombSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(350, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(120, audioCtx.currentTime + 0.5);
+      
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.5);
     }
 
     function playClickSound(padId) {
@@ -543,6 +598,9 @@
 
     function setLanguage(l) {
       lang = l;
+      // Dźwięk przy ręcznej zmianie języka
+      if (audioCtx) playMenuClickSound();
+      
       document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
       document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
       document.getElementById('rulesWrapper').innerHTML = i18n[lang].rules;
@@ -553,7 +611,6 @@
       document.getElementById('btnStart').textContent = i18n[lang].start;
       document.getElementById('btnRestart').textContent = i18n[lang].restart;
       
-      // Update trudności tekstów przycisków
       const diffBtns = document.querySelectorAll('#difficultyGroup .option-btn');
       diffBtns[0].textContent = i18n[lang].easy;
       diffBtns[1].textContent = i18n[lang].medium;
@@ -563,17 +620,17 @@
     }
 
     function showSetupScreen() {
-      initAudio();
+      playBeginGameSound(); // Dedykowany efekt przejścia do konfiguracji
       document.getElementById('introScreen').classList.remove('active-screen');
       document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
     }
 
     function setPlayers(num) {
+      playMenuClickSound(); // Domyślny dźwięk wyboru
       config.players = num;
       const btns = document.querySelectorAll('#setupScreen .form-group:nth-child(1) .option-btn');
       btns.forEach((b, i) => b.classList.toggle('active', i + 1 === num));
       
-      // Ukryj/Pokaż poziom trudności – dla wielu graczy nie ma limitu wygranej
       const diffGroup = document.getElementById('difficultyGroup');
       if (num > 1) {
         diffGroup.classList.add('hidden');
@@ -589,6 +646,7 @@
     }
 
     function setDifficulty(level) {
+      playMenuClickSound(); // Domyślny dźwięk wyboru
       currentDifficulty = level;
       const btns = document.querySelectorAll('#difficultyGroup .option-btn');
       btns[0].classList.toggle('active', level === 'easy');
@@ -597,7 +655,7 @@
     }
 
     function startGame() {
-      initAudio();
+      playArmBombSound(); // Efekt uzbrojenia ładunku
       config.names = [];
       for(let i = 1; i <= config.players; i++) {
         let inputEl = document.getElementById(`p${i}Name`);
@@ -608,21 +666,24 @@
       gameState.score = 0;
       gameState.activePlayerIndex = 0;
 
-      document.getElementById('setupScreen').classList.remove('active-screen', 'setup-grid');
-      document.getElementById('gameScreen').classList.add('active-screen');
+      // Opóźnienie startu o 600ms, aby gracz usłyszał pełny dźwięk Arm Bomb przed błyskiem kafelków
+      setTimeout(() => {
+        document.getElementById('setupScreen').classList.remove('active-screen', 'setup-grid');
+        document.getElementById('gameScreen').classList.add('active-screen');
 
-      if (config.players === 1) {
-        let maxScore = diffLimits[currentDifficulty];
-        document.getElementById('gameModeBadge').textContent = `${i18n[lang].soloBadge} (${i18n[lang][currentDifficulty]})`;
-        document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: 0 / ${maxScore}`;
-        document.getElementById('turnNotice').classList.add('hidden');
-        document.getElementById('btnNextTurn').classList.add('hidden');
-        addNewFlash();
-        playSequence();
-      } else {
-        document.getElementById('gameModeBadge').textContent = i18n[lang].multiBadge;
-        startMultiplayerRound();
-      }
+        if (config.players === 1) {
+          let maxScore = diffLimits[currentDifficulty];
+          document.getElementById('gameModeBadge').textContent = `${i18n[lang].soloBadge} (${i18n[lang][currentDifficulty]})`;
+          document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: 0 / ${maxScore}`;
+          document.getElementById('turnNotice').classList.add('hidden');
+          document.getElementById('btnNextTurn').classList.add('hidden');
+          addNewFlash();
+          playSequence();
+        } else {
+          document.getElementById('gameModeBadge').textContent = i18n[lang].multiBadge;
+          startMultiplayerRound();
+        }
+      }, 600);
     }
 
     function addNewFlash() {
@@ -679,7 +740,6 @@
           let maxScore = diffLimits[currentDifficulty];
           document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: ${gameState.score} / ${maxScore}`;
           
-          // WARUNEK WYGRANEJ SOLO ZALEŻNY OD TRUDNOŚCI
           if (gameState.score >= maxScore) {
             triggerVictorySolo();
             return;
@@ -751,7 +811,7 @@
     }
 
     function startMultiNextTurn() {
-      initAudio();
+      playBeginGameSound(); // Użycie wznoszącego dźwięku na rozpoczęcie kolejnej tury gracza
       document.getElementById('btnNextTurn').classList.add('hidden');
       startMultiplayerRound();
     }
@@ -820,6 +880,7 @@
     }
 
     function resetGame() {
+      playMenuClickSound(); // Piknięcie przy powrocie
       setBuddyState('welcome');
       document.getElementById('endScreen').classList.remove('active-screen');
       document.getElementById('introScreen').classList.add('active-screen');
