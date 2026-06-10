@@ -365,7 +365,7 @@
       <div id="gameScreen" class="screen-segment">
         <div class="game-header">
           <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
-          <span id="gameInfo" style="font-size: 13px; color: var(--text-muted); font-weight: bold;">Word 1/3</span>
+          <span id="gameInfo" style="font-size: 13px; color: var(--text-muted); font-weight: bold;">Word 1</span>
         </div>
 
         <div id="scrambledWord" class="scrambled-box">XXXXXX</div>
@@ -463,7 +463,7 @@
       multiPhase: 'guessing',
       inputFrozen: false,
       activePools: null,
-      scoredPlayers: [] // NOWE: Pamięć dla graczy, którzy zdobyli punkt w danej rundzie
+      scoredPlayers: []
     };
 
     // --- MAPOWANIE GRAFIK HOSTA ---
@@ -530,14 +530,26 @@
       btns.forEach((b, i) => b.classList.toggle('active', targets[i] === score));
     }
 
+    // POPRAWIONE: Dwuetapowe głębokie mieszanie eliminujące powtarzalność
     function scramble(word) {
-      let arr = word.split('');
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+      let scrambled = '';
+      let attempts = 0;
+      
+      while ((scrambled === '' || scrambled === word) && attempts < 20) {
+        let arr = word.split('');
+        // Dwa przebiegi pętli dla maksymalnego chaosu układu liter
+        for (let pass = 0; pass < 2; pass++) {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            let temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+          }
+        }
+        scrambled = arr.join('');
+        attempts++;
       }
-      let scrambled = arr.join('');
-      return scrambled === word ? scramble(word) : scrambled;
+      return scrambled;
     }
 
     function startGame() {
@@ -578,11 +590,10 @@
 
     function loadQuestion() {
       gameState.inputFrozen = false;
-      gameState.scoredPlayers = []; // Resetujemy listę zapunktowanych graczy w nowej rundzie
+      gameState.scoredPlayers = []; 
       
-      let maxInTier = gameState.currentTier === 'hard' ? 2 : 3;
-      
-      if (gameState.roundIndex >= maxInTier || gameState.activePools[gameState.currentTier].length === 0) {
+      // POPRAWIONE: Zamiast sztywnego limitu na grę, przechodzimy dalej gdy pula kategorii całkowicie opustoszeje
+      if (gameState.activePools[gameState.currentTier].length === 0) {
         gameState.roundIndex = 0;
         if (gameState.currentTier === 'easy') gameState.currentTier = 'medium';
         else if (gameState.currentTier === 'medium') gameState.currentTier = 'hard';
@@ -601,7 +612,7 @@
       if(gameState.currentTier === 'hard') tierTxt = i18n[lang].hard;
       
       document.getElementById('tierBadge').textContent = tierTxt;
-      document.getElementById('gameInfo').textContent = `${i18n[lang].word} ${gameState.roundIndex + 1}/${maxInTier}`;
+      document.getElementById('gameInfo').textContent = `${i18n[lang].word} ${gameState.roundIndex + 1}`;
 
       let randomIndex = Math.floor(Math.random() * pool.length);
       let word = pool.splice(randomIndex, 1)[0]; 
@@ -724,7 +735,6 @@
         card.className = 'player-card';
 
         let actionBtn = '';
-        // Wyświetl przycisk tylko jeśli faza to 'revealed' i gracz nie znajduje się jeszcze na liście tych, co dostali punkt
         if (gameState.multiPhase === 'revealed' && !gameState.scoredPlayers.includes(idx)) {
           actionBtn = `<button class="score-btn" onclick="addPoint(${idx})">+1 PT</button>`;
         }
@@ -752,24 +762,20 @@
       renderMultiplayerList();
     }
 
-    // Dodawanie punktu konkretnemu graczowi
     function addPoint(idx) {
       if (gameState.multiPhase !== 'revealed' || gameState.scoredPlayers.includes(idx)) return; 
       
-      // Zapisanie, że ten gracz otrzymał punkt w bieżącej rundzie
       gameState.scoredPlayers.push(idx); 
       gameState.scores[idx]++;
       
       setBuddyState('happy');
-      
-      // Przerenderowanie ukryje przycisk TYLKO u tego gracza
       renderMultiplayerList();
       
       setTimeout(() => {
         if (gameState.scores[idx] >= config.targetScore) {
           endGame(config.names[idx]);
         }
-      }, 1500);
+      }, 1000);
     }
 
     function endByLimit() {
@@ -801,7 +807,6 @@
       document.getElementById('setupScreen').classList.add('active-screen');
     }
 
-    // Inicjalizacja początkowa
     setLanguage('en');
   </script>
 </body>
