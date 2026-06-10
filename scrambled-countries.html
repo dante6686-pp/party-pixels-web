@@ -116,13 +116,12 @@
       border-color: transparent transparent var(--accent-cyan) transparent;
     }
 
-        /* System zarządzania ekranami */
+    /* System zarządzania ekranami - POPRAWIONY */
     .screen-segment { display: none !important; animation: fadeIn 0.4s ease-out; }
     .screen-segment.active-screen { display: block !important; }
     .screen-segment.active-screen.setup-grid { display: grid !important; }
     .setup-grid { gap: 20px; }
     .hidden { display: none !important; }
-
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -331,9 +330,9 @@
         <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
       </div>
 
-      <!-- SEKCJA HOSTA -->
+      <!-- SEKCJA HOSTA - DODANY BEZWZGLĘDNY UKOŚNIK '/' W ŚCIEŻCE -->
       <div class="host-section">
-        <img id="pixelBuddyImg" class="buddy-avatar" src="images/buddy-neutral.png" alt="Pixel Buddy">
+        <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
         <div id="buddyBubble" class="speech-bubble">System online. Ready to play?</div>
       </div>
 
@@ -466,18 +465,17 @@
       currentAnswer: "",
       timer: null,
       multiPhase: 'guessing',
-      inputFrozen: false
+      inputFrozen: false,
+      activePools: null // Dynamiczna pula bez powtórek
     };
 
-    // --- FUNKCJE HOSTA (PIXEL BUDDY) ---
+    // --- FUNKCJE HOSTA (PIXEL BUDDY) z dodanym '/' na początku ścieżki ---
     function setBuddyState(state, customText = null) {
       const img = document.getElementById('pixelBuddyImg');
       const bubble = document.getElementById('buddyBubble');
       
-      // Podmiana obrazka w zależności od stanu
-      img.src = `images/buddy-${state}.png`;
+      img.src = `/images/buddy-${state}.png`;
 
-      // Losowanie tekstu, jeśli nie podano własnego
       let text = customText;
       if (!text) {
         let pool = buddyQuotes[lang][state];
@@ -553,6 +551,13 @@
       gameState.currentTier = 'easy';
       gameState.roundIndex = 0;
 
+      // KLONOWANIE BAZY SŁÓW DO ROZGRYWKI (BRAK POWTÓREK)
+      gameState.activePools = {
+        easy: [...database[lang].easy],
+        medium: [...database[lang].medium],
+        hard: [...database[lang].hard]
+      };
+
       document.getElementById('setupScreen').classList.remove('active-screen');
       document.getElementById('gameScreen').classList.add('active-screen');
 
@@ -574,11 +579,20 @@
       gameState.inputFrozen = false;
       let maxInTier = gameState.currentTier === 'hard' ? 2 : 3;
       
-      if (gameState.roundIndex >= maxInTier) {
+      // Zmiana tieru jeśli przekroczono indeks rzędu LUB pula słów w danym tierze się skończyła
+      if (gameState.roundIndex >= maxInTier || gameState.activePools[gameState.currentTier].length === 0) {
         gameState.roundIndex = 0;
         if (gameState.currentTier === 'easy') gameState.currentTier = 'medium';
         else if (gameState.currentTier === 'medium') gameState.currentTier = 'hard';
         else { endByLimit(); return; }
+      }
+
+      let pool = gameState.activePools[gameState.currentTier];
+      
+      // Bezpiecznik: jeśli następna pula też jest pusta, kończymy grę
+      if (!pool || pool.length === 0) {
+        endByLimit();
+        return;
       }
 
       let tierTxt = i18n[lang].easy;
@@ -588,13 +602,14 @@
       document.getElementById('tierBadge').textContent = tierTxt;
       document.getElementById('gameInfo').textContent = `${i18n[lang].word} ${gameState.roundIndex + 1}/${maxInTier}`;
 
-      let pool = database[lang][gameState.currentTier];
-      let word = pool[Math.floor(Math.random() * pool.length)];
+      // Losowanie słowa ze sklonowanej puli i jednoczesne USUNIĘCIE go stamtąd
+      let randomIndex = Math.floor(Math.random() * pool.length);
+      let word = pool.splice(randomIndex, 1)[0]; 
       gameState.currentAnswer = word;
       
       let wordBox = document.getElementById('scrambledWord');
       wordBox.textContent = scramble(word);
-      wordBox.className = 'scrambled-box'; // Reset klas animacji
+      wordBox.className = 'scrambled-box';
 
       document.getElementById('soloAnswer').value = "";
       document.getElementById('soloAnswer').disabled = false;
@@ -728,7 +743,7 @@
       wordBox.textContent = gameState.currentAnswer;
       wordBox.classList.add('success');
 
-      setBuddyState('thinking'); // Zastanawia się komu przyznać punkt
+      setBuddyState('thinking');
 
       document.getElementById('btnReveal').classList.add('hidden');
       document.getElementById('btnNext').classList.remove('hidden');
@@ -738,7 +753,7 @@
 
     function addPoint(idx) {
       gameState.scores[idx]++;
-      setBuddyState('happy'); // Cieszy się z punktu
+      setBuddyState('happy');
       renderMultiplayerList();
       
       setTimeout(() => {
