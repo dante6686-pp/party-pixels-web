@@ -47,70 +47,136 @@
       border-color: #ff5cff;
     }
 
-    /* System zarządzania ekranami */
-    .screen-segment { display: none !important; }
-    .screen-segment.active-screen { display: grid !important; }
-    .screen-segment.active-screen.game-layout { display: block !important; }
+    /* System zarządzania ekranami (Bezpieczny display) */
+    .screen-segment { 
+      display: none !important; 
+    }
+    .screen-segment.active-screen { 
+      display: grid !important; 
+    }
+    .screen-segment.active-screen.game-layout {
+      display: block !important;
+    }
+
     .hidden { display: none !important; }
 
-    .setup-grid { display: grid; gap: 16px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .setup-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .form-group label {
-      font-size: 11px; color: #8a8dad; text-transform: uppercase; letter-spacing: 0.1em;
+      font-size: 11px;
+      color: #8a8dad;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
 
-    .game-input {
-      padding: 12px; border-radius: 10px; border: 1px solid rgba(90,94,170,0.5);
-      background: rgba(7,9,26,0.8); color: #fff;
+    .game-input, .game-select {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(90,94,170,0.5);
+      background: rgba(7,9,26,0.8);
+      color: #fff;
     }
 
-    .btn-group { display: flex; gap: 8px; }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
     .option-btn {
-      flex: 1; padding: 10px; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1); color: #fff;
-      border-radius: 10px; cursor: pointer; transition: 0.2s;
+      flex: 1;
+      padding: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
     }
     .option-btn.active {
-      background: rgba(124, 128, 210, 0.2); border-color: #7c80d2;
+      background: rgba(124, 128, 210, 0.2);
+      border-color: #7c80d2;
     }
 
     .primary-btn {
       background: radial-gradient(circle at top, #ff5cff, #7c80d2);
-      color: #fff; border: none; padding: 14px; border-radius: 999px;
-      font-weight: bold; cursor: pointer; text-transform: uppercase;
-      letter-spacing: 0.05em; box-shadow: 0 4px 15px rgba(255, 92, 255, 0.3);
-      width: 100%; transition: 0.2s;
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 15px rgba(255, 92, 255, 0.3);
+      width: 100%;
+      transition: 0.2s;
     }
     .primary-btn.alt {
-      background: rgba(255,255,255,0.08); box-shadow: none; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08); 
+      box-shadow: none; 
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
     /* Ekran Gry */
     .scrambled-box {
-      font-size: 38px; font-weight: 900; letter-spacing: 0.15em;
-      text-align: center; margin: 25px 0; color: #fff;
-      text-shadow: 0 0 15px rgba(255,255,255,0.4); transition: color 0.3s, text-shadow 0.3s;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      text-align: center;
+      margin: 25px 0;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(255,255,255,0.4);
+      transition: color 0.3s, text-shadow 0.3s;
     }
 
     .timer-bar-container {
-      background: rgba(255,255,255,0.1); height: 8px; border-radius: 999px;
-      overflow: hidden; margin-bottom: 20px;
+      background: rgba(255,255,255,0.1);
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 20px;
     }
     .timer-bar {
-      background: #ff5cff; height: 100%; width: 100%;
-      transition: width 0.1s linear; box-shadow: 0 0 8px #ff5cff;
+      background: #ff5cff;
+      height: 100%;
+      width: 100%;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px #ff5cff;
     }
 
-    .players-list { display: grid; gap: 12px; margin: 20px 0; }
+    .players-list {
+      display: grid;
+      gap: 12px;
+      margin: 20px 0;
+    }
     .player-card {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 18px; background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
     }
     
     .score-btn {
-      border: none; color: white; padding: 8px 14px; border-radius: 6px;
-      cursor: pointer; font-weight: bold; transition: 0.2s; min-width: 90px;
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+      min-width: 90px;
     }
     .score-btn.btn-ready {
       background: transparent; border: 1px solid #7c80d2; color: #7c80d2;
@@ -125,9 +191,14 @@
     }
 
     .badge-tier {
-      display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 10px;
-      text-transform: uppercase; background: rgba(255,92,255,0.15);
-      border: 1px solid #ff5cff; color: #ff5cff;
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      text-transform: uppercase;
+      background: rgba(255,92,255,0.15);
+      border: 1px solid #ff5cff;
+      color: #ff5cff;
     }
   </style>
 </head>
@@ -148,5 +219,369 @@
       </div>
 
       <div id="setupScreen" class="screen-segment active-screen setup-grid">
-        <div
-          
+        <div class="form-group">
+          <label id="lblPlayers">Number of Players</label>
+          <div class="btn-group">
+            <button class="option-btn active" onclick="setPlayers(1)">1</button>
+            <button class="option-btn" onclick="setPlayers(2)">2</button>
+            <button class="option-btn" onclick="setPlayers(3)">3</button>
+          </div>
+        </div>
+
+        <div id="nameInputs" class="form-group">
+          <label id="lblPlayerNames">Player Name</label>
+          <input type="text" id="p1Name" class="game-input" value="Player 1">
+        </div>
+
+        <div class="form-group">
+          <label id="lblTargetScore">Points to Win</label>
+          <div class="btn-group">
+            <button class="option-btn active" onclick="setTarget(3)">3</button>
+            <button class="option-btn" onclick="setTarget(5)">5</button>
+            <button class="option-btn" onclick="setTarget(10)">10</button>
+          </div>
+        </div>
+
+        <button class="primary-btn" id="btnStart" onclick="startGame()">Start Game</button>
+      </div>
+
+      <div id="gameScreen" class="screen-segment game-layout">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
+          <span id="gameInfo" style="font-size: 13px; color: #8a8dad;">Word 1/3</span>
+        </div>
+
+        <div id="scrambledWord" class="scrambled-box">XXXXXX</div>
+
+        <div id="timerContainer" class="timer-bar-container">
+          <div id="timerBar" class="timer-bar"></div>
+        </div>
+
+        <div id="singlePlayerInput" class="form-group">
+          <input type="text" id="soloAnswer" class="game-input" placeholder="Type country name..." autocomplete="off">
+        </div>
+
+        <div id="multiPlayerList" class="players-list hidden"></div>
+
+        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+          <button class="primary-btn hidden" id="btnReveal" onclick="revealAnswer()">Reveal Answer</button>
+          <button class="primary-btn alt" id="btnNext" onclick="nextWord()">Next Word</button>
+        </div>
+      </div>
+
+      <div id="endScreen" class="screen-segment" style="text-align: center;">
+        <h2 id="endTitle" style="font-size: 28px; margin-bottom: 10px;">Game Over</h2>
+        <p id="endResults" style="color: #8a8dad; margin-bottom: 20px; font-size: 16px; line-height: 1.6;"></p>
+        <button class="primary-btn" id="btnRestart" onclick="resetGame()">Play Again</button>
+      </div>
+    </div>
+
+    <div id="footer"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+
+  <script>
+    function loadPart(id, file) {
+      fetch(file)
+        .then(res => res.text())
+        .then(html => { document.getElementById(id).innerHTML = html; })
+        .catch(err => console.error(`Load error in ${file}:`, err));
+    }
+    loadPart('header', '/header.html');
+    loadPart('footer', '/footer.html');
+  </script>
+
+  <script>
+    const i18n = {
+      en: {
+        players: "Number of Players", names: "Player Name(s)", target: "Points to Win",
+        start: "Start Game", next: "Next Word", skip: "Skip Word", reveal: "Reveal Answer", 
+        restart: "Play Again", easy: "Tier 1: Easy", medium: "Tier 2: Medium", 
+        hard: "Tier 3: Hard (Fast)", word: "Word", win: "Victory!", over: "Game Over", 
+        placeholder: "Type country name...", score: "Score", guess: "Got it!"
+      },
+      pl: {
+        players: "Liczba Graczy", names: "Imię Gracza (Graczy)", target: "Punkty do Wygranej",
+        start: "Uruchom Grę", next: "Następne Słowo", skip: "Pomiń Słowo", reveal: "Sprawdź Odpowiedź", 
+        restart: "Zagraj Ponownie", easy: "Etap 1: Łatwy", medium: "Etap 2: Średni", 
+        hard: "Etap 3: Trudny (Szybka runda)", word: "Słowo", win: "Zwycięstwo!", over: "Koniec Czasu!", 
+        placeholder: "Wpisz nazwę kraju...", score: "Wynik", guess: "Zgaduję!"
+      }
+    };
+
+    const database = {
+      en: {
+        easy: ["POLAND", "SPAIN", "ITALY", "BRAZIL", "FRANCE", "JAPAN", "CANADA", "EGYPT"],
+        medium: ["MEXICO", "VIETNAM", "UKRAINE", "MOROCCO", "ICELAND", "COLOMBIA", "FINLAND"],
+        hard: ["BHUTAN", "LESOTHO", "VANUATU", "SURINAME", "MALTA", "OMAN", "ANDORRA"]
+      },
+      pl: {
+        easy: ["POLSKA", "HISZPANIA", "WLOCHY", "BRAZYLIA", "FRANCJA", "JAPONIA", "KANADA", "EGIPT"],
+        medium: ["MEKSYK", "WIETNAM", "UKRAINA", "MAROKO", "ISLANDIA", "KOLUMBIA", "FINLANDIA"],
+        hard: ["BUTAN", "LESOTHO", "VANUATU", "SURINAM", "MALTA", "OMAN", "ANDORRA"]
+      }
+    };
+
+    let lang = 'en';
+    let config = { players: 1, targetScore: 3, names: ["Player 1"] };
+    let gameState = {
+      scores: [0, 0, 0],
+      currentTier: 'easy',
+      roundIndex: 0,
+      currentAnswer: "",
+      timer: null,
+      timeLeft: 100,
+      multiPhase: 'guessing', 
+      attempted: [false, false, false]
+    };
+
+    function setLanguage(l) {
+      lang = l;
+      document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
+      document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
+      
+      document.getElementById('lblPlayers').textContent = i18n[lang].players;
+      document.getElementById('lblPlayerNames').textContent = i18n[lang].names;
+      document.getElementById('lblTargetScore').textContent = i18n[lang].target;
+      document.getElementById('btnStart').textContent = i18n[lang].start;
+      document.getElementById('btnRestart').textContent = i18n[lang].restart;
+      document.getElementById('btnReveal').textContent = i18n[lang].reveal;
+      document.getElementById('soloAnswer').placeholder = i18n[lang].placeholder;
+      
+      if (document.getElementById('gameScreen').classList.contains('active-screen')) {
+        document.getElementById('btnNext').textContent = config.players === 1 ? i18n[lang].skip : i18n[lang].next;
+      }
+      
+      if (config.players > 1) renderMultiplayerList();
+    }
+
+    function setPlayers(num) {
+      config.players = num;
+      const btns = document.querySelectorAll('#setupScreen .form-group:nth-child(1) .option-btn');
+      btns.forEach((b, i) => b.classList.toggle('active', i + 1 === num));
+
+      let html = '';
+      for(let i = 1; i <= num; i++) {
+        html += `<input type="text" id="p${i}Name" class="game-input" value="Player ${i}" style="margin-bottom:8px;">`;
+      }
+      document.getElementById('nameInputs').innerHTML = `<label>${i18n[lang].names}</label>` + html;
+    }
+
+    function setTarget(score) {
+      config.targetScore = score;
+      const targets = [3, 5, 10];
+      const btns = document.querySelectorAll('#setupScreen .form-group:nth-child(3) .option-btn');
+      btns.forEach((b, i) => b.classList.toggle('active', targets[i] === score));
+    }
+
+    function scramble(word) {
+      let arr = word.split('');
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      let scrambled = arr.join('');
+      return scrambled === word ? scramble(word) : scrambled;
+    }
+
+    function startGame() {
+      config.names = [];
+      for(let i = 1; i <= config.players; i++) {
+        let inputEl = document.getElementById(`p${i}Name`);
+        let val = inputEl ? inputEl.value.trim() : "";
+        config.names.push(val || `Player ${i}`);
+      }
+
+      gameState.scores = [0, 0, 0];
+      gameState.currentTier = 'easy';
+      gameState.roundIndex = 0;
+
+      document.getElementById('setupScreen').classList.remove('active-screen');
+      document.getElementById('gameScreen').classList.add('active-screen');
+
+      if(config.players > 1) {
+        document.getElementById('timerContainer').classList.add('hidden');
+        document.getElementById('singlePlayerInput').classList.add('hidden');
+        document.getElementById('multiPlayerList').classList.remove('hidden');
+      } else {
+        document.getElementById('timerContainer').classList.remove('hidden');
+        document.getElementById('singlePlayerInput').classList.remove('hidden');
+        document.getElementById('multiPlayerList').classList.add('hidden');
+        setupSoloInputListener();
+      }
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      let maxInTier = gameState.currentTier === 'hard' ? 2 : 3;
+      if (gameState.roundIndex >= maxInTier) {
+        gameState.roundIndex = 0;
+        if (gameState.currentTier === 'easy') gameState.currentTier = 'medium';
+        else if (gameState.currentTier === 'medium') gameState.currentTier = 'hard';
+        else { endByLimit(); return; }
+      }
+
+      let tierTxt = i18n[lang].easy;
+      if(gameState.currentTier === 'medium') tierTxt = i18n[lang].medium;
+      if(gameState.currentTier === 'hard') tierTxt = i18n[lang].hard;
+      document.getElementById('tierBadge').textContent = tierTxt;
+      document.getElementById('gameInfo').textContent = `${i18n[lang].word} ${gameState.roundIndex + 1}/${maxInTier}`;
+
+      let pool = database[lang][gameState.currentTier];
+      let word = pool[Math.floor(Math.random() * pool.length)];
+      gameState.currentAnswer = word;
+      
+      let wordBox = document.getElementById('scrambledWord');
+      wordBox.textContent = scramble(word);
+      wordBox.style.color = '#fff';
+      wordBox.style.textShadow = '0 0 15px rgba(255,255,255,0.4)';
+
+      document.getElementById('soloAnswer').value = "";
+      gameState.multiPhase = 'guessing';
+      gameState.attempted = [false, false, false];
+
+      if (config.players > 1) {
+        document.getElementById('btnReveal').classList.remove('hidden');
+        document.getElementById('btnNext').classList.add('hidden');
+        document.getElementById('btnNext').textContent = i18n[lang].next;
+        renderMultiplayerList();
+      } else {
+        document.getElementById('btnReveal').classList.add('hidden');
+        document.getElementById('btnNext').classList.remove('hidden');
+        document.getElementById('btnNext').textContent = i18n[lang].skip;
+        startTimer();
+      }
+    }
+
+    function startTimer() {
+      clearInterval(gameState.timer);
+      let baseSeconds = config.targetScore === 3 ? 20 : (config.targetScore === 5 ? 15 : 12);
+      if (gameState.currentTier === 'hard') baseSeconds = Math.round(baseSeconds * 0.6);
+
+      let duration = baseSeconds * 1000;
+      let start = Date.now();
+
+      gameState.timer = setInterval(() => {
+        let elapsed = Date.now() - start;
+        let progress = 100 - (elapsed / duration * 100);
+        
+        if (progress <= 0) {
+          clearInterval(gameState.timer);
+          document.getElementById('timerBar').style.width = '0%';
+          nextWord();
+        } else {
+          document.getElementById('timerBar').style.width = progress + '%';
+        }
+      }, 100);
+    }
+
+    function setupSoloInputListener() {
+      const input = document.getElementById('soloAnswer');
+      const newInput = input.cloneNode(true);
+      input.parentNode.replaceChild(newInput, input);
+
+      newInput.addEventListener('input', (e) => {
+        let val = e.target.value.trim().toUpperCase();
+        if (val === gameState.currentAnswer) {
+          clearInterval(gameState.timer);
+          gameState.scores[0]++;
+          if (gameState.scores[0] >= config.targetScore) {
+            endGame(config.names[0]);
+          } else {
+            nextWord();
+          }
+        }
+      });
+      setTimeout(() => newInput.focus(), 50);
+    }
+
+    function renderMultiplayerList() {
+      const list = document.getElementById('multiPlayerList');
+      list.innerHTML = '';
+      config.names.forEach((name, idx) => {
+        let card = document.createElement('div');
+        card.className = 'player-card';
+
+        let actionBtn = '';
+        if (gameState.multiPhase === 'guessing') {
+          if (gameState.attempted[idx]) {
+             actionBtn = `<button class="score-btn btn-checked" disabled>✔️</button>`;
+          } else {
+             actionBtn = `<button class="score-btn btn-ready" onclick="markAttempt(${idx})">${i18n[lang].guess}</button>`;
+          }
+        } else {
+          actionBtn = `<button class="score-btn btn-point" onclick="addPoint(${idx})">+1 Point</button>`;
+        }
+
+        card.innerHTML = `
+          <div><strong>${name}</strong> — ${i18n[lang].score}: ${gameState.scores[idx]}</div>
+          ${actionBtn}
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function markAttempt(idx) {
+       gameState.attempted[idx] = true;
+       renderMultiplayerList();
+    }
+
+    function revealAnswer() {
+      gameState.multiPhase = 'revealed';
+      
+      let wordBox = document.getElementById('scrambledWord');
+      wordBox.textContent = gameState.currentAnswer;
+      wordBox.style.color = '#ff5cff';
+      wordBox.style.textShadow = '0 0 20px #ff5cff';
+
+      document.getElementById('btnReveal').classList.add('hidden');
+      document.getElementById('btnNext').classList.remove('hidden');
+      document.getElementById('btnNext').classList.remove('alt');
+      
+      renderMultiplayerList();
+    }
+
+    function addPoint(idx) {
+      gameState.scores[idx]++;
+      renderMultiplayerList();
+      if (gameState.scores[idx] >= config.targetScore) {
+        endGame(config.names[idx]);
+      }
+    }
+
+    function nextWord() {
+      document.getElementById('btnNext').classList.add('alt');
+      gameState.roundIndex++;
+      loadQuestion();
+    }
+
+    function endByLimit() {
+      clearInterval(gameState.timer);
+      let maxScore = Math.max(...gameState.scores);
+      let winIdx = gameState.scores.indexOf(maxScore);
+      endGame(config.names[winIdx]);
+    }
+
+    function endGame(winnerName) {
+      clearInterval(gameState.timer);
+      document.getElementById('gameScreen').classList.remove('active-screen');
+      document.getElementById('endScreen').classList.add('active-screen');
+
+      document.getElementById('endTitle').textContent = i18n[lang].win;
+      
+      let resHtml = '';
+      config.names.forEach((name, idx) => {
+        resHtml += `${name}: ${gameState.scores[idx]} p.<br>`;
+      });
+      document.getElementById('endResults').innerHTML = `<strong>Winner: ${winnerName}</strong><br><br>${resHtml}`;
+    }
+
+    function resetGame() {
+      document.getElementById('endScreen').classList.remove('active-screen');
+      document.getElementById('setupScreen').classList.add('active-screen');
+    }
+  </script>
+</body>
+</html>
