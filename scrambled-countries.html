@@ -166,11 +166,12 @@
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
       border-radius: 12px;
+      min-height: 58px;
     }
     
-    /* Zmodyfikowane przyciski punktacji */
     .score-btn {
-      border: none;
+      background: #7c80d2;
+      border: 1px solid #7c80d2;
       color: white;
       padding: 8px 14px;
       border-radius: 6px;
@@ -179,16 +180,10 @@
       transition: 0.2s;
       min-width: 90px;
     }
-    .score-btn.btn-ready {
-      background: transparent; border: 1px solid #7c80d2; color: #7c80d2;
-    }
-    .score-btn.btn-ready:hover { background: rgba(124, 128, 210, 0.1); }
-    
-    .score-btn.btn-checked {
-      background: #4ade80; color: #000; box-shadow: 0 0 10px #4ade80; border: 1px solid #4ade80; cursor: default;
-    }
-    .score-btn.btn-point {
-      background: #7c80d2; border: 1px solid #7c80d2;
+    .score-btn:hover {
+      background: #ff5cff;
+      border-color: #ff5cff;
+      box-shadow: 0 0 10px rgba(255, 92, 255, 0.5);
     }
 
     .badge-tier {
@@ -301,14 +296,14 @@
         start: "Start Game", next: "Next Word", skip: "Skip Word", reveal: "Reveal Answer", 
         restart: "Play Again", easy: "Tier 1: Easy", medium: "Tier 2: Medium", 
         hard: "Tier 3: Hard (Fast)", word: "Word", win: "Victory!", over: "Game Over", 
-        placeholder: "Type country name...", score: "Score", guess: "Got it!"
+        placeholder: "Type country name...", score: "Score"
       },
       pl: {
         players: "Liczba Graczy", names: "Imię Gracza (Graczy)", target: "Punkty do Wygranej",
         start: "Uruchom Grę", next: "Następne Słowo", skip: "Pomiń Słowo", reveal: "Sprawdź Odpowiedź", 
         restart: "Zagraj Ponownie", easy: "Etap 1: Łatwy", medium: "Etap 2: Średni", 
         hard: "Etap 3: Trudny (Szybka runda)", word: "Słowo", win: "Zwycięstwo!", over: "Koniec Czasu!", 
-        placeholder: "Wpisz nazwę kraju...", score: "Wynik", guess: "Zgaduję!"
+        placeholder: "Wpisz nazwę kraju...", score: "Wynik"
       }
     };
 
@@ -334,8 +329,7 @@
       currentAnswer: "",
       timer: null,
       timeLeft: 100,
-      multiPhase: 'guessing', 
-      attempted: [false, false, false]
+      multiPhase: 'guessing'
     };
 
     function setLanguage(l) {
@@ -399,7 +393,6 @@
       gameState.currentTier = 'easy';
       gameState.roundIndex = 0;
 
-      // Zmiana aktywnych ekranów
       document.getElementById('setupScreen').classList.remove('active-screen');
       document.getElementById('gameScreen').classList.add('active-screen');
 
@@ -443,7 +436,6 @@
 
       document.getElementById('soloAnswer').value = "";
       gameState.multiPhase = 'guessing';
-      gameState.attempted = [false, false, false];
 
       if (config.players > 1) {
         document.getElementById('btnReveal').classList.remove('hidden');
@@ -508,14 +500,8 @@
         card.className = 'player-card';
 
         let actionBtn = '';
-        if (gameState.multiPhase === 'guessing') {
-          if (gameState.attempted[idx]) {
-             actionBtn = `<button class="score-btn btn-checked" disabled>✔️</button>`;
-          } else {
-             actionBtn = `<button class="score-btn btn-ready" onclick="markAttempt(${idx})">${i18n[lang].guess}</button>`;
-          }
-        } else {
-          actionBtn = `<button class="score-btn btn-point" onclick="addPoint(${idx})">+1 Point</button>`;
+        if (gameState.multiPhase === 'revealed') {
+          actionBtn = `<button class="score-btn" onclick="addPoint(${idx})">+1 Point</button>`;
         }
 
         card.innerHTML = `
@@ -524,11 +510,6 @@
         `;
         list.appendChild(card);
       });
-    }
-
-    function markAttempt(idx) {
-       gameState.attempted[idx] = true;
-       renderMultiplayerList();
     }
 
     function revealAnswer() {
