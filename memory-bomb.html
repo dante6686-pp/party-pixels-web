@@ -9,7 +9,7 @@
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612" crossorigin="anonymous"></script>
 
   <style>
-    /* UNIKALNY KLIMAT DLA MEMORY BOMB - Czerwień, purpura i alarmowy klimat */
+    /* UNIKALNY KLIMAT DLA MEMORY BOMB - Alarmowa czerwień + grafika w tle (Splash) */
     .game-layout {
       max-width: 650px;
       width: 100%;
@@ -22,9 +22,16 @@
       width: 100%;
       padding: 30px;
       box-sizing: border-box;
-      background: 
-        radial-gradient(circle at top, rgba(255, 30, 100, 0.15), transparent 75%),
-        linear-gradient(145deg, rgba(20, 5, 25, 0.96), rgba(8, 2, 12, 0.99));
+      /* WARSTWOWE TŁO: Gradient błysku, ciemny miks barw oraz wtopiona grafika splash według nowego schematu */
+      background-image: 
+        radial-gradient(circle at top, rgba(255, 30, 100, 0.2), transparent 75%),
+        linear-gradient(145deg, rgba(20, 5, 25, 0.92), rgba(8, 2, 12, 0.96)),
+        url('/images/pixel-memory-bomb-splash.jpg');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-blend-mode: normal, normal, overlay; /* Dzięki temu grafika perfekcyjnie przyjmuje barwy gry */
+      
       border: 2px solid rgba(255, 50, 100, 0.25);
       border-radius: 20px;
       box-shadow: 
@@ -33,7 +40,6 @@
       transition: border-color 0.5s ease, box-shadow 0.5s ease;
     }
     
-    /* Efekt pulsującego zagrożenia bomby na kontenerze */
     @keyframes bombPulse {
       0% { box-shadow: 0 0 35px rgba(255, 51, 102, 0.1); border-color: rgba(255, 50, 100, 0.25); }
       50% { box-shadow: 0 0 45px rgba(255, 51, 102, 0.25); border-color: rgba(255, 50, 100, 0.45); }
@@ -94,10 +100,10 @@
 
     .speech-bubble {
       position: relative;
-      background: rgba(25, 5, 30, 0.85);
+      background: rgba(25, 5, 30, 0.9);
       border: 2px solid #ff3366;
       border-radius: 12px;
-      padding: 12px 20px;
+      padding: 0 20px; /* Usunięty padding pionowy na rzecz centrowania flexboxem */
       color: #ff3366;
       font-family: 'Courier New', Courier, monospace;
       font-weight: bold;
@@ -105,9 +111,17 @@
       box-shadow: 0 0 15px rgba(255, 51, 102, 0.2);
       margin-top: 15px;
       max-width: 80%;
-      min-width: 250px;
+      min-width: 280px;
+      
+      /* ELIMINACJA PAGE SHIFT - Stały rozmiar kontenera wypowiedzi */
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      
       opacity: 1;
-      transition: all 0.3s ease;
+      transition: opacity 0.3s ease;
     }
 
     .speech-bubble::before {
@@ -236,7 +250,6 @@
       transform: scale(0.95);
     }
 
-    /* Kolory błysków - Alarmowy cyjan bomby */
     .memory-pad.flash-active {
       background: #00f0ff !important;
       border-color: #fff !important;
@@ -371,7 +384,6 @@
       }
     }
 
-    // AUTOMATYCZNY SCROLL DO KONTENERA GRY (UX UPGRADE)
     function scrollToGameTop() {
       const container = document.getElementById('gameAppContainer');
       if (container) {
@@ -479,7 +491,6 @@
       });
     }
 
-    // PIERWSZY DŹWIĘK EKSPLOZJI (BASOWE TĄPNIĘCIE W KAfelek)
     function playExplosionSound() {
       initAudio();
       if (!audioCtx) return;
@@ -499,7 +510,6 @@
       osc.stop(audioCtx.currentTime + 1.2);
     }
 
-    // DRUGI, POTĘŻNIEJSZY DŹWIĘK EKSPLOZJI (FALA UDERZENIOWA NA EKRAN GAME OVER)
     function playGameOverExplosionSound() {
       initAudio();
       if (!audioCtx) return;
@@ -553,7 +563,6 @@
       });
     }
 
-    // --- LOGIKA SILNIKA GRY ---
     const buddyQuotes = {
       en: {
         welcome: ["System online. Watch your step!", "Ready to load the defusal patterns?", "Memory is key to survival..."],
@@ -613,8 +622,12 @@
       let fileSuffix = (state === 'welcome' || state === 'watch' || state === 'repeat' || state === 'pass') ? 'neutral' : state;
       img.src = `/images/buddy-${fileSuffix}.png`;
       let pool = buddyQuotes[lang][state];
+      
       bubble.style.opacity = 0;
-      setTimeout(() => { bubble.textContent = pool[Math.floor(Math.random() * pool.length)]; bubble.style.opacity = 1; }, 200);
+      setTimeout(() => { 
+        bubble.textContent = pool[Math.floor(Math.random() * pool.length)]; 
+        bubble.style.opacity = 1; 
+      }, 150);
     }
 
     function setLanguage(l) {
@@ -643,7 +656,7 @@
       playBeginGameSound();
       document.getElementById('introScreen').classList.remove('active-screen');
       document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
-      scrollToGameTop(); // UX Auto-scroll
+      scrollToGameTop();
     }
 
     function setPlayers(num) {
@@ -690,7 +703,7 @@
       setTimeout(() => {
         document.getElementById('setupScreen').classList.remove('active-screen', 'setup-grid');
         document.getElementById('gameScreen').classList.add('active-screen');
-        scrollToGameTop(); // UX Auto-scroll
+        scrollToGameTop();
 
         if (config.players === 1) {
           let maxScore = diffLimits[currentDifficulty];
@@ -839,14 +852,14 @@
 
     function triggerExplosionSolo() {
       setBuddyState('sad');
-      playExplosionSound(); // Pierwsza fala
+      playExplosionSound(); 
       for(let i=0; i<9; i++) flashPad(i, 'error-flash');
 
       setTimeout(() => {
         document.getElementById('gameScreen').classList.remove('active-screen');
         document.getElementById('endScreen').classList.add('active-screen');
-        scrollToGameTop(); // UX Auto-scroll
-        playGameOverExplosionSound(); // DRUGI, WIĘKSZY WYBUCH NA GAME OVER!
+        scrollToGameTop(); 
+        playGameOverExplosionSound(); 
 
         document.getElementById('endTitle').textContent = "BOOM!";
         document.getElementById('endTitle').style.color = "#ff3366";
@@ -862,14 +875,14 @@
 
     function triggerExplosionMulti() {
       setBuddyState('sad');
-      playExplosionSound(); // Pierwsza fala
+      playExplosionSound(); 
       for(let i=0; i<9; i++) flashPad(i, 'error-flash');
 
       setTimeout(() => {
         document.getElementById('gameScreen').classList.remove('active-screen');
         document.getElementById('endScreen').classList.add('active-screen');
-        scrollToGameTop(); // UX Auto-scroll
-        playGameOverExplosionSound(); // DRUGI, WIĘKSZY WYBUCH NA GAME OVER!
+        scrollToGameTop(); 
+        playGameOverExplosionSound(); 
 
         document.getElementById('endTitle').textContent = "BOOM!";
         document.getElementById('endTitle').style.color = "#ff3366";
@@ -890,7 +903,7 @@
       setTimeout(() => {
         document.getElementById('gameScreen').classList.remove('active-screen');
         document.getElementById('endScreen').classList.add('active-screen');
-        scrollToGameTop(); // UX Auto-scroll
+        scrollToGameTop(); 
         
         document.getElementById('endTitle').textContent = i18n[lang].winTitle;
         document.getElementById('endTitle').style.color = "#00f0ff";
@@ -910,7 +923,7 @@
       setBuddyState('welcome');
       document.getElementById('endScreen').classList.remove('active-screen');
       document.getElementById('introScreen').classList.add('active-screen');
-      scrollToGameTop(); // UX Auto-scroll
+      scrollToGameTop(); 
     }
 
     setLanguage('en');
