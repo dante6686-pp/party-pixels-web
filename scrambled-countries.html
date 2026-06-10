@@ -24,12 +24,68 @@
       background-color: var(--bg-darker);
       color: var(--text-main);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
+    .page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* PARTY PIXELS STYLE COMPONENTS */
+    .pp-navbar {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 20px 40px; 
+      background: rgba(4, 5, 14, 0.85); 
+      border-bottom: 1px solid rgba(0, 240, 255, 0.1); 
+      backdrop-filter: blur(10px);
+    }
+
+    .pp-logo {
+      font-weight: 900; 
+      font-size: 22px; 
+      letter-spacing: 2px; 
+      background: linear-gradient(45deg, var(--accent-cyan), var(--accent-magenta)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+    }
+
+    .pp-nav-links a {
+      color: var(--text-muted); 
+      text-decoration: none; 
+      font-weight: 600; 
+      font-size: 14px; 
+      margin-left: 20px;
+      transition: color 0.2s;
+    }
+
+    .pp-nav-links a:hover, .pp-nav-links a.active {
+      color: var(--accent-cyan);
+    }
+
+    .pp-footer {
+      margin-top: auto; 
+      padding: 30px; 
+      text-align: center; 
+      border-top: 1px solid rgba(124, 128, 210, 0.1); 
+      background: rgba(4, 5, 14, 0.9);
+    }
+
+    /* GAME CONTAINER */
     .game-container {
       max-width: 650px;
+      width: 100%;
       margin: 40px auto;
       padding: 30px;
+      box-sizing: border-box;
       background: 
         radial-gradient(circle at top, rgba(255, 92, 255, 0.1), transparent 70%),
         linear-gradient(145deg, rgba(10, 14, 35, 0.95), rgba(4, 5, 14, 0.98));
@@ -316,11 +372,20 @@
 </head>
 <body>
   <div class="page">
-    <div id="header"></div>
+    <div id="header">
+      <header class="pp-navbar">
+        <div class="pp-logo">PARTY PIXELS</div>
+        <nav class="pp-nav-links">
+          <a href="#" class="active">GAMES</a>
+          <a href="#">LEADERBOARDS</a>
+          <a href="#">COMMUNITY</a>
+        </nav>
+      </header>
+    </div>
 
-    <section class="hero" style="text-align: center; margin-bottom: 20px;">
-      <h1 class="hero-title" style="color: #ff5cff; text-shadow: 0 0 10px rgba(255,92,255,0.5);">Scrambled Countries</h1>
-      <p class="hero-sub" style="color: #8a8dad;">Host: Pixel Buddy</p>
+    <section class="hero" style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
+      <h1 class="hero-title" style="color: #ff5cff; text-shadow: 0 0 10px rgba(255,92,255,0.5); margin: 0; font-size: 36px;">Scrambled Countries</h1>
+      <p class="hero-sub" style="color: #8a8dad; margin: 5px 0 0 0;">Host: Pixel Buddy</p>
     </section>
 
     <div class="game-container">
@@ -393,7 +458,16 @@
       </div>
     </div>
 
-    <div id="footer"></div>
+    <div id="footer">
+      <footer class="pp-footer">
+        <p style="color: var(--text-muted); font-size: 13px; margin: 0;">&copy; 2026 Party Pixels. All arcade rights reserved.</p>
+        <div style="margin-top: 10px; display: flex; justify-content: center; gap: 15px; font-size: 12px;">
+          <a href="#" style="color: var(--accent-purple); text-decoration: none;">Terms of Service</a>
+          <span style="color: rgba(255,255,255,0.1)">|</span>
+          <a href="#" style="color: var(--accent-purple); text-decoration: none;">Privacy Policy</a>
+        </div>
+      </footer>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -466,7 +540,6 @@
       scoredPlayers: []
     };
 
-    // --- MAPOWANIE GRAFIK HOSTA ---
     function setBuddyState(state, customText = null) {
       const img = document.getElementById('pixelBuddyImg');
       const bubble = document.getElementById('buddyBubble');
@@ -490,7 +563,6 @@
       }, 200);
     }
 
-    // --- LOGIKA GRY ---
     function setLanguage(l) {
       lang = l;
       document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
@@ -530,14 +602,12 @@
       btns.forEach((b, i) => b.classList.toggle('active', targets[i] === score));
     }
 
-    // POPRAWIONE: Dwuetapowe głębokie mieszanie eliminujące powtarzalność
     function scramble(word) {
       let scrambled = '';
       let attempts = 0;
       
       while ((scrambled === '' || scrambled === word) && attempts < 20) {
         let arr = word.split('');
-        // Dwa przebiegi pętli dla maksymalnego chaosu układu liter
         for (let pass = 0; pass < 2; pass++) {
           for (let i = arr.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -592,21 +662,25 @@
       gameState.inputFrozen = false;
       gameState.scoredPlayers = []; 
       
-      // POPRAWIONE: Zamiast sztywnego limitu na grę, przechodzimy dalej gdy pula kategorii całkowicie opustoszeje
+      // POPRAWIONE: Matematyczne wyliczanie poziomu trudności dopasowane do "Points to Win"
+      let threshold = Math.ceil(config.targetScore / 3);
+      if (gameState.roundIndex < threshold) {
+        gameState.currentTier = 'easy';
+      } else if (gameState.roundIndex < threshold * 2) {
+        gameState.currentTier = 'medium';
+      } else {
+        gameState.currentTier = 'hard';
+      }
+
+      // Bezpiecznik: jeśli wybrana pula wyjątkowo wyschła, weź z innej dostępnej
       if (gameState.activePools[gameState.currentTier].length === 0) {
-        gameState.roundIndex = 0;
-        if (gameState.currentTier === 'easy') gameState.currentTier = 'medium';
-        else if (gameState.currentTier === 'medium') gameState.currentTier = 'hard';
+        if (gameState.activePools.easy.length > 0) gameState.currentTier = 'easy';
+        else if (gameState.activePools.medium.length > 0) gameState.currentTier = 'medium';
+        else if (gameState.activePools.hard.length > 0) gameState.currentTier = 'hard';
         else { endByLimit(); return; }
       }
 
       let pool = gameState.activePools[gameState.currentTier];
-      
-      if (!pool || pool.length === 0) {
-        endByLimit();
-        return;
-      }
-
       let tierTxt = i18n[lang].easy;
       if(gameState.currentTier === 'medium') tierTxt = i18n[lang].medium;
       if(gameState.currentTier === 'hard') tierTxt = i18n[lang].hard;
@@ -701,6 +775,7 @@
       }, 2000);
     }
 
+    // Wywoływane przy skipie lub końcu czasu w solo
     function handleSoloFail() {
       gameState.inputFrozen = true;
       document.getElementById('soloAnswer').disabled = true;
