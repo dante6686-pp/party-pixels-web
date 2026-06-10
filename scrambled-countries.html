@@ -462,15 +462,15 @@
       timer: null,
       multiPhase: 'guessing',
       inputFrozen: false,
-      activePools: null
+      activePools: null,
+      scoredPlayers: [] // NOWE: Pamięć dla graczy, którzy zdobyli punkt w danej rundzie
     };
 
-    // --- POPRAWIONE MAPOWANIE GRAFIK HOSTA ---
+    // --- MAPOWANIE GRAFIK HOSTA ---
     function setBuddyState(state, customText = null) {
       const img = document.getElementById('pixelBuddyImg');
       const bubble = document.getElementById('buddyBubble');
       
-      // Tłumaczenie stanów logicznych gry na posiadane nazwy plików assetów
       let fileSuffix = state;
       if (state === 'welcome') fileSuffix = 'neutral';
       if (state === 'win') fileSuffix = 'happy';
@@ -551,6 +551,7 @@
       gameState.scores = [0, 0, 0];
       gameState.currentTier = 'easy';
       gameState.roundIndex = 0;
+      gameState.scoredPlayers = [];
 
       gameState.activePools = {
         easy: [...database[lang].easy],
@@ -577,6 +578,8 @@
 
     function loadQuestion() {
       gameState.inputFrozen = false;
+      gameState.scoredPlayers = []; // Resetujemy listę zapunktowanych graczy w nowej rundzie
+      
       let maxInTier = gameState.currentTier === 'hard' ? 2 : 3;
       
       if (gameState.roundIndex >= maxInTier || gameState.activePools[gameState.currentTier].length === 0) {
@@ -721,7 +724,8 @@
         card.className = 'player-card';
 
         let actionBtn = '';
-        if (gameState.multiPhase === 'revealed') {
+        // Wyświetl przycisk tylko jeśli faza to 'revealed' i gracz nie znajduje się jeszcze na liście tych, co dostali punkt
+        if (gameState.multiPhase === 'revealed' && !gameState.scoredPlayers.includes(idx)) {
           actionBtn = `<button class="score-btn" onclick="addPoint(${idx})">+1 PT</button>`;
         }
 
@@ -748,13 +752,17 @@
       renderMultiplayerList();
     }
 
-    // OGRANICZENIE DO JEDNEGO PUNKTU NA PYTANIE
+    // Dodawanie punktu konkretnemu graczowi
     function addPoint(idx) {
-      if (gameState.multiPhase !== 'revealed') return; // Blokada przed ponownym kliknięciem
-      gameState.multiPhase = 'scored'; // Zmiana fazy automatycznie ukrywa przyciski punktowania
-
+      if (gameState.multiPhase !== 'revealed' || gameState.scoredPlayers.includes(idx)) return; 
+      
+      // Zapisanie, że ten gracz otrzymał punkt w bieżącej rundzie
+      gameState.scoredPlayers.push(idx); 
       gameState.scores[idx]++;
+      
       setBuddyState('happy');
+      
+      // Przerenderowanie ukryje przycisk TYLKO u tego gracza
       renderMultiplayerList();
       
       setTimeout(() => {
