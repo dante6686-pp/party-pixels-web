@@ -7,150 +7,273 @@
   <meta name="description" content="Unscramble letters to find the correct country. Play solo against time or host a multiplayer party battle!">
   <link rel="stylesheet" href="/pp-main.css">
   
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612"
-     crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612" crossorigin="anonymous"></script>
 
   <style>
-    /* Stylowanie w klimacie Party Pixels */
+    :root {
+      --bg-dark: #0a0e23;
+      --bg-darker: #04050e;
+      --accent-magenta: #ff5cff;
+      --accent-cyan: #00f0ff;
+      --accent-purple: #7c80d2;
+      --text-main: #ffffff;
+      --text-muted: #8a8dad;
+    }
+
+    body {
+      background-color: var(--bg-darker);
+      color: var(--text-main);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
     .game-container {
       max-width: 650px;
       margin: 40px auto;
-      padding: 24px;
+      padding: 30px;
       background: 
-        radial-gradient(circle at top, rgba(255, 92, 255, 0.15), transparent 60%),
-        linear-gradient(145deg, rgba(10, 14, 35, 0.98), rgba(4, 5, 14, 0.99));
-      border: 1px solid rgba(124, 128, 210, 0.25);
+        radial-gradient(circle at top, rgba(255, 92, 255, 0.1), transparent 70%),
+        linear-gradient(145deg, rgba(10, 14, 35, 0.95), rgba(4, 5, 14, 0.98));
+      border: 1px solid rgba(0, 240, 255, 0.2);
       border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      box-shadow: 0 0 30px rgba(124, 128, 210, 0.15), inset 0 0 20px rgba(0,0,0,0.5);
     }
 
     .lang-switcher {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      gap: 8px;
     }
 
     .lang-btn {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
-      color: var(--text, #fff);
-      padding: 6px 12px;
-      border-radius: 6px;
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: bold;
+      transition: all 0.3s ease;
     }
+    
     .lang-btn.active {
-      background: #ff5cff;
-      color: #000;
-      box-shadow: 0 0 10px #ff5cff;
-      border-color: #ff5cff;
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+      border-color: var(--accent-cyan);
     }
 
-    /* System zarządzania ekranami (Bezpieczny display) */
-    .screen-segment { 
-      display: none !important; 
-    }
-    .screen-segment.active-screen { 
-      display: grid !important; 
-    }
-    .screen-segment.active-screen.game-layout {
-      display: block !important;
+    /* HOST SECTION (PIXEL BUDDY) */
+    .host-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+      min-height: 220px;
     }
 
+    .buddy-avatar {
+      width: 130px;
+      height: auto;
+      animation: float 3.5s ease-in-out infinite;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .speech-bubble {
+      position: relative;
+      background: rgba(18, 1, 54, 0.8);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 12px;
+      padding: 12px 20px;
+      color: var(--accent-cyan);
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+      margin-top: 15px;
+      max-width: 80%;
+      min-width: 250px;
+      opacity: 1;
+      transition: all 0.3s ease;
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 10px 10px 10px;
+      border-style: solid;
+      border-color: transparent transparent var(--accent-cyan) transparent;
+    }
+
+    /* System zarządzania ekranami */
+    .screen-segment { display: none !important; animation: fadeIn 0.4s ease-out; }
+    .screen-segment.active-screen { display: block !important; }
+    .setup-grid { display: grid !important; gap: 20px; }
     .hidden { display: none !important; }
 
-    .setup-grid {
-      display: grid;
-      gap: 16px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Formularze i przyciski */
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-    }
-
-    .form-group label {
-      font-size: 11px;
-      color: #8a8dad;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .game-input, .game-select {
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(90,94,170,0.5);
-      background: rgba(7,9,26,0.8);
-      color: #fff;
-    }
-
-    .btn-group {
-      display: flex;
       gap: 8px;
     }
 
+    .form-group label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: bold;
+    }
+
+    .game-input {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      background: rgba(4, 5, 14, 0.8);
+      color: #fff;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .game-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+
+    .btn-group { display: flex; gap: 10px; }
+
     .option-btn {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       color: #fff;
       border-radius: 10px;
       cursor: pointer;
+      font-weight: bold;
       transition: 0.2s;
     }
+    
     .option-btn.active {
       background: rgba(124, 128, 210, 0.2);
-      border-color: #7c80d2;
+      border-color: var(--accent-purple);
+      color: var(--accent-cyan);
     }
 
     .primary-btn {
-      background: radial-gradient(circle at top, #ff5cff, #7c80d2);
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-magenta));
       color: #fff;
       border: none;
-      padding: 14px;
-      border-radius: 999px;
-      font-weight: bold;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 900;
       cursor: pointer;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      box-shadow: 0 4px 15px rgba(255, 92, 255, 0.3);
+      letter-spacing: 0.1em;
+      box-shadow: 0 5px 20px rgba(255, 92, 255, 0.4);
       width: 100%;
-      transition: 0.2s;
+      transition: all 0.2s ease;
     }
+    
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 92, 255, 0.6);
+    }
+
     .primary-btn.alt {
-      background: rgba(255,255,255,0.08); 
+      background: rgba(255,255,255,0.05); 
       box-shadow: none; 
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-muted);
+    }
+    
+    .primary-btn.alt:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
     }
 
     /* Ekran Gry */
+    .game-header {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      background: rgba(0,0,0,0.3);
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .badge-tier {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
     .scrambled-box {
-      font-size: 38px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 42px;
       font-weight: 900;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.2em;
       text-align: center;
-      margin: 25px 0;
+      margin: 30px 0;
       color: #fff;
-      text-shadow: 0 0 15px rgba(255,255,255,0.4);
-      transition: color 0.3s, text-shadow 0.3s;
+      text-shadow: 0 0 15px rgba(255,255,255,0.5);
+      transition: color 0.3s, text-shadow 0.3s, transform 0.2s;
+    }
+    
+    .scrambled-box.success {
+      color: var(--accent-cyan);
+      text-shadow: 0 0 20px var(--accent-cyan);
+      transform: scale(1.05);
+    }
+
+    .scrambled-box.fail {
+      color: #ff3366;
+      text-shadow: 0 0 20px #ff3366;
     }
 
     .timer-bar-container {
-      background: rgba(255,255,255,0.1);
-      height: 8px;
+      background: rgba(255,255,255,0.05);
+      height: 10px;
       border-radius: 999px;
       overflow: hidden;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
     }
+    
     .timer-bar {
-      background: #ff5cff;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
       height: 100%;
       width: 100%;
       transition: width 0.1s linear;
-      box-shadow: 0 0 8px #ff5cff;
+      box-shadow: 0 0 10px var(--accent-magenta);
     }
 
     .players-list {
@@ -158,43 +281,35 @@
       gap: 12px;
       margin: 20px 0;
     }
+    
     .player-card {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 18px;
+      padding: 15px 20px;
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid rgba(124, 128, 210, 0.3);
       border-radius: 12px;
-      min-height: 58px;
+      font-size: 16px;
     }
     
     .score-btn {
-      background: #7c80d2;
-      border: 1px solid #7c80d2;
+      background: var(--accent-purple);
+      border: none;
       color: white;
-      padding: 8px 14px;
-      border-radius: 6px;
+      padding: 10px 16px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       transition: 0.2s;
-      min-width: 90px;
-    }
-    .score-btn:hover {
-      background: #ff5cff;
-      border-color: #ff5cff;
-      box-shadow: 0 0 10px rgba(255, 92, 255, 0.5);
-    }
-
-    .badge-tier {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 10px;
       text-transform: uppercase;
-      background: rgba(255,92,255,0.15);
-      border: 1px solid #ff5cff;
-      color: #ff5cff;
+      font-size: 12px;
+    }
+    
+    .score-btn:hover {
+      background: var(--accent-cyan);
+      color: #000;
+      box-shadow: 0 0 15px var(--accent-cyan);
     }
   </style>
 </head>
@@ -202,18 +317,25 @@
   <div class="page">
     <div id="header"></div>
 
-    <section class="hero">
-      <div class="hero-kicker">party game · geography · brain melt</div>
-      <h1 class="hero-title">Scrambled Countries</h1>
-      <p class="hero-sub">Unscramble letters to find the correct country. Play solo against time or host a multiplayer party battle!</p>
+    <section class="hero" style="text-align: center; margin-bottom: 20px;">
+      <h1 class="hero-title" style="color: #ff5cff; text-shadow: 0 0 10px rgba(255,92,255,0.5);">Scrambled Countries</h1>
+      <p class="hero-sub" style="color: #8a8dad;">Host: Pixel Buddy</p>
     </section>
 
     <div class="game-container">
+      
       <div class="lang-switcher">
         <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
         <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
       </div>
 
+      <!-- SEKCJA HOSTA -->
+      <div class="host-section">
+        <img id="pixelBuddyImg" class="buddy-avatar" src="images/buddy-neutral.png" alt="Pixel Buddy">
+        <div id="buddyBubble" class="speech-bubble">System online. Ready to play?</div>
+      </div>
+
+      <!-- EKRAN KONFIGURACJI -->
       <div id="setupScreen" class="screen-segment active-screen setup-grid">
         <div class="form-group">
           <label id="lblPlayers">Number of Players</label>
@@ -238,13 +360,14 @@
           </div>
         </div>
 
-        <button class="primary-btn" id="btnStart" onclick="startGame()">Start Game</button>
+        <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Start Game</button>
       </div>
 
-      <div id="gameScreen" class="screen-segment game-layout">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+      <!-- EKRAN GRY -->
+      <div id="gameScreen" class="screen-segment">
+        <div class="game-header">
           <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
-          <span id="gameInfo" style="font-size: 13px; color: #8a8dad;">Word 1/3</span>
+          <span id="gameInfo" style="font-size: 13px; color: var(--text-muted); font-weight: bold;">Word 1/3</span>
         </div>
 
         <div id="scrambledWord" class="scrambled-box">XXXXXX</div>
@@ -259,15 +382,16 @@
 
         <div id="multiPlayerList" class="players-list hidden"></div>
 
-        <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+        <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 12px;">
           <button class="primary-btn hidden" id="btnReveal" onclick="revealAnswer()">Reveal Answer</button>
-          <button class="primary-btn alt" id="btnNext" onclick="nextWord()">Next Word</button>
+          <button class="primary-btn alt" id="btnNext" onclick="skipOrNextWord()">Skip Word</button>
         </div>
       </div>
 
+      <!-- EKRAN KOŃCOWY -->
       <div id="endScreen" class="screen-segment" style="text-align: center;">
-        <h2 id="endTitle" style="font-size: 28px; margin-bottom: 10px;">Game Over</h2>
-        <p id="endResults" style="color: #8a8dad; margin-bottom: 20px; font-size: 16px; line-height: 1.6;"></p>
+        <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: var(--accent-magenta);">Game Over</h2>
+        <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
         <button class="primary-btn" id="btnRestart" onclick="resetGame()">Play Again</button>
       </div>
     </div>
@@ -279,17 +403,27 @@
   <script src="/pp-auth.js"></script>
 
   <script>
-    function loadPart(id, file) {
-      fetch(file)
-        .then(res => res.text())
-        .then(html => { document.getElementById(id).innerHTML = html; })
-        .catch(err => console.error(`Load error in ${file}:`, err));
-    }
-    loadPart('header', '/header.html');
-    loadPart('footer', '/footer.html');
-  </script>
+    // --- DIALOGI PIXEL BUDDY'EGO ---
+    const buddyQuotes = {
+      en: {
+        welcome: ["System online. Ready to play?", "Let's crack some codes!", "I'm your host, Pixel Buddy!"],
+        neutral: ["Unscramble this one!", "Processing letters...", "What country is hiding here?"],
+        happy: ["Nailed it!", "Perfect match!", "System bypassed! 1 Point!", "You're a genius!"],
+        sad: ["Time's up! Error 404.", "Oh no, system crashed!", "Glitch detected!", "Too slow!"],
+        thinking: ["Who's getting the point?", "Analyzing data...", "Host is waiting for results..."],
+        win: ["We have a champion!", "Party successful!", "Mission accomplished!"]
+      },
+      pl: {
+        welcome: ["System połączony. Zaczynamy?", "Rozwiążmy kilka szyfrów!", "Jestem Pixel Buddy, gramy!"],
+        neutral: ["Rozszyfruj to państwo!", "Analizowanie liter...", "Jaki kraj tu się ukrywa?"],
+        happy: ["Genialnie!", "Idealnie!", "System odblokowany! Punkt!", "Jesteś mistrzem!"],
+        sad: ["Czas minął! Błąd 404.", "O nie, awaria systemu!", "Wykryto glitch!", "Za wolno!"],
+        thinking: ["Kto zdobędzie punkt?", "Analizowanie danych...", "Host czeka na werdykt..."],
+        win: ["Mamy zwycięzcę!", "Party zakończone sukcesem!", "Misja wykonana!"]
+      }
+    };
 
-  <script>
+    // --- BAZA JĘZYKOWA INTERFEJSU ---
     const i18n = {
       en: {
         players: "Number of Players", names: "Player Name(s)", target: "Points to Win",
@@ -307,6 +441,7 @@
       }
     };
 
+    // --- BAZA SŁÓW ---
     const database = {
       en: {
         easy: ["POLAND", "SPAIN", "ITALY", "BRAZIL", "FRANCE", "JAPAN", "CANADA", "EGYPT"],
@@ -328,10 +463,33 @@
       roundIndex: 0,
       currentAnswer: "",
       timer: null,
-      timeLeft: 100,
-      multiPhase: 'guessing'
+      multiPhase: 'guessing',
+      inputFrozen: false
     };
 
+    // --- FUNKCJE HOSTA (PIXEL BUDDY) ---
+    function setBuddyState(state, customText = null) {
+      const img = document.getElementById('pixelBuddyImg');
+      const bubble = document.getElementById('buddyBubble');
+      
+      // Podmiana obrazka w zależności od stanu
+      img.src = `images/buddy-${state}.png`;
+
+      // Losowanie tekstu, jeśli nie podano własnego
+      let text = customText;
+      if (!text) {
+        let pool = buddyQuotes[lang][state];
+        text = pool[Math.floor(Math.random() * pool.length)];
+      }
+      
+      bubble.style.opacity = 0;
+      setTimeout(() => {
+        bubble.textContent = text;
+        bubble.style.opacity = 1;
+      }, 200);
+    }
+
+    // --- LOGIKA GRY ---
     function setLanguage(l) {
       lang = l;
       document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
@@ -348,7 +506,7 @@
       if (document.getElementById('gameScreen').classList.contains('active-screen')) {
         document.getElementById('btnNext').textContent = config.players === 1 ? i18n[lang].skip : i18n[lang].next;
       }
-      
+      setBuddyState('welcome');
       if (config.players > 1) renderMultiplayerList();
     }
 
@@ -411,7 +569,9 @@
     }
 
     function loadQuestion() {
+      gameState.inputFrozen = false;
       let maxInTier = gameState.currentTier === 'hard' ? 2 : 3;
+      
       if (gameState.roundIndex >= maxInTier) {
         gameState.roundIndex = 0;
         if (gameState.currentTier === 'easy') gameState.currentTier = 'medium';
@@ -422,6 +582,7 @@
       let tierTxt = i18n[lang].easy;
       if(gameState.currentTier === 'medium') tierTxt = i18n[lang].medium;
       if(gameState.currentTier === 'hard') tierTxt = i18n[lang].hard;
+      
       document.getElementById('tierBadge').textContent = tierTxt;
       document.getElementById('gameInfo').textContent = `${i18n[lang].word} ${gameState.roundIndex + 1}/${maxInTier}`;
 
@@ -431,11 +592,13 @@
       
       let wordBox = document.getElementById('scrambledWord');
       wordBox.textContent = scramble(word);
-      wordBox.style.color = '#fff';
-      wordBox.style.textShadow = '0 0 15px rgba(255,255,255,0.4)';
+      wordBox.className = 'scrambled-box'; // Reset klas animacji
 
       document.getElementById('soloAnswer').value = "";
+      document.getElementById('soloAnswer').disabled = false;
       gameState.multiPhase = 'guessing';
+      
+      setBuddyState('neutral');
 
       if (config.players > 1) {
         document.getElementById('btnReveal').classList.remove('hidden');
@@ -446,6 +609,7 @@
         document.getElementById('btnReveal').classList.add('hidden');
         document.getElementById('btnNext').classList.remove('hidden');
         document.getElementById('btnNext').textContent = i18n[lang].skip;
+        document.getElementById('soloAnswer').focus();
         startTimer();
       }
     }
@@ -465,7 +629,7 @@
         if (progress <= 0) {
           clearInterval(gameState.timer);
           document.getElementById('timerBar').style.width = '0%';
-          nextWord();
+          handleSoloFail();
         } else {
           document.getElementById('timerBar').style.width = progress + '%';
         }
@@ -478,18 +642,61 @@
       input.parentNode.replaceChild(newInput, input);
 
       newInput.addEventListener('input', (e) => {
+        if(gameState.inputFrozen) return;
+        
         let val = e.target.value.trim().toUpperCase();
         if (val === gameState.currentAnswer) {
-          clearInterval(gameState.timer);
-          gameState.scores[0]++;
-          if (gameState.scores[0] >= config.targetScore) {
-            endGame(config.names[0]);
-          } else {
-            nextWord();
-          }
+          handleSoloSuccess();
         }
       });
-      setTimeout(() => newInput.focus(), 50);
+    }
+
+    function handleSoloSuccess() {
+      clearInterval(gameState.timer);
+      gameState.inputFrozen = true;
+      document.getElementById('soloAnswer').disabled = true;
+      
+      let wordBox = document.getElementById('scrambledWord');
+      wordBox.textContent = gameState.currentAnswer;
+      wordBox.classList.add('success');
+      
+      setBuddyState('happy');
+      gameState.scores[0]++;
+
+      setTimeout(() => {
+        if (gameState.scores[0] >= config.targetScore) {
+          endGame(config.names[0]);
+        } else {
+          gameState.roundIndex++;
+          loadQuestion();
+        }
+      }, 2000);
+    }
+
+    function handleSoloFail() {
+      gameState.inputFrozen = true;
+      document.getElementById('soloAnswer').disabled = true;
+      
+      let wordBox = document.getElementById('scrambledWord');
+      wordBox.textContent = gameState.currentAnswer;
+      wordBox.classList.add('fail');
+      
+      setBuddyState('sad');
+
+      setTimeout(() => {
+        gameState.roundIndex++;
+        loadQuestion();
+      }, 2500);
+    }
+
+    function skipOrNextWord() {
+      if(config.players === 1 && !gameState.inputFrozen) {
+        clearInterval(gameState.timer);
+        handleSoloFail();
+      } else if (config.players > 1) {
+        gameState.roundIndex++;
+        loadQuestion();
+      }
     }
 
     function renderMultiplayerList() {
@@ -501,11 +708,11 @@
 
         let actionBtn = '';
         if (gameState.multiPhase === 'revealed') {
-          actionBtn = `<button class="score-btn" onclick="addPoint(${idx})">+1 Point</button>`;
+          actionBtn = `<button class="score-btn" onclick="addPoint(${idx})">+1 PT</button>`;
         }
 
         card.innerHTML = `
-          <div><strong>${name}</strong> — ${i18n[lang].score}: ${gameState.scores[idx]}</div>
+          <div><strong>${name}</strong> <span style="color:var(--text-muted); margin-left:10px;">${i18n[lang].score}: ${gameState.scores[idx]}</span></div>
           ${actionBtn}
         `;
         list.appendChild(card);
@@ -517,28 +724,26 @@
       
       let wordBox = document.getElementById('scrambledWord');
       wordBox.textContent = gameState.currentAnswer;
-      wordBox.style.color = '#ff5cff';
-      wordBox.style.textShadow = '0 0 20px #ff5cff';
+      wordBox.classList.add('success');
+
+      setBuddyState('thinking'); // Zastanawia się komu przyznać punkt
 
       document.getElementById('btnReveal').classList.add('hidden');
       document.getElementById('btnNext').classList.remove('hidden');
-      document.getElementById('btnNext').classList.remove('alt');
       
       renderMultiplayerList();
     }
 
     function addPoint(idx) {
       gameState.scores[idx]++;
+      setBuddyState('happy'); // Cieszy się z punktu
       renderMultiplayerList();
-      if (gameState.scores[idx] >= config.targetScore) {
-        endGame(config.names[idx]);
-      }
-    }
-
-    function nextWord() {
-      document.getElementById('btnNext').classList.add('alt');
-      gameState.roundIndex++;
-      loadQuestion();
+      
+      setTimeout(() => {
+        if (gameState.scores[idx] >= config.targetScore) {
+          endGame(config.names[idx]);
+        }
+      }, 1500);
     }
 
     function endByLimit() {
@@ -550,22 +755,28 @@
 
     function endGame(winnerName) {
       clearInterval(gameState.timer);
+      setBuddyState('win');
+      
       document.getElementById('gameScreen').classList.remove('active-screen');
       document.getElementById('endScreen').classList.add('active-screen');
 
       document.getElementById('endTitle').textContent = i18n[lang].win;
       
-      let resHtml = '';
+      let resHtml = `<strong style="color: var(--accent-cyan); font-size: 22px;">Winner: ${winnerName}</strong><br><br>`;
       config.names.forEach((name, idx) => {
-        resHtml += `${name}: ${gameState.scores[idx]} p.<br>`;
+        resHtml += `${name}: <span style="color:var(--accent-magenta); font-weight:bold;">${gameState.scores[idx]}</span> pts<br>`;
       });
-      document.getElementById('endResults').innerHTML = `<strong>Winner: ${winnerName}</strong><br><br>${resHtml}`;
+      document.getElementById('endResults').innerHTML = resHtml;
     }
 
     function resetGame() {
+      setBuddyState('welcome');
       document.getElementById('endScreen').classList.remove('active-screen');
       document.getElementById('setupScreen').classList.add('active-screen');
     }
+
+    // Inicjalizacja początkowa
+    setLanguage('en');
   </script>
 </body>
 </html>
