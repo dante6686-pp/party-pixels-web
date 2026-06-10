@@ -116,7 +116,7 @@
       border-color: transparent transparent var(--accent-cyan) transparent;
     }
 
-    /* System zarządzania ekranami - POPRAWIONY */
+    /* System zarządzania ekranami */
     .screen-segment { display: none !important; animation: fadeIn 0.4s ease-out; }
     .screen-segment.active-screen { display: block !important; }
     .screen-segment.active-screen.setup-grid { display: grid !important; }
@@ -330,13 +330,11 @@
         <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
       </div>
 
-      <!-- SEKCJA HOSTA - DODANY BEZWZGLĘDNY UKOŚNIK '/' W ŚCIEŻCE -->
       <div class="host-section">
         <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
         <div id="buddyBubble" class="speech-bubble">System online. Ready to play?</div>
       </div>
 
-      <!-- EKRAN KONFIGURACJI -->
       <div id="setupScreen" class="screen-segment active-screen setup-grid">
         <div class="form-group">
           <label id="lblPlayers">Number of Players</label>
@@ -364,7 +362,6 @@
         <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Start Game</button>
       </div>
 
-      <!-- EKRAN GRY -->
       <div id="gameScreen" class="screen-segment">
         <div class="game-header">
           <span id="tierBadge" class="badge-tier">Tier 1: Easy</span>
@@ -389,7 +386,6 @@
         </div>
       </div>
 
-      <!-- EKRAN KOŃCOWY -->
       <div id="endScreen" class="screen-segment" style="text-align: center;">
         <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: var(--accent-magenta);">Game Over</h2>
         <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
@@ -466,15 +462,20 @@
       timer: null,
       multiPhase: 'guessing',
       inputFrozen: false,
-      activePools: null // Dynamiczna pula bez powtórek
+      activePools: null
     };
 
-    // --- FUNKCJE HOSTA (PIXEL BUDDY) z dodanym '/' na początku ścieżki ---
+    // --- POPRAWIONE MAPOWANIE GRAFIK HOSTA ---
     function setBuddyState(state, customText = null) {
       const img = document.getElementById('pixelBuddyImg');
       const bubble = document.getElementById('buddyBubble');
       
-      img.src = `/images/buddy-${state}.png`;
+      // Tłumaczenie stanów logicznych gry na posiadane nazwy plików assetów
+      let fileSuffix = state;
+      if (state === 'welcome') fileSuffix = 'neutral';
+      if (state === 'win') fileSuffix = 'happy';
+      
+      img.src = `/images/buddy-${fileSuffix}.png`;
 
       let text = customText;
       if (!text) {
@@ -551,7 +552,6 @@
       gameState.currentTier = 'easy';
       gameState.roundIndex = 0;
 
-      // KLONOWANIE BAZY SŁÓW DO ROZGRYWKI (BRAK POWTÓREK)
       gameState.activePools = {
         easy: [...database[lang].easy],
         medium: [...database[lang].medium],
@@ -579,7 +579,6 @@
       gameState.inputFrozen = false;
       let maxInTier = gameState.currentTier === 'hard' ? 2 : 3;
       
-      // Zmiana tieru jeśli przekroczono indeks rzędu LUB pula słów w danym tierze się skończyła
       if (gameState.roundIndex >= maxInTier || gameState.activePools[gameState.currentTier].length === 0) {
         gameState.roundIndex = 0;
         if (gameState.currentTier === 'easy') gameState.currentTier = 'medium';
@@ -589,7 +588,6 @@
 
       let pool = gameState.activePools[gameState.currentTier];
       
-      // Bezpiecznik: jeśli następna pula też jest pusta, kończymy grę
       if (!pool || pool.length === 0) {
         endByLimit();
         return;
@@ -602,7 +600,6 @@
       document.getElementById('tierBadge').textContent = tierTxt;
       document.getElementById('gameInfo').textContent = `${i18n[lang].word} ${gameState.roundIndex + 1}/${maxInTier}`;
 
-      // Losowanie słowa ze sklonowanej puli i jednoczesne USUNIĘCIE go stamtąd
       let randomIndex = Math.floor(Math.random() * pool.length);
       let word = pool.splice(randomIndex, 1)[0]; 
       gameState.currentAnswer = word;
@@ -751,7 +748,11 @@
       renderMultiplayerList();
     }
 
+    // OGRANICZENIE DO JEDNEGO PUNKTU NA PYTANIE
     function addPoint(idx) {
+      if (gameState.multiPhase !== 'revealed') return; // Blokada przed ponownym kliknięciem
+      gameState.multiPhase = 'scored'; // Zmiana fazy automatycznie ukrywa przyciski punktowania
+
       gameState.scores[idx]++;
       setBuddyState('happy');
       renderMultiplayerList();
