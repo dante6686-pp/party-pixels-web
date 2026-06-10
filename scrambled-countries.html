@@ -116,11 +116,13 @@
       border-color: transparent transparent var(--accent-cyan) transparent;
     }
 
-    /* System zarządzania ekranami */
+        /* System zarządzania ekranami */
     .screen-segment { display: none !important; animation: fadeIn 0.4s ease-out; }
     .screen-segment.active-screen { display: block !important; }
-    .setup-grid { display: grid !important; gap: 20px; }
+    .screen-segment.active-screen.setup-grid { display: grid !important; }
+    .setup-grid { gap: 20px; }
     .hidden { display: none !important; }
+
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
