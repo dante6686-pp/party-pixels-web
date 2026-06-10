@@ -1,15 +1,932 @@
-<!DOCTYPE html>
-<html lang="pl">
+<!doctype html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <title>Pixel Memory Bomb | Party Pixels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/pp-main.css">
+  
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612" crossorigin="anonymous"></script>
+
+  <style>
+    /* UNIKALNY KLIMAT DLA MEMORY BOMB - Alarmowa czerwień + grafika w tle (Splash) */
+    .game-layout {
+      max-width: 650px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .game-container {
+      width: 100%;
+      padding: 30px;
+      box-sizing: border-box;
+      /* WARSTWOWE TŁO: Gradient błysku, ciemny miks barw oraz wtopiona grafika splash według nowego schematu */
+      background-image: 
+        radial-gradient(circle at top, rgba(255, 30, 100, 0.2), transparent 75%),
+        linear-gradient(145deg, rgba(20, 5, 25, 0.92), rgba(8, 2, 12, 0.96)),
+        url('/images/pixel-memory-bomb-splash.jpg');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-blend-mode: normal, normal, overlay; /* Dzięki temu grafika perfekcyjnie przyjmuje barwy gry */
+      
+      border: 2px solid rgba(255, 50, 100, 0.25);
+      border-radius: 20px;
+      box-shadow: 
+        0 0 35px rgba(255, 51, 102, 0.1), 
+        inset 0 0 25px rgba(0,0,0,0.7);
+      transition: border-color 0.5s ease, box-shadow 0.5s ease;
+    }
+    
+    @keyframes bombPulse {
+      0% { box-shadow: 0 0 35px rgba(255, 51, 102, 0.1); border-color: rgba(255, 50, 100, 0.25); }
+      50% { box-shadow: 0 0 45px rgba(255, 51, 102, 0.25); border-color: rgba(255, 50, 100, 0.45); }
+      100% { box-shadow: 0 0 35px rgba(255, 51, 102, 0.1); border-color: rgba(255, 50, 100, 0.25); }
+    }
+    .game-container {
+      animation: bombPulse 4s infinite ease-in-out;
+    }
+
+    .lang-switcher {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+      gap: 8px;
+    }
+
+    .lang-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .lang-btn.active {
+      background: rgba(255, 51, 102, 0.15);
+      color: #ff3366;
+      box-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
+      border-color: #ff3366;
+    }
+
+    /* HOST SECTION (PIXEL BUDDY) */
+    .host-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+      min-height: 220px;
+    }
+
+    .buddy-avatar {
+      width: 130px;
+      height: auto;
+      animation: float 3.5s ease-in-out infinite;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .speech-bubble {
+      position: relative;
+      background: rgba(25, 5, 30, 0.9);
+      border: 2px solid #ff3366;
+      border-radius: 12px;
+      padding: 0 20px; /* Usunięty padding pionowy na rzecz centrowania flexboxem */
+      color: #ff3366;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 51, 102, 0.2);
+      margin-top: 15px;
+      max-width: 80%;
+      min-width: 280px;
+      
+      /* ELIMINACJA PAGE SHIFT - Stały rozmiar kontenera wypowiedzi */
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 10px 10px 10px;
+      border-style: solid;
+      border-color: transparent transparent #ff3366 transparent;
+    }
+
+    /* SYSTEM EKRANÓW */
+    .screen-segment { display: none !important; animation: fadeIn 0.4s ease-out; }
+    .screen-segment.active-screen { display: block !important; }
+    .screen-segment.active-screen.setup-grid { display: grid !important; }
+    .setup-grid { gap: 20px; }
+    .hidden { display: none !important; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FORMULARZE I PRZYCISKI */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #a09cb0;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: bold;
+    }
+
+    .game-input {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 51, 102, 0.3);
+      background: rgba(10, 3, 15, 0.8);
+      color: #fff;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .btn-group { display: flex; gap: 10px; }
+
+    .option-btn {
+      flex: 1;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    
+    .option-btn.active {
+      background: rgba(255, 51, 102, 0.15);
+      border-color: #ff3366;
+      color: #ff3366;
+    }
+
+    .primary-btn {
+      background: linear-gradient(90deg, #ff3366, #ff5cff);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      box-shadow: 0 5px 20px rgba(255, 51, 102, 0.4);
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+    
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+    }
+
+    .game-header {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      background: rgba(0,0,0,0.4);
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 51, 102, 0.15);
+    }
+
+    /* SIATKA BOMBOWYCH KAFELKÓW (MEMORY GRID) */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 25px auto;
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .memory-pad {
+      aspect-ratio: 1;
+      background: rgba(255, 255, 255, 0.02);
+      border: 2px solid rgba(255, 51, 102, 0.25);
+      border-radius: 14px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s, background-color 0.1s, border-color 0.1s;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .memory-pad:active {
+      transform: scale(0.95);
+    }
+
+    .memory-pad.flash-active {
+      background: #00f0ff !important;
+      border-color: #fff !important;
+      box-shadow: 0 0 25px #00f0ff, inset 0 0 10px #fff;
+    }
+
+    .memory-pad.error-flash {
+      background: #ff3366 !important;
+      border-color: #fff !important;
+      box-shadow: 0 0 25px #ff3366;
+    }
+
+    .turn-indicator {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ff5cff;
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px rgba(255,92,255,0.3);
+    }
+  </style>
 </head>
+
 <body>
-    <div id="game-container">
-        <!-- Tutaj Twoje postacie (Jax, Bulk, itp.) -->
-        <div class="content">
-            <h1>PARTY PIXELS</h1>
-            <p>Unikaj min! Przygotuj się na akcję.</p>
+  <div class="page">
+
+    <div id="header" style="margin-bottom: 40px;"></div>
+
+    <div class="game-layout" id="gameAppContainer">
+      <div class="game-container">
+        
+        <div class="lang-switcher">
+          <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+          <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
         </div>
+
+        <div class="host-section">
+          <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
+          <div id="buddyBubble" class="speech-bubble">System online. Ready to watch it blow?</div>
+        </div>
+
+        <div id="introScreen" class="screen-segment active-screen" style="text-align: center;">
+          <div id="rulesWrapper" style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 14px; border: 1px solid rgba(255,51,102,0.15); margin-bottom: 25px; text-align: left; line-height: 1.6; color: #a09cb0; font-size: 14px;"></div>
+          <button class="primary-btn" id="btnBegin" onclick="showSetupScreen()">Begin Game</button>
+        </div>
+
+        <div id="setupScreen" class="screen-segment setup-grid">
+          <div class="form-group">
+            <label id="lblPlayers">Number of Players</label>
+            <div class="btn-group">
+              <button class="option-btn active" onclick="setPlayers(1)">1 (Solo)</button>
+              <button class="option-btn" onclick="setPlayers(2)">2</button>
+              <button class="option-btn" onclick="setPlayers(3)">3</button>
+            </div>
+          </div>
+
+          <div id="difficultyGroup" class="form-group">
+            <label id="lblDifficulty">Difficulty Level</label>
+            <div class="btn-group">
+              <button class="option-btn" onclick="setDifficulty('easy')">Easy</button>
+              <button class="option-btn active" onclick="setDifficulty('medium')">Medium</button>
+              <button class="option-btn" onclick="setDifficulty('hard')">Hard</button>
+            </div>
+          </div>
+
+          <div id="nameInputs" class="form-group">
+            <label id="lblPlayerNames">Player Name</label>
+            <input type="text" id="p1Name" class="game-input" value="Player 1">
+          </div>
+
+          <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Arm Bomb</button>
+        </div>
+
+        <div id="gameScreen" class="screen-segment">
+          <div class="game-header">
+            <span id="gameModeBadge" class="badge-tier" style="border-color:#ff3366; color:#ff3366;">Solo Round</span>
+            <span id="gameScoreInfo" style="font-size: 13px; color: #a09cb0; font-weight: bold;">Score: 0 / 15</span>
+          </div>
+
+          <div id="turnNotice" class="turn-indicator hidden"></div>
+
+          <div class="memory-grid">
+            <div class="memory-pad" data-id="0" onclick="handlePadClick(0)"></div>
+            <div class="memory-pad" data-id="1" onclick="handlePadClick(1)"></div>
+            <div class="memory-pad" data-id="2" onclick="handlePadClick(2)"></div>
+            <div class="memory-pad" data-id="3" onclick="handlePadClick(3)"></div>
+            <div class="memory-pad" data-id="4" onclick="handlePadClick(4)"></div>
+            <div class="memory-pad" data-id="5" onclick="handlePadClick(5)"></div>
+            <div class="memory-pad" data-id="6" onclick="handlePadClick(6)"></div>
+            <div class="memory-pad" data-id="7" onclick="handlePadClick(7)"></div>
+            <div class="memory-pad" data-id="8" onclick="handlePadClick(8)"></div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <button class="primary-btn hidden" id="btnNextTurn" onclick="startMultiNextTurn()">Next Player, get ready!</button>
+          </div>
+        </div>
+
+        <div id="endScreen" class="screen-segment" style="text-align: center;">
+          <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff3366;">BOOM!</h2>
+          <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,51,102,0.15);"></div>
+          <button class="primary-btn" id="btnRestart" onclick="resetGame()">Play Again</button>
+        </div>
+      </div>
     </div>
+
+    <div id="footer" style="margin-top: 40px;"></div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
+
+  <script>
+    function loadPart(id, file) {
+      fetch(file).then(res => res.text()).then(html => { document.getElementById(id).innerHTML = html; }).catch(err => console.error(err));
+    }
+    loadPart("header", "/header.html");
+    loadPart("footer", "/footer.html");
+  </script>
+  <script src="/tipjar.js"></script>
+
+  <script>
+    let audioCtx = null;
+
+    const diffLimits = { easy: 10, medium: 15, hard: 25 };
+    let currentDifficulty = 'medium';
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function scrollToGameTop() {
+      const container = document.getElementById('gameAppContainer');
+      if (container) {
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function playMenuClickSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.08);
+    }
+
+    function playBeginGameSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const notes = [400, 800];
+      notes.forEach((freq, index) => {
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.12);
+        }, index * 60);
+      });
+    }
+
+    function playArmBombSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(350, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(120, audioCtx.currentTime + 0.5);
+      
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.5);
+    }
+
+    function playClickSound(padId) {
+      initAudio();
+      if (!audioCtx) return;
+      
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(300 + (padId * 50), audioCtx.currentTime); 
+      
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    function playSuccessSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const notes = [440, 554, 659, 880];
+      notes.forEach((freq, index) => {
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.2);
+        }, index * 80);
+      });
+    }
+
+    function playExplosionSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(10, audioCtx.currentTime + 1.2);
+      
+      gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 1.2);
+    }
+
+    function playGameOverExplosionSound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const bufferSize = audioCtx.sampleRate * 1.5; 
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(900, audioCtx.currentTime);
+      filter.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 1.4);
+
+      const noiseGain = audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.4);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+      noise.start();
+      noise.stop(audioCtx.currentTime + 1.5);
+    }
+
+    function playVictorySound() {
+      initAudio();
+      if (!audioCtx) return;
+
+      const melody = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50]; 
+      const timings = [0, 120, 240, 360, 480, 600];
+
+      melody.forEach((freq, index) => {
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.4);
+        }, timings[index]);
+      });
+    }
+
+    const buddyQuotes = {
+      en: {
+        welcome: ["System online. Watch your step!", "Ready to load the defusal patterns?", "Memory is key to survival..."],
+        watch: ["Watch the pattern carefully!", "Focus... uploading sequence...", "Don't blink!"],
+        repeat: ["Your turn! Repeat the pattern.", "Input defusal code now!", "Don't mess this up."],
+        happy: ["Flawless sync!", "Code match verified!", "Moving to the next stage..."],
+        sad: ["BOOM! Sequence corrupted!", "Wrong button! Emergency alert!", "Explosion detected!"],
+        pass: ["Whew! Pass the screen over!", "Safe for now. Next victim please!", "Hand it over!"],
+        victory: ["Incredible! Bomb completely disarmed!", "You saved us! Pure genius!", "Defusal master!"]
+      },
+      pl: {
+        welcome: ["System uzbrojony. Uważaj, gdzie klikasz!", "Gotowy na załadowanie sekwencji?", "Pamięć to klucz do przetrwania..."],
+        watch: ["Obserwuj sekwencję uważnie!", "Skupienie... wgrywam kod...", "Nie mrugaj!"],
+        repeat: ["Twoja kolej! Powtórz sekwencję.", "Wprowadź kod rozbrajający!", "Nie zepsuj tego."],
+        happy: ["Idealna synchronizacja!", "Kod zweryfikowany pomyślnie!", "Przechodzimy na wyższy poziom..."],
+        sad: ["BUM! Sekwencja przerwana!", "Zły przycisk! Awaria!", "Wykryto eksplozję!"],
+        pass: ["Uff! Podaj ekran dalej!", "Na razie czysto. Następny proszę!", "Przekaż urządzenie!"],
+        victory: ["Niesamowite! Bomba całkowicie rozbrojona!", "Uratowałeś nas! Geniusz!", "Mistrz rozbrajania!"]
+      }
+    };
+
+    const i18n = {
+      en: {
+        begin: "Begin Game",
+        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Memorize the flashing sequence of pixel pads.<br><br>2. <b>Solo Mode:</b> Choose difficulty and repeat the code flawlessly to disarm the bomb completely and win!<br><br>3. <b>Multiplayer Mode:</b> Pass the screen around locally! Player 1 starts a sequence, then passes it to Player 2, who must replicate it and add ONE new flash at the end. The sequence keeps growing until someone triggers the explosion!",
+        players: "Number of Players", names: "Player Name(s)", start: "Arm Bomb",
+        restart: "Play Again", score: "Score", round: "Round", soloBadge: "Solo Mode",
+        multiBadge: "Party Bomb", readyBtn: "Click when ready to watch!", turn: "Turn: ",
+        winTitle: "BOMB DEFUSED! 🎉", difficulty: "Difficulty Level",
+        easy: "Easy", medium: "Medium", hard: "Hard"
+      },
+      pl: {
+        begin: "Rozpocznij Grę",
+        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Pixel Memory Bomb:</b>1. Zapamiętaj sekwencję błysków pojawiających się na kafelkach.<br><br>2. <b>Tryb Solo:</b> Wybierz poziom trudności i powtórz sekwencję bez błędu, by całkowicie rozbroić bombę i wygrać!<br><br>3. <b>Tryb Wielu Graczy (Imprezowy):</b> Przekazujcie sobie ekran! Gracz 1 klika sekwencję, po czym przekazuje urządzenie Graczowi 2. Ten musi ją powtórzyć i dodać JEDEN własny błysk na końcu. Łańcuch rośnie, póki ktoś nie wybuchnie!",
+        players: "Liczba Graczy", names: "Imię Gracza (Graczy)", start: "Uzbrój Bombę",
+        restart: "Zagraj Ponownie", score: "Wynik", round: "Runda", soloBadge: "Tryb Solo",
+        multiBadge: "Bomba Imprezowa", readyBtn: "Kliknij, gdy jesteś gotowy oglądać!", turn: "Kolej: ",
+        winTitle: "ROZBROJONA! 🎉", difficulty: "Poziom Trudności",
+        easy: "Łatwy", medium: "Średni", hard: "Trudny"
+      }
+    };
+
+    let lang = 'en';
+    let config = { players: 1, names: ["Player 1"] };
+    let gameState = {
+      sequence: [],
+      userSequence: [],
+      score: 0,
+      isPlayingSequence: false,
+      activePlayerIndex: 0,
+      multiPhase: 'watch'
+    };
+
+    function setBuddyState(state) {
+      const img = document.getElementById('pixelBuddyImg');
+      const bubble = document.getElementById('buddyBubble');
+      let fileSuffix = (state === 'welcome' || state === 'watch' || state === 'repeat' || state === 'pass') ? 'neutral' : state;
+      img.src = `/images/buddy-${fileSuffix}.png`;
+      let pool = buddyQuotes[lang][state];
+      
+      bubble.style.opacity = 0;
+      setTimeout(() => { 
+        bubble.textContent = pool[Math.floor(Math.random() * pool.length)]; 
+        bubble.style.opacity = 1; 
+      }, 150);
+    }
+
+    function setLanguage(l) {
+      lang = l;
+      if (audioCtx) playMenuClickSound();
+      
+      document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
+      document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
+      document.getElementById('rulesWrapper').innerHTML = i18n[lang].rules;
+      document.getElementById('btnBegin').textContent = i18n[lang].begin;
+      document.getElementById('lblPlayers').textContent = i18n[lang].players;
+      document.getElementById('lblDifficulty').textContent = i18n[lang].difficulty;
+      document.getElementById('lblPlayerNames').textContent = i18n[lang].names;
+      document.getElementById('btnStart').textContent = i18n[lang].start;
+      document.getElementById('btnRestart').textContent = i18n[lang].restart;
+      
+      const diffBtns = document.querySelectorAll('#difficultyGroup .option-btn');
+      diffBtns[0].textContent = i18n[lang].easy;
+      diffBtns[1].textContent = i18n[lang].medium;
+      diffBtns[2].textContent = i18n[lang].hard;
+
+      setBuddyState('welcome');
+    }
+
+    function showSetupScreen() {
+      playBeginGameSound();
+      document.getElementById('introScreen').classList.remove('active-screen');
+      document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
+      scrollToGameTop();
+    }
+
+    function setPlayers(num) {
+      playMenuClickSound();
+      config.players = num;
+      const btns = document.querySelectorAll('#setupScreen .form-group:nth-child(1) .option-btn');
+      btns.forEach((b, i) => b.classList.toggle('active', i + 1 === num));
+      
+      const diffGroup = document.getElementById('difficultyGroup');
+      if (num > 1) {
+        diffGroup.classList.add('hidden');
+      } else {
+        diffGroup.classList.remove('hidden');
+      }
+
+      let html = '';
+      for(let i = 1; i <= num; i++) {
+        html += `<input type="text" id="p${i}Name" class="game-input" value="Player ${i}" style="margin-bottom:8px;">`;
+      }
+      document.getElementById('nameInputs').innerHTML = `<label>${i18n[lang].names}</label>` + html;
+    }
+
+    function setDifficulty(level) {
+      playMenuClickSound();
+      currentDifficulty = level;
+      const btns = document.querySelectorAll('#difficultyGroup .option-btn');
+      btns[0].classList.toggle('active', level === 'easy');
+      btns[1].classList.toggle('active', level === 'medium');
+      btns[2].classList.toggle('active', level === 'hard');
+    }
+
+    function startGame() {
+      playArmBombSound();
+      config.names = [];
+      for(let i = 1; i <= config.players; i++) {
+        let inputEl = document.getElementById(`p${i}Name`);
+        config.names.push((inputEl ? inputEl.value.trim() : "") || `Player ${i}`);
+      }
+
+      gameState.sequence = [];
+      gameState.score = 0;
+      gameState.activePlayerIndex = 0;
+
+      setTimeout(() => {
+        document.getElementById('setupScreen').classList.remove('active-screen', 'setup-grid');
+        document.getElementById('gameScreen').classList.add('active-screen');
+        scrollToGameTop();
+
+        if (config.players === 1) {
+          let maxScore = diffLimits[currentDifficulty];
+          document.getElementById('gameModeBadge').textContent = `${i18n[lang].soloBadge} (${i18n[lang][currentDifficulty]})`;
+          document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: 0 / ${maxScore}`;
+          document.getElementById('turnNotice').classList.add('hidden');
+          document.getElementById('btnNextTurn').classList.add('hidden');
+          addNewFlash();
+          playSequence();
+        } else {
+          document.getElementById('gameModeBadge').textContent = i18n[lang].multiBadge;
+          startMultiplayerRound();
+        }
+      }, 600);
+    }
+
+    function addNewFlash() {
+      gameState.sequence.push(Math.floor(Math.random() * 9));
+    }
+
+    function playSequence() {
+      gameState.isPlayingSequence = true;
+      gameState.userSequence = [];
+      setBuddyState('watch');
+
+      let i = 0;
+      let intervalSpeed = Math.max(250, 600 - (gameState.sequence.length * 30)); 
+
+      const id = setInterval(() => {
+        flashPad(gameState.sequence[i]);
+        playClickSound(gameState.sequence[i]);
+        i++;
+        if (i >= gameState.sequence.length) {
+          clearInterval(id);
+          setTimeout(() => {
+            gameState.isPlayingSequence = false;
+            setBuddyState('repeat');
+          }, intervalSpeed);
+        }
+      }, intervalSpeed + 150);
+    }
+
+    function flashPad(padId, type = 'flash-active') {
+      const pad = document.querySelector(`.memory-pad[data-id="${padId}"]`);
+      if(pad) {
+        pad.classList.add(type);
+        setTimeout(() => pad.classList.remove(type), 300);
+      }
+    }
+
+    function handlePadClick(padId) {
+      if (gameState.isPlayingSequence || gameState.multiPhase === 'pass') return;
+
+      if (config.players === 1) {
+        gameState.userSequence.push(padId);
+        const currentCheckIndex = gameState.userSequence.length - 1;
+
+        if (gameState.userSequence[currentCheckIndex] !== gameState.sequence[currentCheckIndex]) {
+          triggerExplosionSolo();
+          return;
+        }
+        
+        flashPad(padId);
+        playClickSound(padId);
+
+        if (gameState.userSequence.length === gameState.sequence.length) {
+          gameState.score++;
+          let maxScore = diffLimits[currentDifficulty];
+          document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score}: ${gameState.score} / ${maxScore}`;
+          
+          if (gameState.score >= maxScore) {
+            triggerVictorySolo();
+            return;
+          }
+
+          setBuddyState('happy');
+          playSuccessSound();
+          setTimeout(() => {
+            addNewFlash();
+            playSequence();
+          }, 1200);
+        }
+      } else {
+        if (gameState.multiPhase === 'watch') return;
+
+        if (gameState.multiPhase === 'input') {
+          gameState.userSequence.push(padId);
+          const currentCheckIndex = gameState.userSequence.length - 1;
+
+          if (currentCheckIndex < gameState.sequence.length) {
+            if (gameState.userSequence[currentCheckIndex] !== gameState.sequence[currentCheckIndex]) {
+              triggerExplosionMulti();
+              return;
+            }
+            flashPad(padId);
+            playClickSound(padId);
+          } else {
+            flashPad(padId);
+            playClickSound(padId);
+            
+            gameState.sequence.push(padId);
+            gameState.score++;
+            
+            setBuddyState('pass');
+            gameState.multiPhase = 'pass';
+            
+            document.getElementById('gameScoreInfo').textContent = `${i18n[lang].round}: ${gameState.score}`;
+            document.getElementById('btnNextTurn').classList.remove('hidden');
+            document.getElementById('btnNextTurn').textContent = i18n[lang].readyBtn;
+
+            gameState.activePlayerIndex = (gameState.activePlayerIndex + 1) % config.players;
+          }
+        }
+      }
+    }
+
+    function startMultiplayerRound() {
+      document.getElementById('btnNextTurn').classList.add('hidden');
+      document.getElementById('gameScoreInfo').textContent = `${i18n[lang].round}: ${gameState.score}`;
+      
+      const turnNotice = document.getElementById('turnNotice');
+      turnNotice.classList.remove('hidden');
+      turnNotice.textContent = `${i18n[lang].turn} ${config.names[gameState.activePlayerIndex]}`;
+
+      if (gameState.sequence.length === 0) {
+        gameState.multiPhase = 'input';
+        gameState.userSequence = [];
+        setBuddyState('repeat');
+      } else {
+        gameState.multiPhase = 'watch';
+        setTimeout(() => {
+          playSequence();
+          setTimeout(() => {
+            gameState.multiPhase = 'input';
+            gameState.userSequence = [];
+          }, (gameState.sequence.length * 600));
+        }, 800);
+      }
+    }
+
+    function startMultiNextTurn() {
+      playBeginGameSound();
+      document.getElementById('btnNextTurn').classList.add('hidden');
+      startMultiplayerRound();
+    }
+
+    function triggerExplosionSolo() {
+      setBuddyState('sad');
+      playExplosionSound(); 
+      for(let i=0; i<9; i++) flashPad(i, 'error-flash');
+
+      setTimeout(() => {
+        document.getElementById('gameScreen').classList.remove('active-screen');
+        document.getElementById('endScreen').classList.add('active-screen');
+        scrollToGameTop(); 
+        playGameOverExplosionSound(); 
+
+        document.getElementById('endTitle').textContent = "BOOM!";
+        document.getElementById('endTitle').style.color = "#ff3366";
+
+        let resHtml = `
+          <strong style="color: #ff5cff; font-size: 22px;">${config.names[0]}</strong><br>
+          Difficulty: <span style="color:#ff5cff; font-weight:bold;">${i18n[lang][currentDifficulty]}</span><br>
+          ${i18n[lang].score}: <span style="color:#00f0ff; font-weight:bold;">${gameState.score}</span> / ${diffLimits[currentDifficulty]}
+        `;
+        document.getElementById('endResults').innerHTML = resHtml;
+      }, 1200);
+    }
+
+    function triggerExplosionMulti() {
+      setBuddyState('sad');
+      playExplosionSound(); 
+      for(let i=0; i<9; i++) flashPad(i, 'error-flash');
+
+      setTimeout(() => {
+        document.getElementById('gameScreen').classList.remove('active-screen');
+        document.getElementById('endScreen').classList.add('active-screen');
+        scrollToGameTop(); 
+        playGameOverExplosionSound(); 
+
+        document.getElementById('endTitle').textContent = "BOOM!";
+        document.getElementById('endTitle').style.color = "#ff3366";
+
+        let loser = config.names[gameState.activePlayerIndex];
+        let resHtml = `
+          <strong style="color: #ff3366; font-size: 22px;">💥 ${loser} Blew Up!</strong><br><br>
+          The bomb safely reached <span style="color:#00f0ff; font-weight:bold;">${gameState.score}</span> steps before detonating.
+        `;
+        document.getElementById('endResults').innerHTML = resHtml;
+      }, 1200);
+    }
+
+    function triggerVictorySolo() {
+      setBuddyState('victory');
+      playVictorySound();
+
+      setTimeout(() => {
+        document.getElementById('gameScreen').classList.remove('active-screen');
+        document.getElementById('endScreen').classList.add('active-screen');
+        scrollToGameTop(); 
+        
+        document.getElementById('endTitle').textContent = i18n[lang].winTitle;
+        document.getElementById('endTitle').style.color = "#00f0ff";
+
+        let resHtml = `
+          <strong style="color: #ff5cff; font-size: 22px;">🥇 ${config.names[0]}</strong><br><br>
+          Difficulty Mastered: <span style="color:#ff5cff; font-weight:bold;">${i18n[lang][currentDifficulty]}</span><br>
+          You successfully defused all <span style="color:#00f0ff; font-weight:bold;">${gameState.score}</span> stages!<br>
+          The pixel world is safe once again.
+        `;
+        document.getElementById('endResults').innerHTML = resHtml;
+      }, 1000);
+    }
+
+    function resetGame() {
+      playMenuClickSound();
+      setBuddyState('welcome');
+      document.getElementById('endScreen').classList.remove('active-screen');
+      document.getElementById('introScreen').classList.add('active-screen');
+      scrollToGameTop(); 
+    }
+
+    setLanguage('en');
+  </script>
 </body>
 </html>
