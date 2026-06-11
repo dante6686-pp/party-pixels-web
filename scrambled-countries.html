@@ -22,10 +22,14 @@
       width: 100%;
       padding: 30px;
       box-sizing: border-box;
-      /* Nowy, podrasowany radial gradient przesunięty w dół i z ostrzejszą krawędzią */
-      background: 
+      /* Trójwarstwowe tło: neonowy reflektor + ciemny filtr + grafika */
+      background-image: 
         radial-gradient(circle at center 40px, rgba(255, 92, 255, 0.3) 45%, transparent 60%),
-        linear-gradient(145deg, rgba(10, 14, 35, 0.95), rgba(4, 5, 14, 0.98));
+        linear-gradient(145deg, rgba(10, 14, 35, 0.95), rgba(4, 5, 14, 0.98)),
+        url('/images/game-bg.png');
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
       border: 1px solid rgba(0, 240, 255, 0.2);
       border-radius: 20px;
       box-shadow: 0 0 30px rgba(124, 128, 210, 0.15), inset 0 0 20px rgba(0,0,0,0.5);
@@ -57,7 +61,7 @@
       border-color: #00f0ff;
     }
 
-    /* HOST SECTION (PIXEL BUDDY) - ANTI-LAYOUT-SHIFT UPDATE */
+    /* HOST SECTION (PIXEL BUDDY) - ANTI-LAYOUT-SHIFT */
     .host-section {
       display: flex;
       flex-direction: column;
@@ -533,6 +537,9 @@
       document.getElementById('introScreen').classList.remove('active-screen');
       document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
       setBuddyState('neutral');
+      
+      // Auto-scroll do góry
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function setPlayers(num) {
@@ -605,6 +612,9 @@
         document.getElementById('multiPlayerList').classList.add('hidden');
         setupSoloInputListener();
       }
+
+      // Auto-scroll do góry ekranu gry
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
       loadQuestion();
     }
@@ -823,6 +833,9 @@
       setBuddyState('welcome');
       document.getElementById('endScreen').classList.remove('active-screen');
       document.getElementById('introScreen').classList.add('active-screen');
+      
+      // Auto-scroll do góry przy powrocie
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Inicjalizacja języka na start
