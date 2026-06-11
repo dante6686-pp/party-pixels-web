@@ -76,21 +76,30 @@
     }
 
     /* HOST SECTION (PIXEL BUDDY) */
-    .host-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 30px;
-      min-height: 220px;
-    }
+.host-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  
+  /* REWOLUCJA PRZECIWKO SHIFTOWI: Sztywna wysokość dla całego bloku */
+  height: 240px; 
+  box-sizing: border-box;
+}
 
-    .buddy-avatar {
-      width: 130px;
-      height: auto;
-      animation: float 3.5s ease-in-out infinite;
-      transition: opacity 0.3s ease;
-      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
-    }
+.buddy-avatar {
+  /* Ograniczamy wysokość obrazka, żeby żaden nie rozbił kontenera */
+  height: 130px;
+  width: auto;
+  
+  /* Zachowujemy proporcje i centrowanie w locie */
+  object-fit: contain; 
+  
+  animation: float 3.5s ease-in-out infinite;
+  transition: opacity 0.3s ease;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+}
+
 
     @keyframes float {
       0% { transform: translateY(0px); }
