@@ -22,8 +22,9 @@
       width: 100%;
       padding: 30px;
       box-sizing: border-box;
+      /* Nowy, podrasowany radial gradient przesunięty w dół i z ostrzejszą krawędzią */
       background: 
-        radial-gradient(circle at top, rgba(255, 92, 255, 0.1), transparent 70%),
+        radial-gradient(circle at center 40px, rgba(255, 92, 255, 0.3) 45%, transparent 60%),
         linear-gradient(145deg, rgba(10, 14, 35, 0.95), rgba(4, 5, 14, 0.98));
       border: 1px solid rgba(0, 240, 255, 0.2);
       border-radius: 20px;
@@ -56,18 +57,20 @@
       border-color: #00f0ff;
     }
 
-    /* HOST SECTION (PIXEL BUDDY) */
+    /* HOST SECTION (PIXEL BUDDY) - ANTI-LAYOUT-SHIFT UPDATE */
     .host-section {
       display: flex;
       flex-direction: column;
       align-items: center;
       margin-bottom: 30px;
-      min-height: 220px;
+      height: 240px; 
+      box-sizing: border-box;
     }
 
     .buddy-avatar {
-      width: 130px;
-      height: auto;
+      height: 130px;
+      width: auto;
+      object-fit: contain;
       animation: float 3.5s ease-in-out infinite;
       transition: opacity 0.3s ease;
       filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
@@ -509,7 +512,6 @@
       document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
       document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
       
-      // Tłumaczenie elementów Intro i Setup
       document.getElementById('rulesWrapper').innerHTML = i18n[lang].rules;
       document.getElementById('btnBegin').textContent = i18n[lang].begin;
       document.getElementById('lblPlayers').textContent = i18n[lang].players;
