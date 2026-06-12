@@ -6,45 +6,310 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/pp-main.css">
   
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9279891303822612" crossorigin="anonymous"></script>
+
   <style>
-    /* ... (Style pozostają te same co wcześniej) ... */
-    .game-layout { max-width: 650px; width: 100%; margin: 40px auto; padding: 0 20px; box-sizing: border-box; }
-    .game-container { width: 100%; padding: 30px; box-sizing: border-box; background-image: radial-gradient(circle at center 40px, rgba(0, 240, 255, 0.25) 45%, transparent 60%), linear-gradient(145deg, rgba(15, 5, 30, 0.95), rgba(5, 2, 12, 0.98)), url('/images/matrix-bg.png'); background-size: cover; background-position: center; background-blend-mode: overlay; border: 1px solid rgba(255, 51, 102, 0.2); border-radius: 20px; box-shadow: 0 0 30px rgba(255, 51, 102, 0.15), inset 0 0 20px rgba(0,0,0,0.5); }
-    .host-section { display: flex; flex-direction: column; align-items: center; margin-bottom: 30px; height: 240px; box-sizing: border-box; }
-    .buddy-avatar { height: 130px; width: auto; object-fit: contain; animation: float 3.5s ease-in-out infinite; transition: opacity 0.3s ease; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); }
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0px); } }
-    .speech-bubble { position: relative; background: rgba(25, 5, 30, 0.85); border: 2px solid #ff3366; border-radius: 12px; padding: 12px 20px; color: #ff3366; font-family: 'Courier New', Courier, monospace; font-weight: bold; text-align: center; box-shadow: 0 0 15px rgba(255, 51, 102, 0.3); margin-top: 15px; max-width: 80%; min-width: 250px; opacity: 1; transition: all 0.3s ease; }
-    .speech-bubble::before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border-width: 0 10px 10px 10px; border-style: solid; border-color: transparent transparent #ff3366 transparent; }
+    /* Style dedykowane dla kontenera gry, zintegrowane z pp-main.css */
+    .game-layout {
+      max-width: 650px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .game-container {
+      width: 100%;
+      padding: 30px;
+      box-sizing: border-box;
+      /* Trójwarstwowe tło z nowym neonowym reflektorem i dedykowaną grafiką */
+      background-image: 
+        radial-gradient(circle at center 40px, rgba(0, 240, 255, 0.25) 45%, transparent 60%),
+        linear-gradient(145deg, rgba(15, 5, 30, 0.95), rgba(5, 2, 12, 0.98)),
+        url('/images/matrix-bg.png');
+      background-size: cover;
+      background-position: center;
+      background-blend-mode: overlay;
+      border: 1px solid rgba(255, 51, 102, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(255, 51, 102, 0.15), inset 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    .lang-switcher {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+      gap: 8px;
+    }
+
+    .lang-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    
+    .lang-btn.active {
+      background: rgba(255, 51, 102, 0.15);
+      color: #ff3366;
+      box-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
+      border-color: #ff3366;
+    }
+
+    /* HOST SECTION (PIXEL BUDDY) - BEZ SHIFTU */
+    .host-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+      height: 240px; 
+      box-sizing: border-box;
+    }
+
+    .buddy-avatar {
+      height: 130px;
+      width: auto;
+      object-fit: contain;
+      animation: float 3.5s ease-in-out infinite;
+      transition: opacity 0.3s ease;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .speech-bubble {
+      position: relative;
+      background: rgba(25, 5, 30, 0.85);
+      border: 2px solid #ff3366;
+      border-radius: 12px;
+      padding: 12px 20px;
+      color: #ff3366;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+      margin-top: 15px;
+      max-width: 80%;
+      min-width: 250px;
+      opacity: 1;
+      transition: all 0.3s ease;
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 0 10px 10px 10px;
+      border-style: solid;
+      border-color: transparent transparent #ff3366 transparent;
+    }
+
+    /* SYSTEM EKRANÓW */
     .screen-segment { display: none !important; animation: fadeIn 0.4s ease-out; }
     .screen-segment.active-screen { display: block !important; }
     .screen-segment.active-screen.setup-grid { display: grid !important; }
     .setup-grid { gap: 20px; }
     .hidden { display: none !important; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-    .form-group label { font-size: 12px; color: #a09cb0; text-transform: uppercase; letter-spacing: 0.1em; font-weight: bold; }
-    .game-input { padding: 14px; border-radius: 10px; border: 1px solid rgba(255, 51, 102, 0.3); background: rgba(10, 3, 15, 0.8); color: #fff; font-size: 16px; transition: all 0.3s ease; text-align: center; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FORMULARZE I PRZYCISKI */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #a09cb0;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: bold;
+    }
+
+    .game-input {
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 51, 102, 0.3);
+      background: rgba(10, 3, 15, 0.8);
+      color: #fff;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
     .btn-group { display: flex; gap: 10px; }
-    .option-btn { flex: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-    .option-btn.active { background: rgba(255, 51, 102, 0.2); border-color: #ff3366; color: #00f0ff; }
-    .primary-btn { background: linear-gradient(90deg, #ff3366, #ff5cff); color: #fff; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 900; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; box-shadow: 0 5px 20px rgba(255, 51, 102, 0.4); width: 100%; transition: all 0.2s ease; }
-    .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6); }
-    .game-header { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255, 51, 102, 0.15); }
-    .badge-tier { display: inline-block; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; background: rgba(255, 51, 102, 0.1); border: 1px solid #ff3366; color: #ff3366; }
-    .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 25px auto; max-width: 320px; width: 100%; }
-    .matrix-node { aspect-ratio: 1; background: rgba(255, 255, 255, 0.02); border: 2px solid rgba(255, 51, 102, 0.15); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 28px; transition: all 0.1s ease; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-    .matrix-node.node-glitch { background: rgba(0, 240, 255, 0.2) !important; border-color: #00f0ff !important; box-shadow: 0 0 20px rgba(0, 240, 255, 0.6), inset 0 0 5px #fff; }
-    .matrix-node.node-mine { background: rgba(255, 51, 102, 0.3) !important; border-color: #ff3366 !important; box-shadow: 0 0 20px rgba(255, 51, 102, 0.7); }
-    .timer-bar-container { background: rgba(255,255,255,0.05); height: 10px; border-radius: 999px; overflow: hidden; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
-    .timer-bar { background: linear-gradient(90deg, #00f0ff, #ff3366); height: 100%; width: 100%; transition: width 0.1s linear; }
+
+    .option-btn {
+      flex: 1;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    
+    .option-btn.active {
+      background: rgba(255, 51, 102, 0.2);
+      border-color: #ff3366;
+      color: #00f0ff;
+    }
+
+    .primary-btn {
+      background: linear-gradient(90deg, #ff3366, #ff5cff);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      box-shadow: 0 5px 20px rgba(255, 51, 102, 0.4);
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+    
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 51, 102, 0.6);
+    }
+
+    /* SIATKA NEON MATRIX */
+    .game-header {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      background: rgba(0,0,0,0.3);
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 51, 102, 0.15);
+    }
+
+    .badge-tier {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: rgba(255, 51, 102, 0.1);
+      border: 1px solid #ff3366;
+      color: #ff3366;
+    }
+
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 25px auto;
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .matrix-node {
+      aspect-ratio: 1;
+      background: rgba(255, 255, 255, 0.02);
+      border: 2px solid rgba(255, 51, 102, 0.15);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      transition: all 0.1s ease;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    /* Stany aktywne węzłów matrycy */
+    .matrix-node.node-glitch {
+      background: rgba(0, 240, 255, 0.2) !important;
+      border-color: #00f0ff !important;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6), inset 0 0 5px #fff;
+    }
+
+    .matrix-node.node-mine {
+      background: rgba(255, 51, 102, 0.3) !important;
+      border-color: #ff3366 !important;
+      box-shadow: 0 0 20px rgba(255, 51, 102, 0.7);
+    }
+
+    .timer-bar-container {
+      background: rgba(255,255,255,0.05);
+      height: 10px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .timer-bar {
+      background: linear-gradient(90deg, #00f0ff, #ff3366);
+      height: 100%;
+      width: 100%;
+      transition: width 0.1s linear;
+    }
+
+    .players-list {
+      display: grid;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    
+    .player-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255, 51, 102, 0.2);
+      border-radius: 12px;
+      font-size: 16px;
+    }
+    
+    .score-btn {
+      background: #ff3366;
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .score-btn:hover { box-shadow: 0 0 15px #ff3366; }
   </style>
 </head>
+
 <body>
   <div class="page">
     <div id="header" style="margin-bottom: 40px;"></div>
+
     <div class="game-layout">
       <div class="game-container">
-        <!-- (Sekcje Intro i Setup jak wcześniej...) -->
+        
         <div class="lang-switcher">
           <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
           <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
@@ -52,7 +317,7 @@
 
         <div class="host-section">
           <img id="pixelBuddyImg" class="buddy-avatar" src="/images/buddy-neutral.png" alt="Pixel Buddy">
-          <div id="buddyBubble" class="speech-bubble">Matrix initialized.</div>
+          <div id="buddyBubble" class="speech-bubble">Matrix initialized. Speed is key.</div>
         </div>
 
         <div id="introScreen" class="screen-segment active-screen" style="text-align: center;">
@@ -61,66 +326,357 @@
         </div>
 
         <div id="setupScreen" class="screen-segment setup-grid">
-           <!-- (pola wyboru graczy...) -->
-          <button class="primary-btn" id="btnStart" onclick="startGame()">Connect to Matrix</button>
+          <div class="form-group">
+            <label id="lblPlayers">Players</label>
+            <div class="btn-group">
+              <button class="option-btn active" onclick="setPlayers(1)">1 (Solo)</button>
+              <button class="option-btn" onclick="setPlayers(2)">2</button>
+            </div>
+          </div>
+          <div id="nameInputs" class="form-group">
+            <label id="lblPlayerNames">Player Name</label>
+            <input type="text" id="p1Name" class="game-input" value="Player 1">
+          </div>
+          <button class="primary-btn" id="btnStart" onclick="startGame()" style="margin-top: 10px;">Connect to Matrix</button>
         </div>
 
         <div id="gameScreen" class="screen-segment">
-          <div class="game-header"><span id="gameModeBadge" class="badge-tier">Solo</span><span id="gameScoreInfo" style="font-size: 13px; color: #a09cb0; font-weight: bold;">Glitches: 0</span></div>
-          <div id="timerContainer" class="timer-bar-container"><div id="timerBar" class="timer-bar"></div></div>
-          <div class="matrix-grid">
-            <div class="matrix-node" data-id="0" onclick="handleNodeClick(0)"></div><div class="matrix-node" data-id="1" onclick="handleNodeClick(1)"></div><div class="matrix-node" data-id="2" onclick="handleNodeClick(2)"></div>
-            <div class="matrix-node" data-id="3" onclick="handleNodeClick(3)"></div><div class="matrix-node" data-id="4" onclick="handleNodeClick(4)"></div><div class="matrix-node" data-id="5" onclick="handleNodeClick(5)"></div>
-            <div class="matrix-node" data-id="6" onclick="handleNodeClick(6)"></div><div class="matrix-node" data-id="7" onclick="handleNodeClick(7)"></div><div class="matrix-node" data-id="8" onclick="handleNodeClick(8)"></div>
+          <div class="game-header">
+            <span id="gameModeBadge" class="badge-tier">Solo</span>
+            <span id="gameScoreInfo" style="font-size: 13px; color: #a09cb0; font-weight: bold;">Glitches: 0</span>
           </div>
+
+          <div id="timerContainer" class="timer-bar-container">
+            <div id="timerBar" class="timer-bar"></div>
+          </div>
+
+          <div class="matrix-grid">
+            <div class="matrix-node" data-id="0" onclick="handleNodeClick(0)"></div>
+            <div class="matrix-node" data-id="1" onclick="handleNodeClick(1)"></div>
+            <div class="matrix-node" data-id="2" onclick="handleNodeClick(2)"></div>
+            <div class="matrix-node" data-id="3" onclick="handleNodeClick(3)"></div>
+            <div class="matrix-node" data-id="4" onclick="handleNodeClick(4)"></div>
+            <div class="matrix-node" data-id="5" onclick="handleNodeClick(5)"></div>
+            <div class="matrix-node" data-id="6" onclick="handleNodeClick(6)"></div>
+            <div class="matrix-node" data-id="7" onclick="handleNodeClick(7)"></div>
+            <div class="matrix-node" data-id="8" onclick="handleNodeClick(8)"></div>
+          </div>
+
+          <div id="multiplayerZone" class="players-list hidden"></div>
+          <button class="primary-btn hidden" id="btnNextPlayer" onclick="startNextPlayerTurn()">Next Player, get ready!</button>
         </div>
 
         <div id="endScreen" class="screen-segment" style="text-align: center;">
-          <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff3366;">GAME OVER</h2>
+          <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff3366;">DISCONNECTED</h2>
           <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255, 51, 102, 0.15);"></div>
-          <button class="primary-btn" onclick="resetGame()">Try Again</button>
+          <button class="primary-btn" id="btnRestart" onclick="resetGame()">Try Again</button>
         </div>
+
       </div>
     </div>
+
+    <div id="footer" style="margin-top: 40px;"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/pp-auth.js"></script>
   <script>
-    // ... (część logiki z poprzedniego pliku) ...
-    // ZMIANY W LOGICE:
-    function startClock() {
+    function loadPart(id, file) { fetch(file).then(res => res.text()).then(html => { document.getElementById(id).innerHTML = html; }).catch(err => console.error(err)); }
+    loadPart("header", "/header.html"); loadPart("footer", "/footer.html");
+  </script>
+  <script src="/tipjar.js"></script>
+
+  <script>
+    const buddyQuotes = {
+      en: {
+        welcome: ["Matrix initialized. Ready to override?", "Zippy says: Click fast or get left behind!", "Watch out for the data-mines!"],
+        neutral: ["Clean the matrix!", "Glitches appearing!", "Tap the cyan targets!"],
+        happy: ["Insane reflexes!", "Data bypass secure!", "Speeds increasing!"],
+        sad: ["BOOM! Neural override failed!", "You clicked a mine!", "Connection lost... too slow!"],
+        pass: ["Hand the device over!", "Next runner up!", "Let's see if they can beat that!"],
+        win: ["Excellent work!", "Matrix fully synchronized!", "System hack successful!"]
+      },
+      pl: {
+        welcome: ["Matryca gotowa. Gotowy na nadpisanie danych?", "Zippy mówi: Klikaj szybko albo zostaniesz w tyle!", "Uważaj na miny systemowe!"],
+        neutral: ["Oczyszczaj matrycę!", "Wykryto błędy!", "Klikaj błękitne cele!"],
+        happy: ["Niewiarygodny refleks!", "Kod hakerski zatwierdzony!", "Prędkość rośnie!"],
+        sad: ["BUM! Przeciążenie synaptyczne!", "Trafiłeś na minę!", "Utracono połączenie!"],
+        thinking: ["Kto teraz wchodzi do sieci?", "Przekaż urządzenie..."],
+        win: ["Świetna robota!", "Matryca w pełni zsynchronizowana!", "Hack systemu udany!"]
+      }
+    };
+
+    const i18n = {
+      en: {
+        begin: "Begin Mission",
+        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Neon Matrix Rules:</b>1. Cyan nodes are <b>Glitches</b>. Click them instantly to score +1 and refresh your time bar.<br><br>2. Red nodes are <b>Data-Mines</b>. They appear 150ms after a Glitch. Tapping them causes an instant Crash!<br><br>3. <b>Time Attack:</b> You have a fixed time bar. Score as many points as you can before it runs out. Glitches will add minor time bonuses!<br><br>4. <b>2-Player Party:</b> Player 1 plays until their time runs out or they hit a mine, then Player 2 tries to beat their highscore!",
+        players: "Players", names: "Player Name(s)", start: "Connect to Matrix",
+        restart: "Try Again", score: "Glitches Cleared: ", soloBadge: "Solo Time Attack",
+        partyBadge: "Matrix Duel", turn: "Current Operator: ", nextPlayer: "Ready Next Player", 
+        over: "CRASHED (MINE)", timeUp: "TIME UP! SYNC COMPLETE"
+      },
+      pl: {
+        begin: "Rozpocznij Misję",
+        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Zasady Neon Matrix:</b>1. Jasnoniebieskie kafelki to <b>Glitche</b>. Klikaj je natychmiast, by zdobyć +1 punkt.<br><br>2. Czerwone kafelki to <b>Miny Systemowe</b>. Pojawiają się 150ms po Glitchu. Trafienie w nie kończy grę awarią!<br><br>3. <b>Time Attack:</b> Twój czas stale ucieka. Zbierz jak najwięcej punktów przed końcem paska. Każdy glitch daje mały bonus do czasu!<br><br>4. <b>Pojedynek:</b> Gracz 1 leci swój sprint, dopóki czas nie dobiegnie końca lub nie trafi na minę. Potem Gracz 2 próbuje pobić wynik!",
+        players: "Gracze", names: "Imię Gracza (Graczy)", start: "Połącz z Matrycą",
+        restart: "Zagraj Ponownie", score: "Usunięte błędy: ", soloBadge: "Solo Wyścig z Czasem",
+        partyBadge: "Pojedynek w Matrycy", turn: "Aktualny Operator: ", nextPlayer: "Następny Gracz Gotowy", 
+        over: "AWARIA (MINA)", timeUp: "KONIEC CZASU! SYNCHRONIZACJA"
+      }
+    };
+
+    let lang = 'en';
+    let config = { players: 1, names: ["Player 1", "Player 2"] };
+    let gameState = {
+      scores: [0, 0],
+      activePlayer: 0,
+      timeRemaining: 100,
+      loopInterval: 850,
+      gameTimer: null,
+      logicTimer: null,
+      mineSpawnTimer: null,
+      nodes: {}
+    };
+
+    function setBuddyState(state) {
+      const img = document.getElementById('pixelBuddyImg');
+      const bubble = document.getElementById('buddyBubble');
+      let suffix = (state === 'welcome' || state === 'pass') ? 'neutral' : state;
+      img.src = `/images/buddy-${suffix}.png`;
+      let pool = buddyQuotes[lang][state] || buddyQuotes[lang]['neutral'];
+      bubble.style.opacity = 0;
+      setTimeout(() => { bubble.textContent = pool[Math.floor(Math.random() * pool.length)]; bubble.style.opacity = 1; }, 150);
+    }
+
+    function setLanguage(l) {
+      lang = l;
+      document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
+      document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
+      document.getElementById('rulesWrapper').innerHTML = i18n[lang].rules;
+      document.getElementById('btnBegin').textContent = i18n[lang].begin;
+      document.getElementById('lblPlayers').textContent = i18n[lang].players;
+      document.getElementById('lblPlayerNames').textContent = i18n[lang].names;
+      document.getElementById('btnStart').textContent = i18n[lang].start;
+      document.getElementById('btnRestart').textContent = i18n[lang].restart;
+      setBuddyState('welcome');
+    }
+
+    function showSetupScreen() {
+      document.getElementById('introScreen').classList.remove('active-screen');
+      document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setPlayers(num) {
+      config.players = num;
+      document.querySelectorAll('#setupScreen .btn-group .option-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === num));
+      let html = '';
+      for(let i = 1; i <= num; i++) {
+        html += `<input type="text" id="p${i}Name" class="game-input" value="Player ${i}" style="margin-bottom:8px;">`;
+      }
+      document.getElementById('nameInputs').innerHTML = `<label>${i18n[lang].names}</label>` + html;
+    }
+
+    function startGame() {
+      for(let i = 1; i <= config.players; i++) {
+        let inputEl = document.getElementById(`p${i}Name`);
+        config.names[i-1] = (inputEl ? inputEl.value.trim() : "") || `Player ${i}`;
+      }
+      gameState.scores = [0, 0];
+      gameState.activePlayer = 0;
+      
+      document.getElementById('setupScreen').classList.remove('active-screen', 'setup-grid');
+      document.getElementById('gameScreen').classList.add('active-screen');
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      startFreshTurn();
+    }
+
+    function startFreshTurn() {
+      document.getElementById('btnNextPlayer').classList.add('hidden');
+      document.getElementById('multiplayerZone').classList.add('hidden');
+      
       gameState.timeRemaining = 100;
+      gameState.loopInterval = 850;
+      
+      let badge = document.getElementById('gameModeBadge');
+      if(config.players === 1) {
+        badge.textContent = i18n[lang].soloBadge;
+      } else {
+        badge.textContent = `${i18n[lang].turn} ${config.names[gameState.activePlayer]}`;
+      }
+      updateScoreUI();
+      
+      setBuddyState('neutral');
+      clearGrid();
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      startClock();
+      tickMatrix();
+    }
+
+    function updateScoreUI() {
+      document.getElementById('gameScoreInfo').textContent = `${i18n[lang].score} ${gameState.scores[gameState.activePlayer]}`;
+    }
+
+    function clearGrid() {
+      clearTimeout(gameState.mineSpawnTimer);
+      document.querySelectorAll('.matrix-node').forEach(node => {
+        node.className = 'matrix-node';
+        node.textContent = '';
+      });
+      gameState.nodes = {};
+    }
+
+    function tickMatrix() {
+      clearTimeout(gameState.logicTimer);
+      clearGrid();
+
+      let glitchNodeId = Math.floor(Math.random() * 9);
+      gameState.nodes[glitchNodeId] = 'glitch';
+      
+      let glitchNode = document.querySelector(`.matrix-node[data-id="${glitchNodeId}"]`);
+      glitchNode.classList.add('node-glitch');
+      glitchNode.textContent = '👾';
+
+      let spawnMine = Math.random() < 0.22;
+      if (spawnMine) {
+        let mineNodeId;
+        do {
+          mineNodeId = Math.floor(Math.random() * 9);
+        } while (mineNodeId === glitchNodeId);
+
+        gameState.nodes[mineNodeId] = 'mine';
+        gameState.mineSpawnTimer = setTimeout(() => {
+          let mineNode = document.querySelector(`.matrix-node[data-id="${mineNodeId}"]`);
+          if (mineNode && gameState.nodes[mineNodeId] === 'mine') {
+            mineNode.classList.add('node-mine');
+            mineNode.textContent = '⚠️';
+          }
+        }, 150);
+      }
+
+      // ZMIANA: Stałe tempo pojawiania się klocków, żeby uniknąć niesprawiedliwego chaosu pod koniec gry
+      let speedFactor = Math.max(340, gameState.loopInterval - (gameState.scores[gameState.activePlayer] * 12));
+      gameState.logicTimer = setTimeout(tickMatrix, speedFactor);
+    }
+
+    function startClock() {
       clearInterval(gameState.gameTimer);
-      // Wolniejszy decay = dłuższa gra
       gameState.gameTimer = setInterval(() => {
-        gameState.timeRemaining -= 0.5; // Dłuższy czas
-        document.getElementById('timerBar').style.width = gameState.timeRemaining + '%';
-        if(gameState.timeRemaining <= 0) handleFinish('success'); // Sukces (koniec czasu)
+        // ZMIANA: Wolniejszy spadek czasu (0.45 zamiast 1.2+), gra trwa dłużej!
+        gameState.timeRemaining -= 0.45; 
+        
+        if(gameState.timeRemaining <= 0) {
+          document.getElementById('timerBar').style.width = '0%';
+          handleDisconnect('timeout');
+        } else {
+          document.getElementById('timerBar').style.width = gameState.timeRemaining + '%';
+        }
       }, 100);
+    }
+
+    function handleNodeClick(id) {
+      let clickedNodeType = gameState.nodes[id];
+      if(!clickedNodeType) return;
+
+      if(clickedNodeType === 'mine') {
+        handleDisconnect('mine');
+      } else if(clickedNodeType === 'glitch') {
+        gameState.scores[gameState.activePlayer]++;
+        // ZMIANA: Solidny bonus (+8%) do paska czasu za poprawne kliknięcie
+        gameState.timeRemaining = Math.min(100, gameState.timeRemaining + 8);
+        updateScoreUI();
+        if(Math.random() < 0.4) setBuddyState('happy');
+        
+        clearGrid();
+        tickMatrix();
+      }
     }
 
     function handleDisconnect(reason) {
       clearInterval(gameState.gameTimer);
       clearTimeout(gameState.logicTimer);
+      clearTimeout(gameState.mineSpawnTimer);
       
-      if(reason === 'mine') {
+      clearGrid();
+
+      // ZMIANA: Dwa różne stany końca gry zależne od przyczyny
+      if (reason === 'mine') {
         setBuddyState('sad');
-        document.getElementById('endTitle').textContent = "CRASHED (MINE)";
-        endGame();
+        document.getElementById('endTitle').textContent = i18n[lang].over;
+      } else if (reason === 'timeout') {
+        setBuddyState('win'); // Pozytywna reakcja hosta!
+        document.getElementById('endTitle').textContent = i18n[lang].timeUp;
+      }
+
+      if(config.players > 1 && gameState.activePlayer === 0) {
+        document.getElementById('btnNextPlayer').classList.remove('hidden');
+        document.getElementById('btnNextPlayer').textContent = `${config.names[1]} - ${i18n[lang].nextPlayer}`;
+        gameState.activePlayer = 1;
+        gameState.multiPhase = 'pass';
+        renderMidgameList();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setTimeout(() => {
+          document.getElementById('gameScreen').classList.remove('active-screen');
+          document.getElementById('endScreen').classList.add('active-screen');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          renderFinalResults();
+        }, 1500);
       }
     }
 
-    function handleFinish(reason) {
-      clearInterval(gameState.gameTimer);
-      setBuddyState('win'); // Pozytywne zakończenie
-      document.getElementById('endTitle').textContent = "TIME UP! SYNC COMPLETE";
-      endGame();
+    function renderMidgameList() {
+      const zone = document.getElementById('multiplayerZone');
+      zone.classList.remove('hidden');
+      zone.innerHTML = `
+        <div class="player-card">
+          <div><strong>⏱️ ${config.names[0]}</strong> finished their turn!</div>
+          <div>Score: ${gameState.scores[0]}</div>
+        </div>
+      `;
     }
 
-    function endGame() {
-        document.getElementById('gameScreen').classList.remove('active-screen');
-        document.getElementById('endScreen').classList.add('active-screen');
-        // Tutaj w przyszłości dopiszemy logikę wysyłania wyniku do Supabase (leaderboard)
+    function startNextPlayerTurn() {
+      startFreshTurn();
     }
+
+    function renderFinalResults() {
+      let resultsBox = document.getElementById('endResults');
+      
+      let html = '';
+      if(config.players === 1) {
+        html = `
+          <strong style="color: #00f0ff; font-size: 22px;">${config.names[0]}</strong><br><br>
+          Glitches Cleared: <span style="color:#ff3366; font-weight:bold;">${gameState.scores[0]}</span>
+        `;
+      } else {
+        let wIdx = gameState.scores[1] > gameState.scores[0] ? 1 : 0;
+        let isDraw = gameState.scores[0] === gameState.scores[1];
+        
+        if(isDraw) {
+          html = `<strong style="color: #a09cb0; font-size: 22px;">DRAW! Matrix Synchronized</strong><br><br>`;
+        } else {
+          html = `<strong style="color: #00f0ff; font-size: 22px;">🏆 WINNER: ${config.names[wIdx]}</strong><br><br>`;
+        }
+        html += `
+          ${config.names[0]}: <span style="color:#ff5cff; font-weight:bold;">${gameState.scores[0]}</span> pts<br>
+          ${config.names[1]}: <span style="color:#ff5cff; font-weight:bold;">${gameState.scores[1]}</span> pts
+        `;
+      }
+      resultsBox.innerHTML = html;
+    }
+
+    function resetGame() {
+      setBuddyState('welcome');
+      document.getElementById('endScreen').classList.remove('active-screen');
+      document.getElementById('introScreen').classList.add('active-screen');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    setLanguage('en');
   </script>
 </body>
 </html>
