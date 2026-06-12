@@ -1,5 +1,17 @@
 [
   {
+  id: "neon-matrix",
+  title: "Neon Matrix Clicker",
+  titlePL: "Neon Matrix",
+  description: "Bypass the system firewall by clearing glitches with Zippy and Mira. Watch out for data-mines!",
+  descriptionPL: "Przełam zaporę sieciową, czyszcząc glitche razem z Zippy i Mirą. Uważaj na miny systemowe!",
+  thumbnail: "/images/thumbnails/matrix-clicker.png", // Ścieżka do miniaturki kafelka
+  url: "/games/neon-matrix.html", // Ścieżka do nowego pliku gry
+  badge: "New",
+  category: "Reflex / Speed",
+  featured: true
+  }, 
+  {
     "id": "memory-bomb",
     "title": "Memory Bomb",
     "type": "Game",
