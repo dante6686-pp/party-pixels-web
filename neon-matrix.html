@@ -327,10 +327,9 @@
     <div id="header" style="margin-bottom: 40px;"></div>
 
     <div class="game-layout">
-      <div class="game-container">
+      <div id="gameContainer" class="game-container">
         
         <div class="header-controls">
-          <!-- PRZYCISK MUTE -->
           <button id="muteBtn" class="mute-btn" onclick="toggleMute()">🔊</button>
           
           <div class="lang-switcher">
@@ -441,7 +440,7 @@
       },
       pl: {
         begin: "Rozpocznij Misję",
-        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Zasady Neon Matrix:</b>1. Jasnoniebieskie kafelki to <b>Glitche</b>. Klikaj je natychmiast, by zdobyć +1 punkt.<br><br>2. Czerwone kafelki to <b>Miny Systemowe</b>. Pojawiają się 150ms po Glitchu. Trafienie w nie kończy grę awarią!<br><br>3. <b>Time Attack:</b> Twój czas stale ucieka. Zbierz jak najwiesz punktów przed końcem paska. Każdy glitch daje mały bonus do czasu!<br><br>4. <b>Pojedynek:</b> Gracz 1 leci swój sprint, dopóki czas nie dobiegnie końca lub nie trafi na minę. Potem Gracz 2 próbuje pobić wynik!",
+        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Zasady Neon Matrix:</b>1. Jasnoniebieskie kafelki to <b>Glitche</b>. Klikaj je natychmiast, by zdobyć +1 punkt.<br><br>2. Czerwone kafelki to <b>Miny Systemowe</b>. Pojawiają się 150ms po Glitchu. Trafienie w nie kończy grę awarią!<br><br>3. <b>Time Attack:</b> Twój czas stale ucieka. Zbierz jak najwięcej punktów przed końcem paska. Każdy glitch daje mały bonus do czasu!<br><br>4. <b>Pojedynek:</b> Gracz 1 leci swój sprint, dopóki czas nie dobiegnie końca lub nie trafi na minę. Potem Gracz 2 próbuje pobić wynik!",
         players: "Gracze", names: "Imię Gracza (Graczy)", start: "Połącz z Matrycą",
         restart: "Zagraj Ponownie", score: "Usunięte błędy: ", soloBadge: "Solo Wyścig z Czasem",
         partyBadge: "Pojedynek w Matrycy", turn: "Aktualny Operator: ", nextPlayer: "Następny Gracz Gotowy", 
@@ -484,16 +483,14 @@
       const now = audioCtx.currentTime;
 
       if (type === 'click') {
-        // Krótki, wysoki dźwięk retro bleep za czyszczenie glitcha
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(587.33, now); // D5
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.08); // A5
+        osc.frequency.setValueAtTime(587.33, now); 
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.08); 
         gain.gain.setValueAtTime(0.15, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
         osc.start(now);
         osc.stop(now + 0.08);
       } else if (type === 'mine') {
-        // Ciężki, opadający dźwięk eksplozji miny
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(220, now);
         osc.frequency.linearRampToValueAtTime(40, now + 0.4);
@@ -502,12 +499,11 @@
         osc.start(now);
         osc.stop(now + 0.4);
       } else if (type === 'success') {
-        // Klasyczny hakerski jingle z triumfem arcy-retro
         osc.type = 'square';
-        osc.frequency.setValueAtTime(523.25, now); // C5
-        osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-        osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-        osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+        osc.frequency.setValueAtTime(523.25, now); 
+        osc.frequency.setValueAtTime(659.25, now + 0.1); 
+        osc.frequency.setValueAtTime(783.99, now + 0.2); 
+        osc.frequency.setValueAtTime(1046.50, now + 0.3); 
         gain.gain.setValueAtTime(0.1, now);
         gain.gain.setValueAtTime(0.1, now + 0.3);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
@@ -531,6 +527,11 @@
         btn.textContent = '🔊';
         btn.classList.remove('muted');
       }
+    }
+
+    // UTILITY: Precyzyjny Scroll do początku kontenera gry
+    function scrollToGame() {
+      document.getElementById('gameContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function setBuddyState(state) {
@@ -559,7 +560,7 @@
     function showSetupScreen() {
       document.getElementById('introScreen').classList.remove('active-screen');
       document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToGame();
     }
 
     function setPlayers(num) {
@@ -583,7 +584,6 @@
       document.getElementById('setupScreen').classList.remove('active-screen', 'setup-grid');
       document.getElementById('gameScreen').classList.add('active-screen');
       
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       startFreshTurn();
     }
 
@@ -605,7 +605,7 @@
       setBuddyState('neutral');
       clearGrid();
       
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToGame(); // Celujemy w kontener gry
       startClock();
       tickMatrix();
     }
@@ -676,7 +676,7 @@
       if(clickedNodeType === 'mine') {
         handleDisconnect('mine');
       } else if(clickedNodeType === 'glitch') {
-        playSound('click'); // DŹWIĘK TRAFIENIA KLIKU
+        playSound('click'); 
         gameState.scores[gameState.activePlayer]++;
         gameState.timeRemaining = Math.min(100, gameState.timeRemaining + 8);
         updateScoreUI();
@@ -696,17 +696,16 @@
 
       const titleEl = document.getElementById('endTitle');
 
-      // NOWE: Dynamiczne zarządzanie klasami kolorów i dźwiękiem zakończenia
       if (reason === 'mine') {
-        playSound('mine'); // DŹWIĘK WYBUCHU MINY
+        playSound('mine'); 
         setBuddyState('sad');
         titleEl.textContent = i18n[lang].over;
-        titleEl.className = 'title-fail'; // Czerwony kolor awarii
+        titleEl.className = 'title-fail'; 
       } else if (reason === 'timeout') {
-        playSound('success'); // TRADYCYJNY RETRO WIN JINGLE
+        playSound('success'); 
         setBuddyState('win');
         titleEl.textContent = i18n[lang].timeUp;
-        titleEl.className = 'title-success'; // ZIELONY KOLOR SYNCHRONIZACJI!
+        titleEl.className = 'title-success'; 
       }
 
       if(config.players > 1 && gameState.activePlayer === 0) {
@@ -715,12 +714,12 @@
         gameState.activePlayer = 1;
         gameState.multiPhase = 'pass';
         renderMidgameList();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollToGame(); // Centrujemy ekran na oknie przekazywania urządzenia
       } else {
         setTimeout(() => {
           document.getElementById('gameScreen').classList.remove('active-screen');
           document.getElementById('endScreen').classList.add('active-screen');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          scrollToGame(); // Centrujemy na ekranie wyników końcowych
           renderFinalResults();
         }, 1500);
       }
@@ -771,10 +770,9 @@
       setBuddyState('welcome');
       document.getElementById('endScreen').classList.remove('active-screen');
       document.getElementById('introScreen').classList.add('active-screen');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToGame(); // Wracamy płynnie do kontenera startowego
     }
 
-    // Inicjalizacja przycisku Mute przy ładowaniu
     updateMuteButtonUI();
     setLanguage('en');
   </script>
