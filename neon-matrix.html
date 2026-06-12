@@ -470,7 +470,10 @@
       }
     }
 
-    function playSound(type) {
+    // Mapa częstotliwości nut dla kafelków (od 0 do 8), tworząca fajną skalę muzyczną
+    const nodeNotes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50, 1174.66];
+
+    function playSound(type, nodeId = null) {
       if (gameState.isMuted) return;
       initAudio();
       if (!audioCtx) return;
@@ -482,31 +485,53 @@
 
       const now = audioCtx.currentTime;
 
-      if (type === 'click') {
+      if (type === 'click' && nodeId !== null) {
+        // DYNAMICZNY KLIK: Ton zależy od pozycji kafelka na siatce!
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(587.33, now); 
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.08); 
+        let baseFreq = nodeNotes[nodeId] || 523.25;
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.08); 
         gain.gain.setValueAtTime(0.15, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
         osc.start(now);
         osc.stop(now + 0.08);
-      } else if (type === 'mine') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, now);
-        osc.frequency.linearRampToValueAtTime(40, now + 0.4);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+      } else if (type === 'menu_click') {
+        // Krótkie, miłe dla ucha piknięcie interfejsu menu
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
         osc.start(now);
-        osc.stop(now + 0.4);
+        osc.stop(now + 0.05);
+      } else if (type === 'begin') {
+        // Dźwięk startu gry - podnosząca się fanfara hakerska
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.setValueAtTime(450, now + 0.08);
+        osc.frequency.setValueAtTime(600, now + 0.16);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'mine') {
+        // Ciężki, przesterowany wybuch po trafieniu w minę
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(30, now + 0.5);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        osc.start(now);
+        osc.stop(now + 0.5);
       } else if (type === 'success') {
+        // Zwycięski arpeggio jingle po ukończeniu pełnego czasu
         osc.type = 'square';
         osc.frequency.setValueAtTime(523.25, now); 
-        osc.frequency.setValueAtTime(659.25, now + 0.1); 
-        osc.frequency.setValueAtTime(783.99, now + 0.2); 
-        osc.frequency.setValueAtTime(1046.50, now + 0.3); 
+        osc.frequency.setValueAtTime(659.25, now + 0.08); 
+        osc.frequency.setValueAtTime(783.99, now + 0.16); 
+        osc.frequency.setValueAtTime(1046.50, now + 0.24); 
         gain.gain.setValueAtTime(0.1, now);
-        gain.gain.setValueAtTime(0.1, now + 0.3);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+        gain.gain.setValueAtTime(0.1, now + 0.24);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
         osc.start(now);
         osc.stop(now + 0.45);
       }
@@ -516,6 +541,7 @@
       gameState.isMuted = !gameState.isMuted;
       localStorage.setItem('matrix_muted', gameState.isMuted);
       updateMuteButtonUI();
+      if (!gameState.isMuted) playSound('menu_click');
     }
 
     function updateMuteButtonUI() {
@@ -529,7 +555,6 @@
       }
     }
 
-    // UTILITY: Precyzyjny Scroll do początku kontenera gry
     function scrollToGame() {
       document.getElementById('gameContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -545,6 +570,7 @@
     }
 
     function setLanguage(l) {
+      playSound('menu_click');
       lang = l;
       document.getElementById('langBtnEN').classList.toggle('active', l === 'en');
       document.getElementById('langBtnPL').classList.toggle('active', l === 'pl');
@@ -558,12 +584,14 @@
     }
 
     function showSetupScreen() {
+      playSound('menu_click');
       document.getElementById('introScreen').classList.remove('active-screen');
       document.getElementById('setupScreen').classList.add('active-screen', 'setup-grid');
       scrollToGame();
     }
 
     function setPlayers(num) {
+      playSound('menu_click');
       config.players = num;
       document.querySelectorAll('#setupScreen .btn-group .option-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === num));
       let html = '';
@@ -574,6 +602,7 @@
     }
 
     function startGame() {
+      playSound('begin'); // DŹWIĘK STARTU MISJI
       for(let i = 1; i <= config.players; i++) {
         let inputEl = document.getElementById(`p${i}Name`);
         config.names[i-1] = (inputEl ? inputEl.value.trim() : "") || `Player ${i}`;
@@ -605,7 +634,7 @@
       setBuddyState('neutral');
       clearGrid();
       
-      scrollToGame(); // Celujemy w kontener gry
+      scrollToGame();
       startClock();
       tickMatrix();
     }
@@ -676,7 +705,7 @@
       if(clickedNodeType === 'mine') {
         handleDisconnect('mine');
       } else if(clickedNodeType === 'glitch') {
-        playSound('click'); 
+        playSound('click', id); // PRZEKAZUJEMY ID: Każde pole zagra teraz inny ton!
         gameState.scores[gameState.activePlayer]++;
         gameState.timeRemaining = Math.min(100, gameState.timeRemaining + 8);
         updateScoreUI();
@@ -714,12 +743,12 @@
         gameState.activePlayer = 1;
         gameState.multiPhase = 'pass';
         renderMidgameList();
-        scrollToGame(); // Centrujemy ekran na oknie przekazywania urządzenia
+        scrollToGame();
       } else {
         setTimeout(() => {
           document.getElementById('gameScreen').classList.remove('active-screen');
           document.getElementById('endScreen').classList.add('active-screen');
-          scrollToGame(); // Centrujemy na ekranie wyników końcowych
+          scrollToGame();
           renderFinalResults();
         }, 1500);
       }
@@ -737,6 +766,7 @@
     }
 
     function startNextPlayerTurn() {
+      playSound('menu_click');
       startFreshTurn();
     }
 
@@ -767,10 +797,11 @@
     }
 
     function resetGame() {
+      playSound('menu_click');
       setBuddyState('welcome');
       document.getElementById('endScreen').classList.remove('active-screen');
       document.getElementById('introScreen').classList.add('active-screen');
-      scrollToGame(); // Wracamy płynnie do kontenera startowego
+      scrollToGame();
     }
 
     updateMuteButtonUI();
