@@ -6,8 +6,8 @@
     "status": "live",
     "desc": "Bypass the system firewall by clearing glitches with Zippy and Mira. Watch out for data-mines!",
     "tags": ["reflex", "speed", "arcade", "neon"],
-    "href": "/games/neon-matrix.html",
-    "thumb": "/images/thumbnails/matrix-clicker.png",
+    "href": "neon-matrix.html",
+    "thumb": "/images/neon-matrix-splash.png",
     "added": "2026-06-12"
   },
   {
