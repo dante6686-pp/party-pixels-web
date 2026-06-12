@@ -22,7 +22,6 @@
       width: 100%;
       padding: 30px;
       box-sizing: border-box;
-      /* Trójwarstwowe tło z nowym neonowym reflektorem i dedykowaną grafiką */
       background-image: 
         radial-gradient(circle at center 40px, rgba(0, 240, 255, 0.25) 45%, transparent 60%),
         linear-gradient(145deg, rgba(15, 5, 30, 0.95), rgba(5, 2, 12, 0.98)),
@@ -35,14 +34,20 @@
       box-shadow: 0 0 30px rgba(255, 51, 102, 0.15), inset 0 0 20px rgba(0,0,0,0.5);
     }
 
-    .lang-switcher {
+    .header-controls {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       margin-bottom: 20px;
+      gap: 12px;
+    }
+
+    .lang-switcher {
+      display: flex;
       gap: 8px;
     }
 
-    .lang-btn {
+    .lang-btn, .mute-btn {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       color: #fff;
@@ -52,6 +57,9 @@
       font-size: 12px;
       font-weight: bold;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .lang-btn.active {
@@ -59,6 +67,13 @@
       color: #ff3366;
       box-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
       border-color: #ff3366;
+    }
+
+    .mute-btn.muted {
+      background: rgba(255, 51, 102, 0.2);
+      border-color: #ff3366;
+      color: #ff3366;
+      box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
     }
 
     /* HOST SECTION (PIXEL BUDDY) - BEZ SHIFTU */
@@ -241,7 +256,6 @@
       box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
     }
 
-    /* Stany aktywne węzłów matrycy */
     .matrix-node.node-glitch {
       background: rgba(0, 240, 255, 0.2) !important;
       border-color: #00f0ff !important;
@@ -270,6 +284,25 @@
       transition: width 0.1s linear;
     }
 
+    /* EKRAN KOŃCOWY - DYNAMICZNE KOLORY NAGŁÓWKA */
+    #endTitle {
+      font-size: 32px;
+      margin-bottom: 15px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      transition: color 0.3s ease;
+    }
+
+    #endTitle.title-fail {
+      color: #ff3366;
+      text-shadow: 0 0 20px rgba(255, 51, 102, 0.6);
+    }
+
+    #endTitle.title-success {
+      color: #00ff66;
+      text-shadow: 0 0 25px rgba(0, 255, 102, 0.8);
+    }
+
     .players-list {
       display: grid;
       gap: 12px;
@@ -286,20 +319,6 @@
       border-radius: 12px;
       font-size: 16px;
     }
-    
-    .score-btn {
-      background: #ff3366;
-      border: none;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-    .score-btn:hover { box-shadow: 0 0 15px #ff3366; }
   </style>
 </head>
 
@@ -310,9 +329,14 @@
     <div class="game-layout">
       <div class="game-container">
         
-        <div class="lang-switcher">
-          <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
-          <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
+        <div class="header-controls">
+          <!-- PRZYCISK MUTE -->
+          <button id="muteBtn" class="mute-btn" onclick="toggleMute()">🔊</button>
+          
+          <div class="lang-switcher">
+            <button id="langBtnEN" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+            <button id="langBtnPL" class="lang-btn" onclick="setLanguage('pl')">PL</button>
+          </div>
         </div>
 
         <div class="host-section">
@@ -367,7 +391,7 @@
         </div>
 
         <div id="endScreen" class="screen-segment" style="text-align: center;">
-          <h2 id="endTitle" style="font-size: 32px; margin-bottom: 15px; color: #ff3366;">DISCONNECTED</h2>
+          <h2 id="endTitle" class="title-fail">DISCONNECTED</h2>
           <div id="endResults" style="color: #fff; margin-bottom: 30px; font-size: 18px; line-height: 1.8; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255, 51, 102, 0.15);"></div>
           <button class="primary-btn" id="btnRestart" onclick="resetGame()">Try Again</button>
         </div>
@@ -417,7 +441,7 @@
       },
       pl: {
         begin: "Rozpocznij Misję",
-        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Zasady Neon Matrix:</b>1. Jasnoniebieskie kafelki to <b>Glitche</b>. Klikaj je natychmiast, by zdobyć +1 punkt.<br><br>2. Czerwone kafelki to <b>Miny Systemowe</b>. Pojawiają się 150ms po Glitchu. Trafienie w nie kończy grę awarią!<br><br>3. <b>Time Attack:</b> Twój czas stale ucieka. Zbierz jak najwięcej punktów przed końcem paska. Każdy glitch daje mały bonus do czasu!<br><br>4. <b>Pojedynek:</b> Gracz 1 leci swój sprint, dopóki czas nie dobiegnie końca lub nie trafi na minę. Potem Gracz 2 próbuje pobić wynik!",
+        rules: "<b style='color:#ff3366; font-size:16px; display:block; margin-bottom:10px;'>Zasady Neon Matrix:</b>1. Jasnoniebieskie kafelki to <b>Glitche</b>. Klikaj je natychmiast, by zdobyć +1 punkt.<br><br>2. Czerwone kafelki to <b>Miny Systemowe</b>. Pojawiają się 150ms po Glitchu. Trafienie w nie kończy grę awarią!<br><br>3. <b>Time Attack:</b> Twój czas stale ucieka. Zbierz jak najwiesz punktów przed końcem paska. Każdy glitch daje mały bonus do czasu!<br><br>4. <b>Pojedynek:</b> Gracz 1 leci swój sprint, dopóki czas nie dobiegnie końca lub nie trafi na minę. Potem Gracz 2 próbuje pobić wynik!",
         players: "Gracze", names: "Imię Gracza (Graczy)", start: "Połącz z Matrycą",
         restart: "Zagraj Ponownie", score: "Usunięte błędy: ", soloBadge: "Solo Wyścig z Czasem",
         partyBadge: "Pojedynek w Matrycy", turn: "Aktualny Operator: ", nextPlayer: "Następny Gracz Gotowy", 
@@ -435,8 +459,79 @@
       gameTimer: null,
       logicTimer: null,
       mineSpawnTimer: null,
-      nodes: {}
+      nodes: {},
+      isMuted: localStorage.getItem('matrix_muted') === 'true'
     };
+
+    // --- SYSTEM DŹWIĘKÓW RETRO (WEB AUDIO API) ---
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      if (gameState.isMuted) return;
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'click') {
+        // Krótki, wysoki dźwięk retro bleep za czyszczenie glitcha
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(587.33, now); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.08); // A5
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      } else if (type === 'mine') {
+        // Ciężki, opadający dźwięk eksplozji miny
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(40, now + 0.4);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === 'success') {
+        // Klasyczny hakerski jingle z triumfem arcy-retro
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+        osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+        osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.setValueAtTime(0.1, now + 0.3);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      }
+    }
+
+    function toggleMute() {
+      gameState.isMuted = !gameState.isMuted;
+      localStorage.setItem('matrix_muted', gameState.isMuted);
+      updateMuteButtonUI();
+    }
+
+    function updateMuteButtonUI() {
+      const btn = document.getElementById('muteBtn');
+      if (gameState.isMuted) {
+        btn.textContent = '❌';
+        btn.classList.add('muted');
+      } else {
+        btn.textContent = '🔊';
+        btn.classList.remove('muted');
+      }
+    }
 
     function setBuddyState(state) {
       const img = document.getElementById('pixelBuddyImg');
@@ -489,7 +584,6 @@
       document.getElementById('gameScreen').classList.add('active-screen');
       
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
       startFreshTurn();
     }
 
@@ -557,7 +651,6 @@
         }, 150);
       }
 
-      // ZMIANA: Stałe tempo pojawiania się klocków, żeby uniknąć niesprawiedliwego chaosu pod koniec gry
       let speedFactor = Math.max(340, gameState.loopInterval - (gameState.scores[gameState.activePlayer] * 12));
       gameState.logicTimer = setTimeout(tickMatrix, speedFactor);
     }
@@ -565,7 +658,6 @@
     function startClock() {
       clearInterval(gameState.gameTimer);
       gameState.gameTimer = setInterval(() => {
-        // ZMIANA: Wolniejszy spadek czasu (0.45 zamiast 1.2+), gra trwa dłużej!
         gameState.timeRemaining -= 0.45; 
         
         if(gameState.timeRemaining <= 0) {
@@ -584,8 +676,8 @@
       if(clickedNodeType === 'mine') {
         handleDisconnect('mine');
       } else if(clickedNodeType === 'glitch') {
+        playSound('click'); // DŹWIĘK TRAFIENIA KLIKU
         gameState.scores[gameState.activePlayer]++;
-        // ZMIANA: Solidny bonus (+8%) do paska czasu za poprawne kliknięcie
         gameState.timeRemaining = Math.min(100, gameState.timeRemaining + 8);
         updateScoreUI();
         if(Math.random() < 0.4) setBuddyState('happy');
@@ -602,13 +694,19 @@
       
       clearGrid();
 
-      // ZMIANA: Dwa różne stany końca gry zależne od przyczyny
+      const titleEl = document.getElementById('endTitle');
+
+      // NOWE: Dynamiczne zarządzanie klasami kolorów i dźwiękiem zakończenia
       if (reason === 'mine') {
+        playSound('mine'); // DŹWIĘK WYBUCHU MINY
         setBuddyState('sad');
-        document.getElementById('endTitle').textContent = i18n[lang].over;
+        titleEl.textContent = i18n[lang].over;
+        titleEl.className = 'title-fail'; // Czerwony kolor awarii
       } else if (reason === 'timeout') {
-        setBuddyState('win'); // Pozytywna reakcja hosta!
-        document.getElementById('endTitle').textContent = i18n[lang].timeUp;
+        playSound('success'); // TRADYCYJNY RETRO WIN JINGLE
+        setBuddyState('win');
+        titleEl.textContent = i18n[lang].timeUp;
+        titleEl.className = 'title-success'; // ZIELONY KOLOR SYNCHRONIZACJI!
       }
 
       if(config.players > 1 && gameState.activePlayer === 0) {
@@ -676,6 +774,8 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Inicjalizacja przycisku Mute przy ładowaniu
+    updateMuteButtonUI();
     setLanguage('en');
   </script>
 </body>
